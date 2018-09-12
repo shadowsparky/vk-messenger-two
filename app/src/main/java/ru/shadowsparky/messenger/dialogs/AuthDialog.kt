@@ -2,6 +2,7 @@ package ru.shadowsparky.messenger.dialogs
 
 import android.app.Dialog
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -65,6 +66,8 @@ class AuthDialog(context: Context, val callback: (String) -> Unit) : Dialog(cont
     }
 
     protected fun isAuthEnded(url: String) : Boolean = url.contains("access_token", true)
+
+    protected fun checkError(url: String) : Boolean = url.contains("error", true)
 
     override fun onBackPressed() {
         super.onBackPressed()
