@@ -18,7 +18,7 @@ import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
 import ru.shadowsparky.messenger.utils.ToastUtils
 import javax.inject.Inject
 
-class AuthDialog(context: Context, val callback: (String) -> Unit) : Dialog(context) {
+class AuthDialog(context: Context, val callback: () -> Unit) : Dialog(context) {
     @Inject
     lateinit var log: Logger
     @Inject
@@ -50,7 +50,7 @@ class AuthDialog(context: Context, val callback: (String) -> Unit) : Dialog(cont
                     val token = getToken(url)
                     if (preferences.write(TOKEN, token)) {
                         hide()
-                        callback(token)
+                        callback()
                     } else {
                         log.print("SHARED PREFERENCES ERROR! WRITE DON'T WORKING")
                     }

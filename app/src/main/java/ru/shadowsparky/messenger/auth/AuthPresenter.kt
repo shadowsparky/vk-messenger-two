@@ -24,7 +24,7 @@ class AuthPresenter(val view : Auth.View) : Auth.Presenter {
         view.setLoading(true)
         val token = preferences.read(TOKEN)
         if (token.isNotBlank()) {
-            view.navigateToMessagesList(token)
+            view.navigateToMessagesList()
             log.print("TOKEN READED ${preferences.read(TOKEN)}")
         }
         view.setLoading(false)

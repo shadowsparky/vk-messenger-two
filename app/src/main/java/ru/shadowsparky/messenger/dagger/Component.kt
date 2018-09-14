@@ -5,6 +5,7 @@ import ru.shadowsparky.messenger.auth.AuthModel
 import ru.shadowsparky.messenger.auth.AuthPresenter
 import ru.shadowsparky.messenger.auth.AuthView
 import ru.shadowsparky.messenger.dialogs.AuthDialog
+import ru.shadowsparky.messenger.messages_list.MessagesListModel
 import javax.inject.Singleton
 
 @Singleton
@@ -14,4 +15,6 @@ interface Component {
     fun inject(target: AuthPresenter)
     fun inject(target: AuthModel)
     fun inject(target: AuthDialog)
+
+    fun inject(target: MessagesListModel)
 }
