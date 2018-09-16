@@ -1,6 +1,7 @@
 package ru.shadowsparky.messenger.messages_list
 
-import ru.shadowsparky.messenger.response_utils.Message
+import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
+
 
 interface MessagesList {
     interface View {
@@ -12,6 +13,6 @@ interface MessagesList {
     }
 
     interface Model {
-        fun getAllDialogs(callback: (ArrayList<Message>?) -> Unit)
+        fun getAllDialogs(callback: (MessagesResponse?) -> Unit)
     }
 }
