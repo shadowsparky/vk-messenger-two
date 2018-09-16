@@ -12,6 +12,7 @@ interface VKApi {
         @Query("count") count: Int,
         @Query("filter") filter: String,
         @Query("access_token") token: String,
-        @Query("v") version: Double = 5.85
+        @Query("v") version: Double = 5.85,
+        @Query("extended") extended: Boolean = true
     ) : Observable<retrofit2.Response<MessagesResponse>>
 }

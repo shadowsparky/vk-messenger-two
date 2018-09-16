@@ -7,16 +7,21 @@ import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.ToastUtils
+import javax.inject.Inject
 
 class MessagesListView : AppCompatActivity(), MessagesList.View {
     lateinit var presenter: MessagesList.Presenter
-    lateinit var log: Logger
-    lateinit var preferencesUtils: SharedPreferencesUtils
-    lateinit var toast: ToastUtils
+    @Inject lateinit var log: Logger
+    @Inject lateinit var preferencesUtils: SharedPreferencesUtils
+    @Inject lateinit var toast: ToastUtils
 
     override fun setLoading(result: Boolean) {
 
     }
+
+    override fun showError() =
+        toast.error(this, "При соединении произошла ошибка")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

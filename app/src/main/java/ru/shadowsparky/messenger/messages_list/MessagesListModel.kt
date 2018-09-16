@@ -22,7 +22,7 @@ class MessagesListModel(
         App.component.inject(this)
     }
 
-    override fun getAllDialogs(callback: (MessagesResponse?) -> Unit) {
+    override fun getAllDialogs(callback: (MessagesResponse?) -> Unit, offset: Int) {
         log.print("Dialogs Loading...")
         Observable.just("")
                 .observeOn(Schedulers.io())
