@@ -1,6 +1,7 @@
 package ru.shadowsparky.messenger.dagger
 
 import dagger.Component
+import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthModel
 import ru.shadowsparky.messenger.auth.AuthPresenter
 import ru.shadowsparky.messenger.auth.AuthView
@@ -18,4 +19,5 @@ interface Component {
     fun inject(target: AuthDialog)
     fun inject(target: MessagesListModel)
     fun inject(target: MessagesListView)
+    fun inject(target: MessagesAdapter)
 }

@@ -1,8 +1,12 @@
 package ru.shadowsparky.messenger.messages_list
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import kotlinx.android.synthetic.main.activity_friends_view.*
 import ru.shadowsparky.messenger.R
+import ru.shadowsparky.messenger.adapters.MessagesAdapter
+import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
@@ -14,9 +18,21 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
     @Inject lateinit var log: Logger
     @Inject lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject lateinit var toast: ToastUtils
+    var adapter: MessagesAdapter? = null
 
     override fun setLoading(result: Boolean) {
 
+    }
+
+    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit) {
+        if (adapter == null) {
+            adapter = MessagesAdapter(response, callback)
+            messages_list.setHasFixedSize(true)
+            messages_list.layoutManager = GridLayoutManager(this, 1)
+            messages_list.adapter = adapter
+        } else {
+            adapter!!.addData(response)
+        }
     }
 
     override fun showError() =

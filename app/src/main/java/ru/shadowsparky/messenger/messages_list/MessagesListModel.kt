@@ -1,6 +1,7 @@
 package ru.shadowsparky.messenger.messages_list
 
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
@@ -28,18 +29,19 @@ class MessagesListModel(
                 .observeOn(Schedulers.io())
                 .map {
                     retrofit.create(VKApi::class.java)
-                        .getDialogs(0, 20, "all", preferencesUtils.read(TOKEN))
+                        .getDialogs(offset, 20, "all", preferencesUtils.read(TOKEN))
                         .blockingFirst()
                 }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                         onNext = {
                             log.print("URL: ${it.raw().request().url()}")
                             callback(it.body())
-                        },
-                        onError = {
-                            log.print("ERROR: $it")
-                            callback(null)
-                        }
+                        }//,
+//                        onError = {
+//                            log.print("ERROR: $it")
+//                            callback(null)
+//                        }
                 )
     }
 
