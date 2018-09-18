@@ -9,11 +9,10 @@ class MessagesListPresenter(
         private val log: Logger,
         preferencesUtils: SharedPreferencesUtils
 ) : MessagesList.Presenter {
-    override fun onItemClicked() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     val model = MessagesListModel(log, preferencesUtils)
+
+    override fun onItemClicked(id: Int) = view.navigateToHistory(id)
+
     override fun onActivityOpen() {
         view.setLoading(true)
         model.getAllDialogs(this::onResponseHandled)

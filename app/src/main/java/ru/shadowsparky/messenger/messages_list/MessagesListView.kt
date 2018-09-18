@@ -12,6 +12,8 @@ import kotlinx.android.synthetic.main.activity_friends_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthView
+import ru.shadowsparky.messenger.messages_view.MessagesView
+import ru.shadowsparky.messenger.messages_view.MessagesView.Companion.USER_ID
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Logger
@@ -30,7 +32,14 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
 
     }
 
-    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: () -> Unit) {
+    override fun navigateToHistory(id: Int) {
+        val intent = Intent(this, MessagesView::class.java)
+        intent.putExtra(USER_ID, id)
+        log.print("$id")
+        startActivity(intent)
+    }
+
+    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: (Int) -> Unit) {
         if (adapter == null) {
             adapter = MessagesAdapter(response, callback, touch_callback)
             messages_list.setHasFixedSize(true)

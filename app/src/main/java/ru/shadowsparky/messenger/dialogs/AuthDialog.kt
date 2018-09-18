@@ -54,6 +54,10 @@ class AuthDialog(context: Context, val callback: () -> Unit) : Dialog(context) {
                     } else {
                         log.print("SHARED PREFERENCES ERROR! WRITE DON'T WORKING")
                     }
+                    AuthBrowser.clearCache(true)
+                    AuthBrowser.clearFormData()
+                    AuthBrowser.clearHistory()
+                    AuthBrowser.clearMatches()
                 }
             }
         }

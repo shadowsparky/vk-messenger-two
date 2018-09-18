@@ -7,6 +7,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.hendraanggrian.pikasso.picasso
 import com.hendraanggrian.pikasso.transformations.circle
@@ -24,7 +25,7 @@ import javax.inject.Inject
 open class MessagesAdapter(
         val data: MessagesResponse,
         val callback: (Int) -> Unit,
-        val touch_callback: () -> Unit
+        val touch_callback: (Int) -> Unit
 ) : RecyclerView.Adapter<MessagesAdapter.MainViewHolder>() {
     @Inject
     lateinit var log: Logger
@@ -51,6 +52,9 @@ open class MessagesAdapter(
         holder.user_data.text = "null"
         holder.message_data.text = item.last_message!!.text
         holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
+        holder.card.setOnClickListener {
+            touch_callback(item.conversation!!.peer!!.id!!)
+        }
         profiles.toObservable()
                 .filter { it.id == item.conversation!!.peer!!.id }
                 .subscribeBy(
@@ -74,12 +78,14 @@ open class MessagesAdapter(
         val user_data: TextView
         val message_data: TextView
         val time: TextView
+        val card: CardView
 
         constructor(itemView: View) : super(itemView) {
             image = itemView.findViewById(R.id.messageitem_photo)
             user_data = itemView.findViewById(R.id.messageitem_user_data)
             message_data = itemView.findViewById(R.id.messageitem_user_message)
             time = itemView.findViewById(R.id.messageitem_time)
+            card = itemView.findViewById(R.id.item_card)
         }
     }
 }
