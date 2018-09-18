@@ -5,8 +5,13 @@ import java.util.*
 
 class DateUtils {
 
-    fun fromUnixToDateString(unix: Long) : String {
+    fun fromUnixToTimeString(unix: Long) : String {
         val formatter = SimpleDateFormat("HH:mm")
+        return formatter.format(fromUnixToDate(unix))
+    }
+
+    fun fromUnixToDateString(unix: Long) : String {
+        val formatter = SimpleDateFormat("yyyy.MM.dd")
         return formatter.format(fromUnixToDate(unix))
     }
 

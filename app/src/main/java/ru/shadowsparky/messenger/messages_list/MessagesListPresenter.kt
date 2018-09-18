@@ -9,6 +9,10 @@ class MessagesListPresenter(
         private val log: Logger,
         preferencesUtils: SharedPreferencesUtils
 ) : MessagesList.Presenter {
+    override fun onItemClicked() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     val model = MessagesListModel(log, preferencesUtils)
     override fun onActivityOpen() {
         view.setLoading(true)
@@ -24,7 +28,7 @@ class MessagesListPresenter(
             log.print("COUNT: ${response.response.count}")
             log.print("PROFILES: ${response.response.profiles}")
             log.print("ITEMS: ${response.response.items}")
-            view.setAdapter(response, this::onScrollFinished)
+            view.setAdapter(response, this::onScrollFinished, this::onItemClicked)
         } else {
             view.showError()
         }

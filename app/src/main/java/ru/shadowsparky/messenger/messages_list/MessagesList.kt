@@ -7,13 +7,14 @@ interface MessagesList {
     interface View {
         fun setLoading(result: Boolean)
         fun showError()
-        fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit)
+        fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: () -> Unit)
     }
 
     interface Presenter {
         fun onActivityOpen()
         fun onResponseHandled(response: MessagesResponse?)
         fun onScrollFinished(currentOffset: Int)
+        fun onItemClicked()
     }
 
     interface Model {

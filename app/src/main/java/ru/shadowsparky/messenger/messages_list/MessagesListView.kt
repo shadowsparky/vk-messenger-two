@@ -30,9 +30,9 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
 
     }
 
-    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit) {
+    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: () -> Unit) {
         if (adapter == null) {
-            adapter = MessagesAdapter(response, callback)
+            adapter = MessagesAdapter(response, callback, touch_callback)
             messages_list.setHasFixedSize(true)
             messages_list.layoutManager = GridLayoutManager(this, 1)
             messages_list.adapter = adapter

@@ -10,6 +10,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hendraanggrian.pikasso.picasso
 import com.hendraanggrian.pikasso.transformations.circle
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.toObservable
+import io.reactivex.schedulers.Schedulers
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
@@ -19,7 +23,8 @@ import javax.inject.Inject
 
 open class MessagesAdapter(
         val data: MessagesResponse,
-        val callback: (Int) -> Unit
+        val callback: (Int) -> Unit,
+        val touch_callback: () -> Unit
 ) : RecyclerView.Adapter<MessagesAdapter.MainViewHolder>() {
     @Inject
     lateinit var log: Logger
@@ -40,27 +45,21 @@ open class MessagesAdapter(
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         if ((position == itemCount - 1) and (position != data.response.count!! - 1)) {
             callback(position)
-            log.print("Scrolling callback working. Position: $position")
         }
-        log.print("Current cursor in: $position")
         val profiles = data.response.profiles!!
         val item = data.response.items!!.get(position)
-        var check = false
-        for (i in profiles) {
-            if (!check) {
-                if (item.conversation!!.peer!!.id == i.id) {
-                    holder.user_data.text = "${i.first_name} ${i.last_name}"
-                    picasso.load(i.photo_100).circle().into(holder.image)
-                    holder.image.visibility = VISIBLE
-                    check = true
-                } else {
-                    holder.user_data.text = "Группа (не обрабатывается)"
-                    holder.image.visibility = GONE
-                }
-            }
-        }
+        holder.user_data.text = "null"
         holder.message_data.text = item.last_message!!.text
-        holder.time.text = dateUtils.fromUnixToDateString(item.last_message.date!!)
+        holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
+        profiles.toObservable()
+                .filter { it.id == item.conversation!!.peer!!.id }
+                .subscribeBy(
+                        onNext = {
+                            holder.user_data.text = "${it.first_name} ${it.last_name}"
+                            picasso.load(it.photo_100).circle().into(holder.image)
+                        },
+                        onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
+                )
     }
 
 
