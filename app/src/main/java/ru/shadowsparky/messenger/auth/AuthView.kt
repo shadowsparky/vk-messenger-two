@@ -39,6 +39,9 @@ class AuthView : AppCompatActivity(), Auth.View {
     override fun setLoading(result: Boolean) {
     }
 
-    override fun navigateToMessagesList() = startActivity(Intent(this, MessagesListView::class.java))
+    override fun navigateToMessagesList() {
+        finish()
+        startActivity(Intent(this, MessagesListView::class.java))
+    }
 
 }

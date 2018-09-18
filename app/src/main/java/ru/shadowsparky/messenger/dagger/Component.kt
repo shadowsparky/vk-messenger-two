@@ -11,7 +11,7 @@ import ru.shadowsparky.messenger.messages_list.MessagesListView
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AdditionalModule::class, RequestModule::class])
+@Component(modules = [AdditionalModule::class, RequestModule::class, DateModule::class])
 interface Component {
     fun inject(target: AuthView)
     fun inject(target: AuthPresenter)

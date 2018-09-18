@@ -10,10 +10,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hendraanggrian.pikasso.picasso
 import com.hendraanggrian.pikasso.transformations.circle
-import io.reactivex.Observable
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
 
@@ -23,6 +23,8 @@ open class MessagesAdapter(
 ) : RecyclerView.Adapter<MessagesAdapter.MainViewHolder>() {
     @Inject
     lateinit var log: Logger
+    @Inject
+    lateinit var dateUtils: DateUtils
 
     init {
         App.component.inject(this)
@@ -36,7 +38,7 @@ open class MessagesAdapter(
     override fun getItemCount(): Int = data.response.items!!.size
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        if ((position == itemCount - 1) and (position != data.response.count)) {
+        if ((position == itemCount - 1) and (position != data.response.count!! - 1)) {
             callback(position)
             log.print("Scrolling callback working. Position: $position")
         }
@@ -58,11 +60,12 @@ open class MessagesAdapter(
             }
         }
         holder.message_data.text = item.last_message!!.text
+        holder.time.text = dateUtils.fromUnixToDateString(item.last_message.date!!)
     }
+
 
     fun addData(newData: MessagesResponse) {
         data.response.profiles!!.addAll(newData.response.profiles!!)
-//        data.response.groups!!.addAll(newData.response.groups!!)
         data.response.items!!.addAll(newData.response.items!!)
         notifyDataSetChanged()
     }
@@ -71,11 +74,13 @@ open class MessagesAdapter(
         val image: ImageView
         val user_data: TextView
         val message_data: TextView
+        val time: TextView
 
         constructor(itemView: View) : super(itemView) {
             image = itemView.findViewById(R.id.messageitem_photo)
             user_data = itemView.findViewById(R.id.messageitem_user_data)
             message_data = itemView.findViewById(R.id.messageitem_user_message)
+            time = itemView.findViewById(R.id.messageitem_time)
         }
     }
 }

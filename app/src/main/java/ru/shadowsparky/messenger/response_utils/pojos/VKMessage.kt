@@ -4,7 +4,7 @@ import ru.shadowsparky.messenger.response_utils.Response
 
 data class VKMessage(
         val id: Int?,
-        val date: Int?,
+        val date: Long?,
         val peer_id: Int?,
         val from_id: Int?,
         val text: String?,
