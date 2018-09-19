@@ -8,14 +8,14 @@ import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import kotlinx.android.synthetic.main.activity_friends_view.*
+import kotlinx.android.synthetic.main.activity_messages_list_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthView
 import ru.shadowsparky.messenger.messages_view.MessagesView
-import ru.shadowsparky.messenger.messages_view.MessagesView.Companion.USER_ID
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.ToastUtils
@@ -72,7 +72,7 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_friends_view)
+        setContentView(R.layout.activity_messages_list_view)
         App.component.inject(this)
         setSupportActionBar(toolbar)
         presenter = MessagesListPresenter(this, log, preferencesUtils)
