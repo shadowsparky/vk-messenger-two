@@ -46,7 +46,7 @@ open class MessagesAdapter(
             callback(position)
         }
         val profiles = data.response.profiles!!
-        val item = data.response.items!!.get(position)
+        val item = data.response.items!![position]
         holder.user_data.text = "null"
         holder.message_data.text = item.last_message!!.text
         holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
@@ -63,7 +63,6 @@ open class MessagesAdapter(
                         onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
                 )
     }
-
 
     fun addData(newData: MessagesResponse) {
         data.response.profiles!!.addAll(newData.response.profiles!!)
