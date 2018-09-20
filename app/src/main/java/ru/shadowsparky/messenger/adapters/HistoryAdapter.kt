@@ -1,9 +1,15 @@
 package ru.shadowsparky.messenger.adapters
 
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
@@ -14,7 +20,8 @@ import javax.inject.Inject
 
 class HistoryAdapter(
         val data: HistoryResponse,
-        val scroll_callback: (Int) -> Unit
+        val scroll_callback: (Int) -> Unit,
+        val user_id: Int
 ) : RecyclerView.Adapter<HistoryAdapter.MainViewHolder>() {
     @Inject lateinit var log: Logger
 
@@ -45,6 +52,7 @@ class HistoryAdapter(
         reverse()
     }
 
+
     override fun getItemCount(): Int = data.response!!.items!!.size
 
     override fun onBindViewHolder(holder: HistoryAdapter.MainViewHolder, position: Int) {
@@ -53,11 +61,26 @@ class HistoryAdapter(
             current_cursor += 20
             log.print("LOG CALLBACK WORKED: $current_cursor")
         }
+        val item = data.response!!.items!![position]
+        val params = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        params.setMargins(8,8,8,8)
+        if (item.from_id == user_id) {
+//            params.mar
+            params.gravity = Gravity.LEFT
+            params.rightMargin = 60
+//            holder.card.foregroundGravity = Gravity.LEFT
+        } else {
+            params.gravity = Gravity.RIGHT
+            params.leftMargin = 60
+//            holder.card.foregr/oundGravity = Gravity.RIGHT
+        }
+        holder.card.layoutParams = params
         log.print("Current cursor: $position. Last Cursor is $itemCount")
         holder.text.text = data.response!!.items!![position].text
     }
 
     open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val text: TextView = itemView.findViewById(R.id.message_text)
+        val card: CardView = itemView.findViewById(R.id.message_history_card)
     }
 }

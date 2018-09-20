@@ -29,7 +29,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit) {
         if (adapter == null) {
-            adapter = HistoryAdapter(response, scroll_callback)
+            adapter = HistoryAdapter(response, scroll_callback, user_id)
             adapter!!.reverse()
             message_history_list.setHasFixedSize(true)
             message_history_list.layoutManager = GridLayoutManager(this, DEFAULT_SPAN_VALUE)
