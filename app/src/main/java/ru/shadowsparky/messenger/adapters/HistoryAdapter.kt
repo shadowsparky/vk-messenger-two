@@ -25,7 +25,7 @@ class HistoryAdapter(
 ) : RecyclerView.Adapter<HistoryAdapter.MainViewHolder>() {
     @Inject lateinit var log: Logger
 
-    var current_cursor = 0
+    var current_cursor = 19
         private set
 
     init {
@@ -56,7 +56,7 @@ class HistoryAdapter(
     override fun getItemCount(): Int = data.response!!.items!!.size
 
     override fun onBindViewHolder(holder: HistoryAdapter.MainViewHolder, position: Int) {
-        if (position == 0) {
+        if ((position == 0) and (itemCount > current_cursor)) {
             scroll_callback(current_cursor + 1)
             current_cursor += 20
             log.print("LOG CALLBACK WORKED: $current_cursor")
