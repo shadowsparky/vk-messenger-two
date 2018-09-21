@@ -46,4 +46,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha1'
     implementation "com.hendraanggrian.pikasso:pikasso:0.2"
     implementation 'androidx.cardview:cardview:1.0.0-alpha1'
+    implementation 'com.google.android.material:material:1.0.0-alpha1'
 }

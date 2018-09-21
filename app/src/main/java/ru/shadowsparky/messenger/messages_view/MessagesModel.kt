@@ -35,6 +35,7 @@ class MessagesModel(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy (
                         onNext = {
+                            log.print("${it.raw().request().url()}")
                             log.print("Get message history was successfully executed.")
                             callback(it.body())
                         },

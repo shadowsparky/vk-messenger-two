@@ -44,6 +44,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages_view)
         user_id = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
+        setSupportActionBar(toolbar)
         if (user_id != USER_ID_NOT_FOUND) {
             presenter = MessagesPresenter(user_id, this, preferencesUtils, log)
             presenter.onGetMessageHistoryRequest()
