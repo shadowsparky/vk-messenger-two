@@ -29,6 +29,7 @@ open class MessagesAdapter(
 ) : RecyclerView.Adapter<MessagesAdapter.MainViewHolder>() {
     @Inject lateinit var log: Logger
     @Inject lateinit var dateUtils: DateUtils
+    private var TMPDate = ""
 
     init {
         App.component.inject(this)
@@ -42,8 +43,8 @@ open class MessagesAdapter(
     override fun getItemCount(): Int = data.response.items!!.size
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        if ((position == itemCount - 1) and (position != data.response.count!!)) {
-            callback(position)
+        if ((position == itemCount - 1) and (position != data.response.count!! - 1)) {
+            callback(position + 1)
         }
         val profiles = data.response.profiles!!
         val item = data.response.items!![position]
@@ -62,12 +63,28 @@ open class MessagesAdapter(
                         },
                         onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
                 )
+        log.print("CURSOR IS: $position. Last cursor: $itemCount")
+//        log.print("TMP DATE: $TMPDate")
+//        log.print("CURRENT DATE: ${dateUtils.fromUnixToDateString(item.last_message.date)}")
+//        if (TMPDate != dateUtils.fromUnixToDateString(item.last_message.date)) {
+//        TMPDate = dateUtils.fromUnixToDateString(item.last_message.date)
+//        holder.date_card.visibility = VISIBLE
+//        holder.date_text.text = TMPDate
+//            log.print("ELEMENT VISIBLE")
+//        } else {
+//            holder.date_card.visibility = GONE
+//            log.print("ELEMENT GONE")
+//        }
+//        log.print("________________________________")
     }
 
     fun addData(newData: MessagesResponse) {
+//        val TMP_MAX = itemCount - 1
         data.response.profiles!!.addAll(newData.response.profiles!!)
         data.response.items!!.addAll(newData.response.items!!)
         notifyDataSetChanged()
+//        notifyItemRangeInserted(TMP_MAX, newData.response.items.size)
+//        log.print("ELEMENT ADD! MAX: $TMP_MAX, SIZE: ${newData.response.items.size}")
     }
 
     open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -76,5 +93,7 @@ open class MessagesAdapter(
         val message_data: TextView = itemView.findViewById(R.id.messageitem_user_message)
         val time: TextView = itemView.findViewById(R.id.messageitem_time)
         val card: CardView = itemView.findViewById(R.id.item_card)
+        val date_card: CardView = itemView.findViewById(R.id.messageitem_date_card)
+        val date_text: TextView = itemView.findViewById(R.id.messageitem_date_text)
     }
 }

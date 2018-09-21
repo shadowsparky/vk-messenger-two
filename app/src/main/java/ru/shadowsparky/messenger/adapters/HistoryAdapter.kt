@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
 import java.util.*
 import javax.inject.Inject
@@ -24,6 +25,7 @@ class HistoryAdapter(
         val user_id: Int
 ) : RecyclerView.Adapter<HistoryAdapter.MainViewHolder>() {
     @Inject lateinit var log: Logger
+    @Inject lateinit var dateUtils: DateUtils
 
     var current_cursor = 19
         private set
@@ -61,22 +63,37 @@ class HistoryAdapter(
             log.print("LOG CALLBACK WORKED: $current_cursor")
         }
         val item = data.response!!.items!![position]
+        configureCard(holder.card, item.from_id!!)
+        log.print("Current cursor: $position. Last Cursor is $itemCount")
+        holder.text.text = item.text
+        dateUtils.fromUnixToDateAndTimeCalendar(item.date!!)
+        val today_date = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
+        val message_date = dateUtils.fromUnixToStrictDate(item.date)
+        if (today_date > message_date) {
+            holder.time.text = dateUtils.fromUnixToDateAndTime(item.date)
+            log.print("$today_date < $message_date")
+        } else {
+            holder.time.text = dateUtils.fromUnixToTimeString(item.date)
+            log.print("$today_date > $message_date")
+        }
+    }
+
+    protected fun configureCard(card: CardView, from_id: Int) {
         val params = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         params.setMargins(8,8,8,8)
-        if (item.from_id == user_id) {
+        if (from_id == user_id) {
             params.gravity = Gravity.LEFT
             params.rightMargin = 60
         } else {
             params.gravity = Gravity.RIGHT
             params.leftMargin = 60
         }
-        holder.card.layoutParams = params
-        log.print("Current cursor: $position. Last Cursor is $itemCount")
-        holder.text.text = data.response!!.items!![position].text
+        card.layoutParams = params
     }
 
     open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val text: TextView = itemView.findViewById(R.id.message_text)
         val card: CardView = itemView.findViewById(R.id.message_history_card)
+        val time: TextView = itemView.findViewById(R.id.message_history_time)
     }
 }
