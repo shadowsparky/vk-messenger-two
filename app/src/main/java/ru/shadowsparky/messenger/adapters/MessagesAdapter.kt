@@ -55,28 +55,26 @@ open class MessagesAdapter(
                 .filter { it.id == item.conversation!!.peer!!.id }
                 .subscribeBy(
                         onNext = {
-                            val photo_url = it.photo_100
-                            val online_status = it.online!!
                             holder.user_data.text = "${it.first_name} ${it.last_name}"
-                            holder.card.setOnClickListener {
+                            holder.card.setOnClickListener { _ ->
                                 touch_callback(
                                         item.conversation!!.peer!!.id!!,
                                         holder.user_data.text.toString(),
-                                        photo_url!!,
-                                        online_status
+                                        it.photo_100!!,
+                                        it.online!!
                                 )
                             }
-                            picasso.load(photo_url).circle().into(holder.image)
+                            picasso.load(it.photo_100).circle().into(holder.image)
                         },
                         onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
                 )
-        log.print("CURSOR IS: $position. Last cursor: $itemCount")
+//        log.print("CURSOR IS: $position. Last cursor: $itemCount")
 //        log.print("TMP DATE: $TMPDate")
 //        log.print("CURRENT DATE: ${dateUtils.fromUnixToDateString(item.last_message.date)}")
 //        if (TMPDate != dateUtils.fromUnixToDateString(item.last_message.date)) {
-//        TMPDate = dateUtils.fromUnixToDateString(item.last_message.date)
-//        holder.date_card.visibility = VISIBLE
-//        holder.date_text.text = TMPDate
+//            TMPDate = dateUtils.fromUnixToDateString(item.last_message.date)
+//            holder.date_card.visibility = VISIBLE
+//            holder.date_text.text = TMPDate
 //            log.print("ELEMENT VISIBLE")
 //        } else {
 //            holder.date_card.visibility = GONE
@@ -86,11 +84,11 @@ open class MessagesAdapter(
     }
 
     fun addData(newData: MessagesResponse) {
-//        val TMP_MAX = itemCount - 1
+        val TMP_MAX = itemCount - 1
         data.response.profiles!!.addAll(newData.response.profiles!!)
         data.response.items!!.addAll(newData.response.items!!)
-        notifyDataSetChanged()
-//        notifyItemRangeInserted(TMP_MAX, newData.response.items.size)
+//        notifyDataSetChanged()
+        notifyItemRangeInserted(TMP_MAX, newData.response.items.size)
 //        log.print("ELEMENT ADD! MAX: $TMP_MAX, SIZE: ${newData.response.items.size}")
     }
 

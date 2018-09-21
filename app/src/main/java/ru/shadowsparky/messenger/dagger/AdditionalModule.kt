@@ -6,6 +6,7 @@ import dagger.Provides
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.ToastUtils
+import ru.shadowsparky.messenger.utils.Validator
 import javax.inject.Singleton
 
 @Module
@@ -26,4 +27,8 @@ class AdditionalModule(val context: Context) {
     @Provides
     @Singleton
     fun provideSharedPreferences() : SharedPreferencesUtils = SharedPreferencesUtils(context)
+
+    @Provides
+    @Singleton
+    fun provideValidator() : Validator = Validator()
 }

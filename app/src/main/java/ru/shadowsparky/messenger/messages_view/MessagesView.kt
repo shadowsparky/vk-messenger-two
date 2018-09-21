@@ -1,10 +1,9 @@
 package ru.shadowsparky.messenger.messages_view
 
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import com.hendraanggrian.pikasso.picasso
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
@@ -22,11 +21,13 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
+import ru.shadowsparky.messenger.utils.Validator
 import javax.inject.Inject
 
 class MessagesView : AppCompatActivity(), Messages.View {
     @Inject lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject lateinit var log: Logger
+    @Inject lateinit var validator: Validator
     private lateinit var presenter: MessagesPresenter
     private var adapter: HistoryAdapter? = null
     private var user_id: Int = USER_ID_NOT_FOUND
@@ -65,6 +66,8 @@ class MessagesView : AppCompatActivity(), Messages.View {
             initToolbar()
             presenter.onGetMessageHistoryRequest()
         }
+        val verify_callback: (Boolean) -> Unit = { push_message.isEnabled = it }
+        validator.verifyText(add_message, verify_callback)
     }
 
     protected fun initToolbar() {

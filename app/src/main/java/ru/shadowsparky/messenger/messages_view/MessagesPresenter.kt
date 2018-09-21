@@ -1,6 +1,7 @@
 package ru.shadowsparky.messenger.messages_view
 
 import android.widget.ImageView
+import com.jakewharton.rxbinding2.widget.RxTextView
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
