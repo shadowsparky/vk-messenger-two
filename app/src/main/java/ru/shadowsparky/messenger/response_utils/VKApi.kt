@@ -5,6 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
+import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
 
 interface VKApi {
     @GET("method/messages.getConversations")
@@ -26,4 +27,12 @@ interface VKApi {
         @Query("v") version: Double = 5.85,
         @Query("extended") extended: Boolean = true
     ) : Observable<retrofit2.Response<HistoryResponse>>
+
+    @GET("method/messages.send")
+    fun sendMessage(
+        @Query("peer_id") peer_id: Int,
+        @Query("message") message: String,
+        @Query("access_token") token: String,
+        @Query("v") version: Double = 5.85
+    ) : Observable<retrofit2.Response<SendMessageResponse>>
 }

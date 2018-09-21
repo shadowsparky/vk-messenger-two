@@ -36,6 +36,16 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
         refresher.isRefreshing = result
     }
 
+    override fun disposeAdapter() {
+        adapter = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        disposeAdapter()
+        presenter.onActivityOpen()
+    }
+
     override fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int) {
         val intent = Intent(this, MessagesView::class.java)
         intent.putExtra(USER_ID, id)
@@ -84,7 +94,7 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
         setSupportActionBar(toolbar)
         presenter = MessagesListPresenter(this, log, preferencesUtils)
         refresher.setOnRefreshListener {
-            adapter = null
+            disposeAdapter()
             presenter.onActivityOpen()
         }
         presenter.onActivityOpen()

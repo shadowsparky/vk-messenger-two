@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS_NOT_FOUND
@@ -19,15 +19,13 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
-import ru.shadowsparky.messenger.utils.Logger
-import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
-import ru.shadowsparky.messenger.utils.Validator
 import javax.inject.Inject
 
 class MessagesView : AppCompatActivity(), Messages.View {
     @Inject lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject lateinit var log: Logger
     @Inject lateinit var validator: Validator
+    @Inject lateinit var toast: ToastUtils
     private lateinit var presenter: MessagesPresenter
     private var adapter: HistoryAdapter? = null
     private var user_id: Int = USER_ID_NOT_FOUND
@@ -38,6 +36,16 @@ class MessagesView : AppCompatActivity(), Messages.View {
     init {
         App.component.inject(this)
     }
+
+    override fun clearMessageText() {
+        add_message.setText("")
+    }
+
+    override fun disposeAdapter() {
+        adapter = null
+    }
+
+    override fun showError() = toast.error(this, "При соединении произошла ошибка")
 
     override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit) {
         if (adapter == null) {
@@ -65,6 +73,9 @@ class MessagesView : AppCompatActivity(), Messages.View {
             presenter = MessagesPresenter(user_id, this, preferencesUtils, log)
             initToolbar()
             presenter.onGetMessageHistoryRequest()
+        }
+        push_message.setOnClickListener {
+            presenter.onSendMessage(add_message.text.toString())
         }
         val verify_callback: (Boolean) -> Unit = { push_message.isEnabled = it }
         validator.verifyText(add_message, verify_callback)
