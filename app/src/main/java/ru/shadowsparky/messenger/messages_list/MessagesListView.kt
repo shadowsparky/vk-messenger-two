@@ -33,7 +33,7 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
     var adapter: MessagesAdapter? = null
 
     override fun setLoading(result: Boolean) {
-
+        refresher.isRefreshing = result
     }
 
     override fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int) {
@@ -83,6 +83,10 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
         App.component.inject(this)
         setSupportActionBar(toolbar)
         presenter = MessagesListPresenter(this, log, preferencesUtils)
+        refresher.setOnRefreshListener {
+            adapter = null
+            presenter.onActivityOpen()
+        }
         presenter.onActivityOpen()
     }
 }
