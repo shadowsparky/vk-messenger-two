@@ -25,7 +25,7 @@ import javax.inject.Inject
 open class MessagesAdapter(
         val data: MessagesResponse,
         val callback: (Int) -> Unit,
-        val touch_callback: (Int) -> Unit
+        val touch_callback: (Int, String, String, Int) -> Unit
 ) : RecyclerView.Adapter<MessagesAdapter.MainViewHolder>() {
     @Inject lateinit var log: Logger
     @Inject lateinit var dateUtils: DateUtils
@@ -51,15 +51,22 @@ open class MessagesAdapter(
         holder.user_data.text = "null"
         holder.message_data.text = item.last_message!!.text
         holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
-        holder.card.setOnClickListener {
-            touch_callback(item.conversation!!.peer!!.id!!)
-        }
         profiles.toObservable()
                 .filter { it.id == item.conversation!!.peer!!.id }
                 .subscribeBy(
                         onNext = {
+                            val photo_url = it.photo_100
+                            val online_status = it.online!!
                             holder.user_data.text = "${it.first_name} ${it.last_name}"
-                            picasso.load(it.photo_100).circle().into(holder.image)
+                            holder.card.setOnClickListener {
+                                touch_callback(
+                                        item.conversation!!.peer!!.id!!,
+                                        holder.user_data.text.toString(),
+                                        photo_url!!,
+                                        online_status
+                                )
+                            }
+                            picasso.load(photo_url).circle().into(holder.image)
                         },
                         onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
                 )

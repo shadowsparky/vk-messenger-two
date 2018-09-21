@@ -13,8 +13,12 @@ import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthView
 import ru.shadowsparky.messenger.messages_view.MessagesView
+import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
+import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
+import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
@@ -32,14 +36,17 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
 
     }
 
-    override fun navigateToHistory(id: Int) {
+    override fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int) {
         val intent = Intent(this, MessagesView::class.java)
         intent.putExtra(USER_ID, id)
+        intent.putExtra(USER_DATA, user_data)
+        intent.putExtra(URL, url)
+        intent.putExtra(ONLINE_STATUS, online_status)
         log.print("$id")
         startActivity(intent)
     }
 
-    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: (Int) -> Unit) {
+    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: (Int, String, String, online_status: Int) -> Unit) {
         if (adapter == null) {
             adapter = MessagesAdapter(response, callback, touch_callback)
             messages_list.setHasFixedSize(true)

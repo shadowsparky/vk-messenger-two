@@ -1,5 +1,6 @@
 package ru.shadowsparky.messenger.messages_view
 
+import android.widget.ImageView
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
@@ -10,6 +11,10 @@ class MessagesPresenter(
         private val preferencesUtils: SharedPreferencesUtils,
         private val log: Logger
 ) : Messages.Presenter {
+    override fun onGetPhoto(url: String, image: ImageView) {
+        model.getPhoto(url, image)
+    }
+
     private val model = MessagesModel(preferencesUtils, log)
 
     override fun onGetMessageHistoryRequest() {

@@ -3,4 +3,5 @@
     <string name="messages_list_toolbar_title">Сообщения</string>
     <string name="exit_from_account">Выйти из аккаунта</string>
     <string name="send_message">Отправить</string>
+    <string name="message">Сообщение</string>
 </resources>

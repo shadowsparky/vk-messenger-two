@@ -4,14 +4,22 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.hendraanggrian.pikasso.picasso
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
+import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS_NOT_FOUND
+import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
+import ru.shadowsparky.messenger.utils.Constansts.Companion.URL_NOT_FOUND
+import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID_NOT_FOUND
+import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import javax.inject.Inject
@@ -22,6 +30,9 @@ class MessagesView : AppCompatActivity(), Messages.View {
     private lateinit var presenter: MessagesPresenter
     private var adapter: HistoryAdapter? = null
     private var user_id: Int = USER_ID_NOT_FOUND
+    private var user_data: String = USER_NOT_FOUND
+    private var url: String = URL_NOT_FOUND
+    private var online_status = ONLINE_STATUS_NOT_FOUND
 
     init {
         App.component.inject(this)
@@ -44,10 +55,25 @@ class MessagesView : AppCompatActivity(), Messages.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages_view)
         user_id = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
+        user_data = intent.getStringExtra(USER_DATA)
+        url = intent.getStringExtra(URL)
+        online_status = intent.getIntExtra(ONLINE_STATUS, ONLINE_STATUS_NOT_FOUND)
         setSupportActionBar(toolbar)
-        if (user_id != USER_ID_NOT_FOUND) {
+        if ((user_id != USER_ID_NOT_FOUND) and (user_data != USER_NOT_FOUND) and
+                (url != URL_NOT_FOUND) and (online_status != ONLINE_STATUS_NOT_FOUND)) {
             presenter = MessagesPresenter(user_id, this, preferencesUtils, log)
+            initToolbar()
             presenter.onGetMessageHistoryRequest()
         }
+    }
+
+    protected fun initToolbar() {
+        message_history_user_data.text = user_data
+        if (online_status == STATUS_OFFLINE) {
+            message_history_user_online.text = "Не в сети"
+        } else {
+            message_history_user_online.text = "В сети"
+        }
+        presenter.onGetPhoto(url, message_history_user_photo)
     }
 }

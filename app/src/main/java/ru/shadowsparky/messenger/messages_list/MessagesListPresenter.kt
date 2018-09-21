@@ -11,7 +11,8 @@ class MessagesListPresenter(
 ) : MessagesList.Presenter {
     val model = MessagesListModel(log, preferencesUtils)
 
-    override fun onItemClicked(id: Int) = view.navigateToHistory(id)
+    override fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int)
+            = view.navigateToHistory(id, user_data, url, online_status)
 
     override fun onActivityOpen() {
         view.setLoading(true)

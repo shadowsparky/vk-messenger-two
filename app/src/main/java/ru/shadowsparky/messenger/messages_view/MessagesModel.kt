@@ -1,5 +1,8 @@
 package ru.shadowsparky.messenger.messages_view
 
+import android.widget.ImageView
+import com.hendraanggrian.pikasso.picasso
+import com.hendraanggrian.pikasso.transformations.circle
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -16,7 +19,6 @@ class MessagesModel(
         private val preferencesUtils: SharedPreferencesUtils,
         private val log: Logger
 ) : Messages.Model {
-
     @Inject
     lateinit var retrofit: Retrofit
 
@@ -44,5 +46,9 @@ class MessagesModel(
                             callback(null)
                         }
                 )
+    }
+
+    override fun getPhoto(url: String, image: ImageView) {
+        picasso.load(url).circle().into(image)
     }
 }

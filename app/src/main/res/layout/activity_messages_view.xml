@@ -23,7 +23,7 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/message_history_user_photo"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="8dp"
@@ -40,20 +40,20 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:textColor="@android:color/white"
-                android:text="Самсонов Евгений"
+                android:text="User Data"
                 android:textSize="16sp"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintStart_toEndOf="@+id/message_history_user_photo"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/message_history_user_online"
-                android:layout_width="52dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Онлайн"
-                android:textColor="@color/messageColor"
+                android:text="Connection Status"
+                android:textColor="@android:color/white"
                 android:textSize="14sp"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintStart_toEndOf="@+id/message_history_user_photo"
                 app:layout_constraintTop_toBottomOf="@+id/message_history_user_data" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -62,13 +62,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/message_history_list"
         android:layout_width="match_parent"
-        android:layout_marginBottom="65dp"
+        android:background="@drawable/background"
+        android:paddingBottom="65dp"
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_height="match_parent" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:gravity="center"
+        android:background="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -81,6 +83,8 @@
             android:layout_width="0dp"
             android:layout_gravity="center"
             android:layout_height="50dp"
+            android:textColor="@android:color/black"
+            android:hint="@string/message"
             android:inputType="textMultiLine"
             android:layout_weight="11"/>
 
