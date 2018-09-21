@@ -1,3 +1,7 @@
+/*
+ * Copyright Samsonov Eugene(c) 2018.
+ */
+
 package ru.shadowsparky.messenger.utils
 
 import java.text.SimpleDateFormat

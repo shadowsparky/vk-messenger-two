@@ -1,3 +1,7 @@
+/*
+ * Copyright Samsonov Eugene(c) 2018.
+ */
+
 package ru.shadowsparky.messenger.adapters
 
 import android.view.LayoutInflater
@@ -87,7 +91,7 @@ open class MessagesAdapter(
         val TMP_MAX = itemCount - 1
         data.response.profiles!!.addAll(newData.response.profiles!!)
         data.response.items!!.addAll(newData.response.items!!)
-        // fixme: заменить notifyDataSetChanged на notifyIntemRangeInserted.
+        // fixme: заменить notifyDataSetChanged на notifyItemRangeInserted.
         notifyDataSetChanged()
 //        notifyItemRangeInserted(TMP_MAX, newData.response.items.size)
 //        log.print("ELEMENT ADD! MAX: $TMP_MAX, SIZE: ${newData.response.items.size}")

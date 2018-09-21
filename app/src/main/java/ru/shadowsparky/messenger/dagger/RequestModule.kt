@@ -1,3 +1,7 @@
+/*
+ * Copyright Samsonov Eugene(c) 2018.
+ */
+
 package ru.shadowsparky.messenger.dagger
 
 import dagger.Module
@@ -16,6 +20,6 @@ class RequestModule {
                 .baseUrl("https://api.vk.com/")
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .build();
+                .build()
     }
 }
