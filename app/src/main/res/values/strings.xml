@@ -4,4 +4,5 @@
     <string name="exit_from_account">Выйти из аккаунта</string>
     <string name="send_message">Отправить</string>
     <string name="message">Сообщение</string>
+    <string name="pick_image_intent_text">pick_image_intent_text</string>
 </resources>
