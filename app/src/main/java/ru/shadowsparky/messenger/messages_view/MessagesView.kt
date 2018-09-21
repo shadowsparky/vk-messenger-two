@@ -37,9 +37,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
             message_history_list.scrollToPosition(adapter!!.itemCount - 1)
         } else {
             adapter!!.addData(response)
-            message_history_list.scrollToPosition(30)
         }
-        log.print("LIST SCROLLED")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

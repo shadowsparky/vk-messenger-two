@@ -41,7 +41,6 @@ class HistoryAdapter(
         data.response!!.items!!.reverse()
         data.response.conversations!!.reverse()
         data.response.profiles!!.reverse()
-        notifyDataSetChanged()
     }
 
     fun addData(response: HistoryResponse) {
@@ -50,8 +49,8 @@ class HistoryAdapter(
         data.response.conversations!!.addAll(response.response.conversations!!)
         data.response.profiles!!.addAll(response.response.profiles!!)
         reverse()
+        notifyItemRangeInserted(0, response.response.items!!.size)
     }
-
 
     override fun getItemCount(): Int = data.response!!.items!!.size
 
@@ -65,14 +64,11 @@ class HistoryAdapter(
         val params = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         params.setMargins(8,8,8,8)
         if (item.from_id == user_id) {
-//            params.mar
             params.gravity = Gravity.LEFT
             params.rightMargin = 60
-//            holder.card.foregroundGravity = Gravity.LEFT
         } else {
             params.gravity = Gravity.RIGHT
             params.leftMargin = 60
-//            holder.card.foregr/oundGravity = Gravity.RIGHT
         }
         holder.card.layoutParams = params
         log.print("Current cursor: $position. Last Cursor is $itemCount")
