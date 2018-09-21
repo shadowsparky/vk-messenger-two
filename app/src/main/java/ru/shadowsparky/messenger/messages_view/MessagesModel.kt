@@ -25,11 +25,11 @@ class MessagesModel(
     }
 
     override fun getMessageHistory(user_id: Int, callback: (HistoryResponse?) -> Unit, offset: Int) {
-        Observable.just("null")
+        Observable.just(20)
                 .observeOn(Schedulers.io())
                 .map {
                     retrofit.create(VKApi::class.java)
-                            .getHistory(offset, 20, user_id,
+                            .getHistory(offset, it, user_id,
                                     preferencesUtils.read(SharedPreferencesUtils.TOKEN)).blockingFirst()
                 }
                 .observeOn(AndroidSchedulers.mainThread())

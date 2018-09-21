@@ -24,24 +24,23 @@ class MessagesListModel(
     }
 
     override fun getAllDialogs(callback: (MessagesResponse?) -> Unit, offset: Int) {
-        log.print("Dialogs Loading...")
-        Observable.just("")
+        Observable.just(offset)
                 .observeOn(Schedulers.io())
                 .map {
                     retrofit.create(VKApi::class.java)
-                        .getDialogs(offset, 20, "all", preferencesUtils.read(TOKEN))
+                        .getDialogs(offset, it, "all", preferencesUtils.read(TOKEN))
                         .blockingFirst()
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                         onNext = {
-                            log.print("URL: ${it.raw().request().url()}")
+                            log.print("Get all dialogs was successfully executed.")
                             callback(it.body())
-                        }//,
-//                        onError = {
-//                            log.print("ERROR: $it")
-//                            callback(null)
-//                        }
+                        },
+                        onError = {
+                            log.print("Get all dialogs was unsuccessfully executed. $it")
+                            callback(null)
+                        }
                 )
     }
 
