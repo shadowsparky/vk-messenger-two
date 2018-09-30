@@ -15,6 +15,8 @@ import ru.shadowsparky.messenger.messages_list.MessagesListModel
 import ru.shadowsparky.messenger.messages_list.MessagesListView
 import ru.shadowsparky.messenger.messages_view.MessagesModel
 import ru.shadowsparky.messenger.messages_view.MessagesView
+import ru.shadowsparky.messenger.notifications.FirebaseMessage
+import ru.shadowsparky.messenger.notifications.FirebaseRefresher
 import javax.inject.Singleton
 
 @Singleton
@@ -30,4 +32,6 @@ interface Component {
     fun inject(target: MessagesView)
     fun inject(target: MessagesModel)
     fun inject(target: HistoryAdapter)
+    fun inject(target: FirebaseRefresher)
+    fun inject(target: FirebaseMessage)
 }

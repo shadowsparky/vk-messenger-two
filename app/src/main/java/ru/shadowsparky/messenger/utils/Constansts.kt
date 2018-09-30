@@ -17,5 +17,6 @@ open class Constansts {
         val ONLINE_STATUS_NOT_FOUND = -1
         val STATUS_OFFLINE = 0
         val STATUS_ONLINE = 1
+        val FIREBASE_TOKEN = "firebase_token"
     }
 }

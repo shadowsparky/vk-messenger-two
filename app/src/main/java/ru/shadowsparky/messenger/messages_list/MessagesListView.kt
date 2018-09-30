@@ -6,6 +6,7 @@ package ru.shadowsparky.messenger.messages_list
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.Menu
@@ -20,6 +21,7 @@ import ru.shadowsparky.messenger.messages_view.MessagesView
 import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
@@ -102,5 +104,9 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
             presenter.onActivityOpen()
         }
         presenter.onActivityOpen()
+        val device_id = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID);
+        log.print("FIREBASE TOKEN: ${preferencesUtils.read(FIREBASE_TOKEN)}")
+        log.print("DEVICE ID: $device_id")
+        // tst
     }
 }

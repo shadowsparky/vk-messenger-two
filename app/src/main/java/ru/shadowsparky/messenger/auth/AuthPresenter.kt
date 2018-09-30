@@ -13,7 +13,6 @@ import javax.inject.Inject
 class AuthPresenter(val view : Auth.View) : Auth.Presenter {
     @Inject
     lateinit var log: Logger
-    var test: Logger? = null
     @Inject
     lateinit var preferences: SharedPreferencesUtils
 
