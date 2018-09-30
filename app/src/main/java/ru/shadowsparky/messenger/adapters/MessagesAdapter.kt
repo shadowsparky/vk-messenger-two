@@ -88,12 +88,12 @@ open class MessagesAdapter(
     }
 
     fun addData(newData: MessagesResponse) {
-        val TMP_MAX = itemCount - 1
+        val TMP_MAX = itemCount
         data.response.profiles!!.addAll(newData.response.profiles!!)
         data.response.items!!.addAll(newData.response.items!!)
         // fixme: заменить notifyDataSetChanged на notifyItemRangeInserted.
-        notifyDataSetChanged()
-//        notifyItemRangeInserted(TMP_MAX, newData.response.items.size)
+//        notifyDataSetChanged()
+        notifyItemRangeInserted(TMP_MAX, TMP_MAX + newData.response.items.size)
 //        log.print("ELEMENT ADD! MAX: $TMP_MAX, SIZE: ${newData.response.items.size}")
     }
 

@@ -34,13 +34,10 @@ class MessagesModel(
     }
 
     override fun getMessageHistory(user_id: Int, callback: (HistoryResponse?) -> Unit, offset: Int) {
-        Observable.just(20)
-                .observeOn(Schedulers.io())
-                .map {
-                    retrofit.create(VKApi::class.java)
-                            .getHistory(offset, it, user_id,
-                                    preferencesUtils.read(SharedPreferencesUtils.TOKEN)).blockingFirst()
-                }
+        retrofit
+                .create(VKApi::class.java)
+                .getHistory(offset, 20, user_id, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy (
                         onNext = {
@@ -56,12 +53,9 @@ class MessagesModel(
     }
 
     override fun sendMessage(message: String, callback: (SendMessageResponse?) -> Unit) {
-        Observable.just(message)
-                .observeOn(Schedulers.io())
-                .map { retrofit.create(VKApi::class.java)
-                        .sendMessage(peer_id, message, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
-                        .blockingFirst()
-                }
+        retrofit.create(VKApi::class.java)
+                .sendMessage(peer_id, message, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                         onNext = {
