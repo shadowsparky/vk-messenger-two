@@ -18,5 +18,7 @@ open class Constansts {
         val STATUS_OFFLINE = 0
         val STATUS_ONLINE = 1
         val FIREBASE_TOKEN = "firebase_token"
+        val CONNECTION_ERROR_CODE = -1
+        val UNHANDLED_EXCEPTION_CODE = 99999
     }
 }

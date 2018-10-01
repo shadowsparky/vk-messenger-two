@@ -64,21 +64,18 @@ class HistoryAdapter(
         if ((position == 0) and (itemCount > current_cursor)) {
             scroll_callback(current_cursor + 1)
             current_cursor += 20
-            log.print("LOG CALLBACK WORKED: $current_cursor")
+            log.print("Message history loading request... position: $current_cursor")
         }
         val item = data.response!!.items!![position]
         configureCard(holder.card, item.from_id!!)
-        log.print("Current cursor: $position. Last Cursor is $itemCount")
         holder.text.text = item.text
         dateUtils.fromUnixToDateAndTimeCalendar(item.date!!)
-        val today_date = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
-        val message_date = dateUtils.fromUnixToStrictDate(item.date)
-        if (today_date > message_date) {
+        val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
+        val messageDate = dateUtils.fromUnixToStrictDate(item.date)
+        if (todayDate > messageDate) {
             holder.time.text = dateUtils.fromUnixToDateAndTime(item.date)
-            log.print("$today_date < $message_date")
         } else {
             holder.time.text = dateUtils.fromUnixToTimeString(item.date)
-            log.print("$today_date > $message_date")
         }
     }
 

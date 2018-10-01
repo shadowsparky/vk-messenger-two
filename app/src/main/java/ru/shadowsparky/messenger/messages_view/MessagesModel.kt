@@ -33,7 +33,8 @@ class MessagesModel(
         App.component.inject(this)
     }
 
-    override fun getMessageHistory(user_id: Int, callback: (HistoryResponse?) -> Unit, offset: Int) {
+    override fun getMessageHistory(user_id: Int, callback: (HistoryResponse) -> Unit,
+                                   failureHandler: (Throwable) -> Unit, offset: Int) {
         retrofit
                 .create(VKApi::class.java)
                 .getHistory(offset, 20, user_id, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
@@ -43,16 +44,16 @@ class MessagesModel(
                         onNext = {
                             log.print("${it.raw().request().url()}")
                             log.print("Get message history was successfully executed.")
-                            callback(it.body())
+                            callback(it.body()!!)
                         },
                         onError = {
                             log.print("Get message history was unsuccessfully executed: $it")
-                            callback(null)
+                            failureHandler(it)
                         }
                 )
     }
 
-    override fun sendMessage(message: String, callback: (SendMessageResponse?) -> Unit) {
+    override fun sendMessage(message: String, callback: (SendMessageResponse) -> Unit, failureHandler: (Throwable) -> Unit) {
         retrofit.create(VKApi::class.java)
                 .sendMessage(peer_id, message, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
                 .subscribeOn(Schedulers.computation())
@@ -61,11 +62,11 @@ class MessagesModel(
                         onNext = {
                             log.print("${it.raw().request().url()}")
                             log.print("Send message was successfully executed.")
-                            callback(it.body())
+                            callback(it.body()!!)
                         },
                         onError = {
                             log.print("Send message was unsuccessfully executed: $it")
-                            callback(null)
+                            failureHandler(it)
                         }
                 )
     }

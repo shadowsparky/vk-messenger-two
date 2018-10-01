@@ -16,8 +16,7 @@ class FirebaseMessage : FirebaseMessagingService() {
         App.component.inject(this)
     }
     override fun onMessageReceived(p0: RemoteMessage?) {
-        this.log.print("NEW MESSAGE: ${p0.toString()}")
+        log.print("NEW MESSAGE: ${p0.toString()}")
         super.onMessageReceived(p0)
-        // test asdas dqwe wqe
     }
 }

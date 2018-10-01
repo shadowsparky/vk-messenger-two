@@ -18,7 +18,6 @@ import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthView
 import ru.shadowsparky.messenger.messages_view.MessagesView
-import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
@@ -48,8 +47,10 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
 
     override fun onResume() {
         super.onResume()
+        log.print("MessagesListView activity is resuming")
         disposeAdapter()
         presenter.onActivityOpen()
+        log.print("MessagesListView activity resumed...")
     }
 
     override fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int) {
@@ -62,7 +63,7 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
         startActivity(intent)
     }
 
-    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: (Int, String, String, online_status: Int) -> Unit) {
+    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: (Int, String, String, Int) -> Unit) {
         if (adapter == null) {
             adapter = MessagesAdapter(response, callback, touch_callback)
             messages_list.setHasFixedSize(true)
@@ -95,18 +96,18 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_messages_list_view)
         App.component.inject(this)
+        log.print("MessagesListView activity is creating...")
+        setContentView(R.layout.activity_messages_list_view)
         setSupportActionBar(toolbar)
         presenter = MessagesListPresenter(this, log, preferencesUtils)
         refresher.setOnRefreshListener {
             disposeAdapter()
             presenter.onActivityOpen()
         }
-        presenter.onActivityOpen()
-        val device_id = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID);
+        val device_id = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         log.print("FIREBASE TOKEN: ${preferencesUtils.read(FIREBASE_TOKEN)}")
         log.print("DEVICE ID: $device_id")
-        // tst
+        log.print("MessagesListView activity created...")
     }
 }

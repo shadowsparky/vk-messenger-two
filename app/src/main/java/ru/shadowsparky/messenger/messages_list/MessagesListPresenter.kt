@@ -20,18 +20,15 @@ class MessagesListPresenter(
 
     override fun onActivityOpen() {
         view.setLoading(true)
-        model.getAllDialogs(this::onResponseHandled)
+        model.getAllDialogs(::onResponseHandled)
     }
 
     override fun onScrollFinished(currentOffset: Int) {
-        model.getAllDialogs(this::onResponseHandled, currentOffset)
+        model.getAllDialogs(::onResponseHandled, currentOffset)
     }
 
     override fun onResponseHandled(response: MessagesResponse?) {
         if (response != null) {
-            log.print("COUNT: ${response.response.count}")
-            log.print("PROFILES: ${response.response.profiles}")
-            log.print("ITEMS: ${response.response.items}")
             view.setAdapter(response, this::onScrollFinished, this::onItemClicked)
         } else {
             view.showError()

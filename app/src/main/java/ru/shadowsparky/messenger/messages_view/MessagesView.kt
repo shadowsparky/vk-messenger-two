@@ -13,6 +13,7 @@ import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.*
+import ru.shadowsparky.messenger.utils.Constansts.Companion.CONNECTION_ERROR_CODE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS_NOT_FOUND
@@ -32,10 +33,10 @@ class MessagesView : AppCompatActivity(), Messages.View {
     @Inject lateinit var toast: ToastUtils
     private lateinit var presenter: MessagesPresenter
     private var adapter: HistoryAdapter? = null
-    private var user_id: Int = USER_ID_NOT_FOUND
-    private var user_data: String = USER_NOT_FOUND
+    private var userId: Int = USER_ID_NOT_FOUND
+    private var userData: String = USER_NOT_FOUND
     private var url: String = URL_NOT_FOUND
-    private var online_status = ONLINE_STATUS_NOT_FOUND
+    private var onlineStatus = ONLINE_STATUS_NOT_FOUND
 
     init {
         App.component.inject(this)
@@ -49,11 +50,18 @@ class MessagesView : AppCompatActivity(), Messages.View {
         adapter = null
     }
 
-    override fun showError() = toast.error(this, "При соединении произошла ошибка")
+    override fun showError(code: Int) {
+        when(code) {
+            CONNECTION_ERROR_CODE ->
+                toast.error(this, "При соединении произошла ошибка. Проверьте свое интернет соединение")
+            else ->
+                toast.error(this, "Произошла неизвестная ошибка")
+        }
+    }
 
     override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit) {
         if (adapter == null) {
-            adapter = HistoryAdapter(response, scroll_callback, user_id)
+            adapter = HistoryAdapter(response, scroll_callback, userId)
             adapter!!.reverse()
             message_history_list.setHasFixedSize(true)
             message_history_list.layoutManager = GridLayoutManager(this, DEFAULT_SPAN_VALUE)
@@ -67,27 +75,27 @@ class MessagesView : AppCompatActivity(), Messages.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages_view)
-        user_id = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
-        user_data = intent.getStringExtra(USER_DATA)
+        userId = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
+        userData = intent.getStringExtra(USER_DATA)
         url = intent.getStringExtra(URL)
-        online_status = intent.getIntExtra(ONLINE_STATUS, ONLINE_STATUS_NOT_FOUND)
+        onlineStatus = intent.getIntExtra(ONLINE_STATUS, ONLINE_STATUS_NOT_FOUND)
         setSupportActionBar(toolbar)
-        if ((user_id != USER_ID_NOT_FOUND) and (user_data != USER_NOT_FOUND) and
-                (url != URL_NOT_FOUND) and (online_status != ONLINE_STATUS_NOT_FOUND)) {
-            presenter = MessagesPresenter(user_id, this, preferencesUtils, log)
+        if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
+                (url != URL_NOT_FOUND) and (onlineStatus != ONLINE_STATUS_NOT_FOUND)) {
+            presenter = MessagesPresenter(userId, this, preferencesUtils, log)
             initToolbar()
             presenter.onGetMessageHistoryRequest()
+            push_message.setOnClickListener {
+                presenter.onSendMessage(add_message.text.toString())
+            }
         }
-        push_message.setOnClickListener {
-            presenter.onSendMessage(add_message.text.toString())
-        }
-        val verify_callback: (Boolean) -> Unit = { push_message.isEnabled = it }
-        validator.verifyText(add_message, verify_callback)
+        val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
+        validator.verifyText(add_message, verifyCallback)
     }
 
-    protected fun initToolbar() {
-        message_history_user_data.text = user_data
-        if (online_status == STATUS_OFFLINE) {
+    private fun initToolbar() {
+        message_history_user_data.text = userData
+        if (onlineStatus == STATUS_OFFLINE) {
             message_history_user_online.text = "Не в сети"
         } else {
             message_history_user_online.text = "В сети"
