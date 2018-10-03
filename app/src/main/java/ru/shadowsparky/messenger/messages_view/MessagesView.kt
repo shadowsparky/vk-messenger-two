@@ -84,13 +84,23 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 (url != URL_NOT_FOUND) and (onlineStatus != ONLINE_STATUS_NOT_FOUND)) {
             presenter = MessagesPresenter(userId, this, preferencesUtils, log)
             initToolbar()
-            presenter.onGetMessageHistoryRequest()
             push_message.setOnClickListener {
                 presenter.onSendMessage(add_message.text.toString())
             }
         }
         val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
         validator.verifyText(add_message, verifyCallback)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.onGetMessageHistoryRequest()
+        log.print("MessagesView activity loaded")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        log.print("MessagesView activity paused")
     }
 
     private fun initToolbar() {
@@ -101,5 +111,11 @@ class MessagesView : AppCompatActivity(), Messages.View {
             message_history_user_online.text = "В сети"
         }
         presenter.onGetPhoto(url, message_history_user_photo)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.disposeRequests()
+        log.print("MessagesView activity destroyed")
     }
 }

@@ -5,6 +5,8 @@
 package ru.shadowsparky.messenger.response_utils
 
 import io.reactivex.Observable
+import io.reactivex.Single
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
@@ -20,7 +22,7 @@ interface VKApi {
         @Query("access_token") token: String,
         @Query("v") version: Double = 5.85,
         @Query("extended") extended: Boolean = true
-    ) : Observable<retrofit2.Response<MessagesResponse>>
+    ) : Single<Response<MessagesResponse>>
 
     @GET("method/messages.getHistory")
     fun getHistory(
@@ -30,7 +32,7 @@ interface VKApi {
         @Query("access_token") token: String,
         @Query("v") version: Double = 5.85,
         @Query("extended") extended: Boolean = true
-    ) : Observable<retrofit2.Response<HistoryResponse>>
+    ) : Single<Response<HistoryResponse>>
 
     @GET("method/messages.send")
     fun sendMessage(
@@ -38,5 +40,5 @@ interface VKApi {
         @Query("message") message: String,
         @Query("access_token") token: String,
         @Query("v") version: Double = 5.85
-    ) : Observable<retrofit2.Response<SendMessageResponse>>
+    ) : Single<Response<SendMessageResponse>>
 }

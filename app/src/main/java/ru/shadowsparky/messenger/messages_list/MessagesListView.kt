@@ -19,15 +19,12 @@ import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthView
 import ru.shadowsparky.messenger.messages_view.MessagesView
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
-import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
-import ru.shadowsparky.messenger.utils.Logger
-import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
-import ru.shadowsparky.messenger.utils.ToastUtils
 import javax.inject.Inject
 
 class MessagesListView : AppCompatActivity(), MessagesList.View {
@@ -47,10 +44,14 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
 
     override fun onResume() {
         super.onResume()
-        log.print("MessagesListView activity is resuming")
         disposeAdapter()
         presenter.onActivityOpen()
-        log.print("MessagesListView activity resumed...")
+        log.print("MessagesListView activity loaded")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        log.print("MessagesListView activity on pause...")
     }
 
     override fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int) {
@@ -59,7 +60,6 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
         intent.putExtra(USER_DATA, user_data)
         intent.putExtra(URL, url)
         intent.putExtra(ONLINE_STATUS, online_status)
-        log.print("$id")
         startActivity(intent)
     }
 
@@ -74,8 +74,14 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
         }
     }
 
-    override fun showError() =
-        toast.error(this, "При соединении произошла ошибка")
+    override fun showError(code: Int) {
+        when(code) {
+            Constansts.CONNECTION_ERROR_CODE ->
+                toast.error(this, "При соединении произошла ошибка. Проверьте свое интернет соединение")
+            else ->
+                toast.error(this, "Произошла неизвестная ошибка")
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.messages_list_menu, menu)
@@ -92,12 +98,9 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
         return super.onCreateOptionsMenu(menu)
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.component.inject(this)
-        log.print("MessagesListView activity is creating...")
         setContentView(R.layout.activity_messages_list_view)
         setSupportActionBar(toolbar)
         presenter = MessagesListPresenter(this, log, preferencesUtils)
@@ -108,6 +111,11 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
         val device_id = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         log.print("FIREBASE TOKEN: ${preferencesUtils.read(FIREBASE_TOKEN)}")
         log.print("DEVICE ID: $device_id")
-        log.print("MessagesListView activity created...")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.disposeRequests()
+        log.print("MessagesListView activity destroyed")
     }
 }

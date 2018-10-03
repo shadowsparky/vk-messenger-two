@@ -4,15 +4,18 @@
 
 package ru.shadowsparky.messenger.messages_list
 
+import ru.shadowsparky.messenger.response_utils.Response
+import ru.shadowsparky.messenger.response_utils.ResponseHandler
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 
+// TODO: Нужен нормальный DI. Зачем я Dagger ставил АЛЛО.
 class MessagesListPresenter(
-        private val view: MessagesList.View,
+        override val view: MessagesList.View,
         private val log: Logger,
         preferencesUtils: SharedPreferencesUtils
-) : MessagesList.Presenter {
+) : MessagesList.Presenter, ResponseHandler(view) {
     val model = MessagesListModel(log, preferencesUtils)
 
     override fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int)
@@ -20,19 +23,19 @@ class MessagesListPresenter(
 
     override fun onActivityOpen() {
         view.setLoading(true)
-        model.getAllDialogs(::onResponseHandled)
+        model.getAllDialogs(::onSuccessResponse, ::onFailureResponse)
     }
 
     override fun onScrollFinished(currentOffset: Int) {
-        model.getAllDialogs(::onResponseHandled, currentOffset)
+        model.getAllDialogs(::onSuccessResponse, ::onFailureResponse, currentOffset)
     }
 
-    override fun onResponseHandled(response: MessagesResponse?) {
-        if (response != null) {
-            view.setAdapter(response, this::onScrollFinished, this::onItemClicked)
-        } else {
-            view.showError()
-        }
+    override fun onSuccessResponse(response: Response) {
+        view.setAdapter(response as MessagesResponse, ::onScrollFinished, ::onItemClicked)
         view.setLoading(false)
+    }
+
+    override fun disposeRequests() {
+        model.disposeRequests()
     }
 }

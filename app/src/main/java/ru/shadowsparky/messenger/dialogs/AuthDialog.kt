@@ -36,7 +36,7 @@ class AuthDialog(context: Context, val callback: () -> Unit) : Dialog(context) {
         AuthBrowser.settings.javaScriptEnabled = true
         AuthBrowser.settings.setAppCacheEnabled(true)
 //        AuthBrowser.loadUrl("https://m.vk.com")
-        AuthBrowser.loadUrl("https://oauth.vk.com/authorize?client_id=6690029&scope=friends,messages&redirect_uri=https://vk.com/blank.html&display=popup&v=5.85&response_type=token")
+        AuthBrowser.loadUrl("https://oauth.vk.com/authorize?client_id=6690029&scope=friends,messages,offline&redirect_uri=https://vk.com/blank.html&display=popup&v=5.85&response_type=token")
         AuthBrowser.webViewClient = object : WebViewClient() {
             override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                 super.onReceivedError(view, request, error)
