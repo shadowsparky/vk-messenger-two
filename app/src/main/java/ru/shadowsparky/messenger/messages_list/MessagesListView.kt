@@ -27,11 +27,11 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import javax.inject.Inject
 
-class MessagesListView : AppCompatActivity(), MessagesList.View {
-    lateinit var presenter: MessagesList.Presenter
-    @Inject lateinit var log: Logger
-    @Inject lateinit var preferencesUtils: SharedPreferencesUtils
-    @Inject lateinit var toast: ToastUtils
+open class MessagesListView : AppCompatActivity(), MessagesList.View {
+    private lateinit var presenter: MessagesList.Presenter
+    @Inject protected lateinit var log: Logger
+    @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
+    @Inject protected lateinit var toast: ToastUtils
     var adapter: MessagesAdapter? = null
 
     override fun setLoading(result: Boolean) {
@@ -103,7 +103,7 @@ class MessagesListView : AppCompatActivity(), MessagesList.View {
         App.component.inject(this)
         setContentView(R.layout.activity_messages_list_view)
         setSupportActionBar(toolbar)
-        presenter = MessagesListPresenter(this, log, preferencesUtils)
+        presenter = MessagesListPresenter(this)
         refresher.setOnRefreshListener {
             disposeAdapter()
             presenter.onActivityOpen()

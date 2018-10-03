@@ -18,15 +18,15 @@ import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class MessagesModel(
-        private val preferencesUtils: SharedPreferencesUtils,
-        private val log: Logger,
+open class MessagesModel(
         private val peerId: Int
 ) : Messages.Model {
-
+    @Inject
+    protected lateinit var preferencesUtils: SharedPreferencesUtils
+    @Inject
+    protected lateinit var log: Logger
     @Inject
     lateinit var retrofit: Retrofit
     private var disposables = CompositeDisposable()

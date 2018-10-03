@@ -18,11 +18,10 @@ import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
 import javax.inject.Inject
 
-class MessagesListModel(
-        private val log: Logger,
-        private val preferencesUtils: SharedPreferencesUtils
-) : MessagesList.Model {
-    @Inject lateinit var retrofit: Retrofit
+open class MessagesListModel : MessagesList.Model {
+    @Inject protected lateinit var retrofit: Retrofit
+    @Inject protected lateinit var log: Logger
+    @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     private var disposables = CompositeDisposable()
 
     init {

@@ -9,20 +9,18 @@ import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.ResponseHandler
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
-import ru.shadowsparky.messenger.utils.Constansts.Companion.CONNECTION_ERROR_CODE
-import ru.shadowsparky.messenger.utils.Constansts.Companion.UNHANDLED_EXCEPTION_CODE
 import ru.shadowsparky.messenger.utils.Logger
-import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
-import java.net.UnknownHostException
+import javax.inject.Inject
 
 class MessagesPresenter(
         private val peerId: Int,
-        override val view: Messages.View,
-        private val preferencesUtils: SharedPreferencesUtils,
-        private val log: Logger
+        override val view: Messages.View
 ) : ResponseHandler(view), Messages.Presenter {
 
-    private val model = MessagesModel(preferencesUtils, log, peerId)
+    @Inject
+    protected lateinit var log: Logger
+
+    private val model = MessagesModel(peerId)
 
     override fun onSendMessage(message: String) =
             model.sendMessage(message, ::onMessageSuccessfullySent, ::onFailureResponse)

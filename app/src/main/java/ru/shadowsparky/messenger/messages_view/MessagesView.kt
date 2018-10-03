@@ -82,7 +82,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
         setSupportActionBar(toolbar)
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
                 (url != URL_NOT_FOUND) and (onlineStatus != ONLINE_STATUS_NOT_FOUND)) {
-            presenter = MessagesPresenter(userId, this, preferencesUtils, log)
+            presenter = MessagesPresenter(userId, this)
             initToolbar()
             push_message.setOnClickListener {
                 presenter.onSendMessage(add_message.text.toString())

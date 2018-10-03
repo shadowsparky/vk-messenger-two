@@ -9,14 +9,17 @@ import ru.shadowsparky.messenger.response_utils.ResponseHandler
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
+import javax.inject.Inject
 
 // TODO: Нужен нормальный DI. Зачем я Dagger ставил АЛЛО.
-class MessagesListPresenter(
-        override val view: MessagesList.View,
-        private val log: Logger,
-        preferencesUtils: SharedPreferencesUtils
+open class MessagesListPresenter(
+        override val view: MessagesList.View
 ) : MessagesList.Presenter, ResponseHandler(view) {
-    val model = MessagesListModel(log, preferencesUtils)
+
+    @Inject
+    protected lateinit var log: Logger
+
+    val model = MessagesListModel()
 
     override fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int)
             = view.navigateToHistory(id, user_data, url, online_status)
