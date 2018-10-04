@@ -15,7 +15,7 @@ open class CompositeDisposableManager {
         App.component.inject(this)
     }
 
-    fun addToCollection(item: Disposable) = disposables.add(item)
+    fun addRequest(item: Disposable) = disposables.add(item)
 
     fun disposeAllRequests() {
         if ((disposables.size() > 0) and (!disposables.isDisposed)) {

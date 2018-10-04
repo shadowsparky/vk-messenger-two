@@ -16,8 +16,9 @@ import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import javax.inject.Inject
 
-class MessagesModel : Messages.Model, CompositeDisposableManager() {
+class MessagesModel : Messages.Model {
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
+    @Inject protected lateinit var disposables: CompositeDisposableManager
     init {
         App.component.inject(this)
     }
@@ -30,22 +31,22 @@ class MessagesModel : Messages.Model, CompositeDisposableManager() {
                 .setCallbacks(callback as (Response) -> Unit, failureHandler)
                 .getHistoryRequest()
                 .build()
-        addToCollection(request.getDisposable())
+        disposables.addRequest(request.getDisposable())
     }
 
     override fun sendMessage(peerId: Int, message: String, callback: (SendMessageResponse) -> Unit,
                              failureHandler: (Throwable) -> Unit) {
         val request = RequestBuilder()
                 .setPeerId(peerId)
-                .setCallbacks(callback as (Response) -> Unit, failureHandler)
                 .setMessage(message)
+                .setCallbacks(callback as (Response) -> Unit, failureHandler)
                 .sendMessageRequest()
                 .build()
-        addToCollection(request.getDisposable())
+        disposables.addRequest(request.getDisposable())
     }
 
     override fun getPhoto(url: String, image: ImageView) = picasso.load(url).circle().into(image)
 
-    override fun disposeRequests() = disposeAllRequests()
+    override fun disposeRequests() = disposables.disposeAllRequests()
 
 }

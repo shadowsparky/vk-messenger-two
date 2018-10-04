@@ -12,8 +12,9 @@ import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import javax.inject.Inject
 
-class MessagesListModel : MessagesList.Model, CompositeDisposableManager() {
+class MessagesListModel : MessagesList.Model {
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
+    @Inject protected lateinit var disposables: CompositeDisposableManager
     init {
         App.component.inject(this)
     }
@@ -24,8 +25,8 @@ class MessagesListModel : MessagesList.Model, CompositeDisposableManager() {
                 .setCallbacks(callback as (Response) -> Unit, failureHandler)
                 .getDialogsRequest()
                 .build()
-        addToCollection(request.getDisposable())
+        disposables.addRequest(request.getDisposable())
     }
 
-    override fun disposeRequests() = disposeAllRequests()
+    override fun disposeRequests() = disposables.disposeAllRequests()
 }
