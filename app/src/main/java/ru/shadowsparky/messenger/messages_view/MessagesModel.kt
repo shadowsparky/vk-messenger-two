@@ -12,6 +12,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
+import ru.shadowsparky.messenger.response_utils.RequestBuilder
+import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.VKApi
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
@@ -23,12 +25,9 @@ import javax.inject.Inject
 open class MessagesModel(
         private val peerId: Int
 ) : Messages.Model {
-    @Inject
-    protected lateinit var preferencesUtils: SharedPreferencesUtils
-    @Inject
-    protected lateinit var log: Logger
-    @Inject
-    lateinit var retrofit: Retrofit
+    @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
+    @Inject protected lateinit var log: Logger
+    @Inject lateinit var retrofit: Retrofit
     private var disposables = CompositeDisposable()
 
     init {
@@ -37,44 +36,24 @@ open class MessagesModel(
 
     override fun getMessageHistory(callback: (HistoryResponse) -> Unit,
                                    failureHandler: (Throwable) -> Unit, offset: Int) {
-        val request = retrofit
-                .create(VKApi::class.java)
-                .getHistory(offset, 20, peerId, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy (
-                        onSuccess = {
-                            log.print("${it.raw().request().url()}")
-                            log.print("Get message history was successfully executed.")
-                            callback(it.body()!!)
-                        },
-                        onError = {
-                            log.print("Get message history was unsuccessfully executed: $it")
-                            failureHandler(it)
-                        }
-                )
-        disposables.add(request)
+        val request = RequestBuilder()
+                .setPeerId(peerId)
+                .setOffset(offset)
+                .setCallbacks(callback as (Response) -> Unit, failureHandler)
+                .getHistoryRequest()
+                .build()
+        disposables.add(request.getDisposable())
     }
 
     override fun sendMessage(message: String, callback: (SendMessageResponse) -> Unit,
                              failureHandler: (Throwable) -> Unit) {
-        val request = retrofit
-                .create(VKApi::class.java)
-                .sendMessage(peerId, message, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                        onSuccess = {
-                            log.print("${it.raw().request().url()}")
-                            log.print("Send message was successfully executed.")
-                            callback(it.body()!!)
-                        },
-                        onError = {
-                            log.print("Send message was unsuccessfully executed: $it")
-                            failureHandler(it)
-                        }
-                )
-        disposables.add(request)
+        val request = RequestBuilder()
+                .setPeerId(peerId)
+                .setCallbacks(callback as (Response) -> Unit, failureHandler)
+                .setMessage(message)
+                .sendMessageRequest()
+                .build()
+        disposables.add(request.getDisposable())
     }
 
     override fun getPhoto(url: String, image: ImageView) {

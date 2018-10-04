@@ -10,6 +10,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
+import ru.shadowsparky.messenger.response_utils.RequestBuilder
+import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.VKApi
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
@@ -23,28 +25,17 @@ open class MessagesListModel : MessagesList.Model {
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     private var disposables = CompositeDisposable()
-
     init {
         App.component.inject(this)
     }
 
     override fun getAllDialogs(callback: (MessagesResponse) -> Unit, failureHandler: (Throwable) -> Unit, offset: Int) {
-        val request = retrofit.create(VKApi::class.java)
-                .getDialogs(offset, 20, "all", preferencesUtils.read(TOKEN))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                        onSuccess = {
-                            log.print("${it.raw().request().url()}")
-                            log.print("Get all dialogs was successfully executed.")
-                            callback(it.body()!!)
-                        },
-                        onError = {
-                            log.print("Get all dialogs was unsuccessfully executed. $it")
-                            failureHandler(it)
-                        }
-                )
-        disposables.add(request)
+        val request = RequestBuilder()
+                .setOffset(offset)
+                .setCallbacks(callback as (Response) -> Unit, failureHandler)
+                .getDialogsRequest()
+                .build()
+        disposables.add(request.getDisposable())
     }
 
     override fun disposeRequests() {
