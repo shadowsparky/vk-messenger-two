@@ -15,7 +15,6 @@ import javax.inject.Inject
 class MessagesListPresenter(
         override val view: MessagesList.View
 ) : MessagesList.Presenter, ResponseHandler(view) {
-
     @Inject protected lateinit var model: MessagesListModel
 
     init {

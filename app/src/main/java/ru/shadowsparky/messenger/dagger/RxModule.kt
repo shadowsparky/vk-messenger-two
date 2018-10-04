@@ -6,10 +6,10 @@ package ru.shadowsparky.messenger.dagger
 
 import dagger.Module
 import dagger.Provides
-import ru.shadowsparky.messenger.messages_view.MessagesModel
+import io.reactivex.disposables.CompositeDisposable
 
 @Module
-class MessagesViewModule {
+class RxModule {
     @Provides
-    fun provideMessagesModel() : MessagesModel = MessagesModel()
+    fun provideCompositeDisposable() : CompositeDisposable = CompositeDisposable()
 }
