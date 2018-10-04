@@ -20,6 +20,7 @@ import ru.shadowsparky.messenger.auth.AuthView
 import ru.shadowsparky.messenger.messages_view.MessagesView
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.*
+import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
@@ -28,10 +29,11 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import javax.inject.Inject
 
 open class MessagesListView : AppCompatActivity(), MessagesList.View {
-    private lateinit var presenter: MessagesList.Presenter
+    @Inject protected lateinit var presenter: MessagesList.Presenter
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var toast: ToastUtils
+    @Inject protected lateinit var colorize: TextColorUtils
     var adapter: MessagesAdapter? = null
 
     override fun setLoading(result: Boolean) {
@@ -81,18 +83,23 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
             else ->
                 toast.error(this, "Произошла неизвестная ошибка")
         }
+        setLoading(false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.messages_list_menu, menu)
         val item = menu.findItem(R.id.exit_from_account)
-        val fixedTitle = SpannableString(item.title)
-        fixedTitle.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, android.R.color.black)), 0, fixedTitle.length, 0)
-        item.title = fixedTitle
+        item.title = colorize.getBlackText(item.title.toString())
         item.setOnMenuItemClickListener {
             preferencesUtils.removeAll()
             startActivity(Intent(this, AuthView::class.java))
             finish()
+            return@setOnMenuItemClickListener true
+        }
+        val sub = menu.findItem(R.id.subscribe_to_push)
+        sub.title = colorize.getBlackText(sub.title.toString())
+        sub.setOnMenuItemClickListener {
+            presenter.onPushSubscribing()
             return@setOnMenuItemClickListener true
         }
         return super.onCreateOptionsMenu(menu)
@@ -103,14 +110,15 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         App.component.inject(this)
         setContentView(R.layout.activity_messages_list_view)
         setSupportActionBar(toolbar)
-        presenter = MessagesListPresenter(this)
+        presenter.attachView(this)
         refresher.setOnRefreshListener {
             disposeAdapter()
             presenter.onActivityOpen()
         }
-        val device_id = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        if (preferencesUtils.read(DEVICE_ID) == "")
+            preferencesUtils.write(DEVICE_ID, Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
         log.print("FIREBASE TOKEN: ${preferencesUtils.read(FIREBASE_TOKEN)}")
-        log.print("DEVICE ID: $device_id")
+        log.print("DEVICE ID: ${preferencesUtils.read(DEVICE_ID)}")
     }
 
     override fun onDestroy() {

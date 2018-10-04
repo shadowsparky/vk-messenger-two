@@ -18,7 +18,7 @@ import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
 import ru.shadowsparky.messenger.utils.ToastUtils
 import javax.inject.Inject
 
-class AuthDialog(context: Context, val callback: () -> Unit) : Dialog(context) {
+open class AuthDialog(context: Context, val callback: () -> Unit) : Dialog(context) {
     @Inject
     lateinit var log: Logger
     @Inject

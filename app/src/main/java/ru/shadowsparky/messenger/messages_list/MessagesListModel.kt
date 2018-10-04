@@ -8,15 +8,23 @@ import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.response_utils.RequestBuilder
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
+import ru.shadowsparky.messenger.response_utils.responses.VKPushResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import javax.inject.Inject
 
 class MessagesListModel : MessagesList.Model {
-    @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var disposables: CompositeDisposableManager
     init {
         App.component.inject(this)
+    }
+
+    override fun subscribeToPush(callback: (VKPushResponse) -> Unit, failureHandler: (Throwable) -> Unit) {
+        val request = RequestBuilder()
+                .setCallbacks(callback as (Response) -> Unit, failureHandler)
+                .subscribeToPushRequest()
+                .build()
+        disposables.addRequest(request.getDisposable())
     }
 
     override fun getAllDialogs(callback: (MessagesResponse) -> Unit, failureHandler: (Throwable) -> Unit, offset: Int) {

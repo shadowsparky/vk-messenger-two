@@ -7,10 +7,7 @@ package ru.shadowsparky.messenger.dagger
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import ru.shadowsparky.messenger.utils.Logger
-import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
-import ru.shadowsparky.messenger.utils.ToastUtils
-import ru.shadowsparky.messenger.utils.Validator
+import ru.shadowsparky.messenger.utils.*
 import javax.inject.Singleton
 
 @Module
@@ -35,4 +32,8 @@ class AdditionalModule(val context: Context) {
     @Provides
     @Singleton
     fun provideValidator() : Validator = Validator()
+
+    @Provides
+    @Singleton
+    fun provideTextColor() : TextColorUtils = TextColorUtils(context)
 }

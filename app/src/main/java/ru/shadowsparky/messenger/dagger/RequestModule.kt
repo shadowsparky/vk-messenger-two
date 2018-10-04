@@ -9,6 +9,7 @@ import dagger.Provides
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import javax.inject.Singleton
 
 @Module
@@ -22,4 +23,7 @@ class RequestModule {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
     }
+
+    @Provides
+    fun provideErrorHandler() : FailureResponseHandler = FailureResponseHandler()
 }

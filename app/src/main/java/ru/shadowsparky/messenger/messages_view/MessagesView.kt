@@ -27,11 +27,11 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
 import javax.inject.Inject
 
 class MessagesView : AppCompatActivity(), Messages.View {
-    @Inject lateinit var preferencesUtils: SharedPreferencesUtils
-    @Inject lateinit var log: Logger
-    @Inject lateinit var validator: Validator
-    @Inject lateinit var toast: ToastUtils
-    private lateinit var presenter: MessagesPresenter
+    @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
+    @Inject protected lateinit var log: Logger
+    @Inject protected lateinit var validator: Validator
+    @Inject protected lateinit var toast: ToastUtils
+    @Inject protected lateinit var presenter: Messages.Presenter
     private var adapter: HistoryAdapter? = null
     private var userId: Int = USER_ID_NOT_FOUND
     private var userData: String = USER_NOT_FOUND
@@ -82,7 +82,9 @@ class MessagesView : AppCompatActivity(), Messages.View {
         setSupportActionBar(toolbar)
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
                 (url != URL_NOT_FOUND) and (onlineStatus != ONLINE_STATUS_NOT_FOUND)) {
-            presenter = MessagesPresenter(userId, this)
+            presenter
+                    .attachPeerID(userId)
+                    .attachView(this)
             initToolbar()
             push_message.setOnClickListener {
                 presenter.onSendMessage(add_message.text.toString())

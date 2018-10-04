@@ -5,4 +5,9 @@
         android:icon="@drawable/ic_check_white_48dp"
         android:title="@string/exit_from_account">
     </item>
+
+    <item
+        android:id="@+id/subscribe_to_push"
+        android:title="Подписаться на уведомления">
+    </item>
 </menu>

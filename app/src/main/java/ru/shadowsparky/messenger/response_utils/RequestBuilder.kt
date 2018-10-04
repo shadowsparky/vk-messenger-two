@@ -11,6 +11,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
+import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
@@ -80,6 +82,21 @@ open class RequestBuilder {
         request = retrofit
                 .create(VKApi::class.java)
                 .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+        configureCallbacks()
+        return this
+    }
+
+    fun subscribeToPushRequest() : RequestBuilder {
+        log.print("Subscribe to push request...")
+        request = retrofit
+                .create(VKApi::class.java)
+                .subscribeToPush(
+                        preferencesUtils.read(TOKEN),
+                        preferencesUtils.read(FIREBASE_TOKEN),
+                        preferencesUtils.read(DEVICE_ID)
+                )
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()

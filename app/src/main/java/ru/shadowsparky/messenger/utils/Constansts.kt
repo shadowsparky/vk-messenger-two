@@ -20,5 +20,6 @@ open class Constansts {
         val FIREBASE_TOKEN = "firebase_token"
         val CONNECTION_ERROR_CODE = -1
         val UNHANDLED_EXCEPTION_CODE = 99999
+        val DEVICE_ID = "device_id"
     }
 }

@@ -20,10 +20,14 @@ interface Messages {
     }
 
     interface Presenter {
+        fun attachPeerID(peerId: Int) : MessagesPresenter
         fun onGetMessageHistoryRequest()
         fun onScrollFinished(position: Int)
+        fun attachView(view: View)
         fun onGetPhoto(url: String, image: ImageView)
         fun onSendMessage(message: String)
+        fun onSuccessResponse(response: HistoryResponse)
+        fun onFailureResponse(error: Throwable)
         fun onMessageSuccessfullySent(response: SendMessageResponse)
         fun disposeRequests()
     }
