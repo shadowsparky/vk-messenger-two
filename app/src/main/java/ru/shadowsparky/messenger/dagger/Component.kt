@@ -12,8 +12,10 @@ import ru.shadowsparky.messenger.auth.AuthPresenter
 import ru.shadowsparky.messenger.auth.AuthView
 import ru.shadowsparky.messenger.dialogs.AuthDialog
 import ru.shadowsparky.messenger.messages_list.MessagesListModel
+import ru.shadowsparky.messenger.messages_list.MessagesListPresenter
 import ru.shadowsparky.messenger.messages_list.MessagesListView
 import ru.shadowsparky.messenger.messages_view.MessagesModel
+import ru.shadowsparky.messenger.messages_view.MessagesPresenter
 import ru.shadowsparky.messenger.messages_view.MessagesView
 import ru.shadowsparky.messenger.notifications.FirebaseMessage
 import ru.shadowsparky.messenger.notifications.FirebaseRefresher
@@ -21,16 +23,19 @@ import ru.shadowsparky.messenger.response_utils.RequestBuilder
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AdditionalModule::class, RequestModule::class, DateModule::class])
+@Component(modules = [AdditionalModule::class, RequestModule::class,
+    DateModule::class, MessagesListModule::class, MessagesViewModule::class])
 interface Component {
     fun inject(target: AuthView)
     fun inject(target: AuthPresenter)
     fun inject(target: AuthModel)
     fun inject(target: AuthDialog)
     fun inject(target: MessagesListModel)
+    fun inject(target: MessagesListPresenter)
     fun inject(target: MessagesListView)
     fun inject(target: MessagesAdapter)
     fun inject(target: MessagesView)
+    fun inject(target: MessagesPresenter)
     fun inject(target: MessagesModel)
     fun inject(target: HistoryAdapter)
     fun inject(target: FirebaseRefresher)

@@ -29,10 +29,11 @@ interface Messages {
     }
 
     interface Model {
-        fun getMessageHistory(callback: (HistoryResponse) -> Unit,
+        fun getMessageHistory(peerId: Int, callback: (HistoryResponse) -> Unit,
                               failureHandler: (Throwable) -> Unit, offset: Int = 0)
         fun getPhoto(url: String, image: ImageView)
-        fun sendMessage(message: String, callback: (SendMessageResponse) -> Unit, failureHandler: (Throwable) -> Unit)
+        fun sendMessage(peerId: Int, message: String, callback: (SendMessageResponse) -> Unit,
+                        failureHandler: (Throwable) -> Unit)
         fun disposeRequests()
     }
 }

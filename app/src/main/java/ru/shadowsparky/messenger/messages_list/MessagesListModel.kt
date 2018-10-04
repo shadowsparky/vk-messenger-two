@@ -20,7 +20,7 @@ import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
 import javax.inject.Inject
 
-open class MessagesListModel : MessagesList.Model {
+class MessagesListModel : MessagesList.Model {
     @Inject protected lateinit var retrofit: Retrofit
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils

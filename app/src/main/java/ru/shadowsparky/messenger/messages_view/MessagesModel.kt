@@ -22,9 +22,7 @@ import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import javax.inject.Inject
 
-open class MessagesModel(
-        private val peerId: Int
-) : Messages.Model {
+open class MessagesModel : Messages.Model {
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var log: Logger
     @Inject lateinit var retrofit: Retrofit
@@ -34,7 +32,7 @@ open class MessagesModel(
         App.component.inject(this)
     }
 
-    override fun getMessageHistory(callback: (HistoryResponse) -> Unit,
+    override fun getMessageHistory(peerId: Int, callback: (HistoryResponse) -> Unit,
                                    failureHandler: (Throwable) -> Unit, offset: Int) {
         val request = RequestBuilder()
                 .setPeerId(peerId)
@@ -45,7 +43,7 @@ open class MessagesModel(
         disposables.add(request.getDisposable())
     }
 
-    override fun sendMessage(message: String, callback: (SendMessageResponse) -> Unit,
+    override fun sendMessage(peerId: Int, message: String, callback: (SendMessageResponse) -> Unit,
                              failureHandler: (Throwable) -> Unit) {
         val request = RequestBuilder()
                 .setPeerId(peerId)
