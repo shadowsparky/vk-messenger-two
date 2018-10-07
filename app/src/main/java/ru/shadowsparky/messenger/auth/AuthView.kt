@@ -18,19 +18,15 @@ import ru.shadowsparky.messenger.utils.ToastUtils
 import javax.inject.Inject
 
 class AuthView : AppCompatActivity(), Auth.View {
-    @Inject
-    lateinit var log: Logger
-    @Inject
-    lateinit var toast: ToastUtils
-    @Inject
-    lateinit var context: Context
-    lateinit var presenter: Auth.Presenter
+    @Inject protected lateinit var log: Logger
+    @Inject protected lateinit var context: Context
+    @Inject protected lateinit var presenter: Auth.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
         App.component.inject(this)
-        presenter = AuthPresenter(this)
+        presenter.attachView(this)
         AuthButton.setOnClickListener {
             val callback: () -> Unit = {
                 navigateToMessagesList()
@@ -47,5 +43,4 @@ class AuthView : AppCompatActivity(), Auth.View {
         finish()
         startActivity(Intent(this, MessagesListView::class.java))
     }
-
 }

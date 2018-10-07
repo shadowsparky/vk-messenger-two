@@ -24,8 +24,8 @@ import ru.shadowsparky.messenger.response_utils.RequestBuilder
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AdditionalModule::class, RequestModule::class,
-    DateModule::class, MessagesListModule::class, MessagesViewModule::class, RxModule::class])
+@Component(modules = [AdditionalModule::class, RequestModule::class, DateModule::class,
+    MessagesListModule::class, MessagesViewModule::class, RxModule::class, AuthModule::class])
 interface Component {
     fun inject(target: AuthView)
     fun inject(target: AuthPresenter)

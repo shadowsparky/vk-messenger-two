@@ -34,7 +34,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var toast: ToastUtils
     @Inject protected lateinit var colorize: TextColorUtils
-    var adapter: MessagesAdapter? = null
+    private var adapter: MessagesAdapter? = null
 
     override fun setLoading(result: Boolean) {
         refresher.isRefreshing = result
@@ -117,6 +117,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         }
         if (preferencesUtils.read(DEVICE_ID) == "")
             preferencesUtils.write(DEVICE_ID, Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
+        preferencesUtils.write(Constansts.FIREBASE_TOKEN, "805067557592")
         log.print("FIREBASE TOKEN: ${preferencesUtils.read(FIREBASE_TOKEN)}")
         log.print("DEVICE ID: ${preferencesUtils.read(DEVICE_ID)}")
     }

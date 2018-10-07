@@ -22,11 +22,12 @@
         <activity android:name=".messages_list.MessagesListView" />
         <activity android:name=".messages_view.MessagesView" />
 
-        <service android:name=".notifications.FirebaseRefresher">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
+        <!--<service android:name=".notifications.FirebaseRefresher">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT" />-->
+                <!--<action android:name="com.google.firebase.MESSAGING_EVENT"/>-->
+            <!--</intent-filter>-->
+        <!--</service>-->
 
         <service
             android:name=".notifications.FirebaseMessage">

@@ -12,11 +12,9 @@ interface Auth {
     }
 
     interface Presenter {
+        fun attachView(view: View)
         fun onAuthentication()
     }
 
-    interface Model {
-
-    }
-
+    interface Model
 }
