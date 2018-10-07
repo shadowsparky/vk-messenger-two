@@ -23,23 +23,23 @@ class MessagesModel : Messages.Model {
         App.component.inject(this)
     }
 
-    override fun getMessageHistory(peerId: Int, callback: (HistoryResponse) -> Unit,
+    override fun getMessageHistory(peerId: Int, callback: (Response) -> Unit,
                                    failureHandler: (Throwable) -> Unit, offset: Int) {
         val request = RequestBuilder()
                 .setPeerId(peerId)
                 .setOffset(offset)
-                .setCallbacks(callback as (Response) -> Unit, failureHandler)
+                .setCallbacks(callback, failureHandler)
                 .getHistoryRequest()
                 .build()
         disposables.addRequest(request.getDisposable())
     }
 
-    override fun sendMessage(peerId: Int, message: String, callback: (SendMessageResponse) -> Unit,
+    override fun sendMessage(peerId: Int, message: String, callback: (Response) -> Unit,
                              failureHandler: (Throwable) -> Unit) {
         val request = RequestBuilder()
                 .setPeerId(peerId)
                 .setMessage(message)
-                .setCallbacks(callback as (Response) -> Unit, failureHandler)
+                .setCallbacks(callback, failureHandler)
                 .sendMessageRequest()
                 .build()
         disposables.addRequest(request.getDisposable())

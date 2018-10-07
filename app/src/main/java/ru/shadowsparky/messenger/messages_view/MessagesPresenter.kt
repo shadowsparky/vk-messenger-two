@@ -4,6 +4,7 @@
 
 package ru.shadowsparky.messenger.messages_view
 
+import android.content.Context
 import android.widget.ImageView
 import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import ru.shadowsparky.messenger.response_utils.Response
@@ -29,34 +30,37 @@ class MessagesPresenter : Messages.Presenter {
         return this
     }
 
-    override fun onSendMessage(message: String) =
-            model.sendMessage(peerId!!, message, ::onMessageSuccessfullySent, ::onFailureResponse)
-
-    override fun onGetPhoto(url: String, image: ImageView) = model.getPhoto(url, image)
+    override fun attachView(view: MessagesView) {
+        this.view = view
+        errorUtils.attach(view)
+    }
 
     override fun onGetMessageHistoryRequest() =
-            model.getMessageHistory(peerId!!,::onSuccessResponse, ::onFailureResponse)
+            model.getMessageHistory(peerId!!, ::onSuccessResponse, ::onFailureResponse)
 
-    override fun onScrollFinished(position: Int) {
-        model.getMessageHistory(peerId!!,::onSuccessResponse, ::onFailureResponse, position)
-    }
+    override fun onScrollFinished(position: Int) =
+            model.getMessageHistory(peerId!!,::onSuccessResponse, ::onFailureResponse, position)
 
-    override fun attachView(view: Messages.View) {
-        this.view = view
-        errorUtils.attachView(view)
-    }
+    override fun onSendMessage(message: String) =
+            model.sendMessage(peerId!!, message, ::onSuccessResponse, ::onFailureResponse)
 
     override fun onFailureResponse(error: Throwable) = errorUtils.onFailureResponse(error)
 
+    override fun onGetPhoto(url: String, image: ImageView) = model.getPhoto(url, image)
 
-    override fun onSuccessResponse(response: HistoryResponse) = view!!.setAdapter(response, ::onScrollFinished)
+    override fun onActivityDestroying() = model.disposeRequests()
 
-    override fun onMessageSuccessfullySent(response: SendMessageResponse) {
-        view!!.disposeAdapter()
-        onGetMessageHistoryRequest()
-        view!!.clearMessageText()
+    override fun onSuccessResponse(response: Response) {
+        when (response) {
+            is HistoryResponse -> view!!.setAdapter(response, ::onScrollFinished)
+            is SendMessageResponse -> {
+                view!!.run {
+                    disposeAdapter()
+                    clearMessageText()
+                }
+                onGetMessageHistoryRequest()
+            }
+            else -> onFailureResponse(ClassCastException())
+        }
     }
-
-    override fun disposeRequests() = model.disposeRequests()
-
 }

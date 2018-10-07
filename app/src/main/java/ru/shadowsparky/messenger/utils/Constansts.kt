@@ -21,5 +21,6 @@ open class Constansts {
         val CONNECTION_ERROR_CODE = -1
         val UNHANDLED_EXCEPTION_CODE = 99999
         val DEVICE_ID = "device_id"
+        val CLASS_CAST_EXCEPTION_CODE = -101
     }
 }

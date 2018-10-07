@@ -19,6 +19,7 @@ import ru.shadowsparky.messenger.messages_view.MessagesPresenter
 import ru.shadowsparky.messenger.messages_view.MessagesView
 import ru.shadowsparky.messenger.notifications.FirebaseMessage
 import ru.shadowsparky.messenger.notifications.FirebaseRefresher
+import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.response_utils.RequestBuilder
 import javax.inject.Singleton
@@ -43,4 +44,5 @@ interface Component {
     fun inject(target: FirebaseMessage)
     fun inject(target: RequestBuilder)
     fun inject(target: CompositeDisposableManager)
+    fun inject(target: FailureResponseHandler)
 }

@@ -28,9 +28,7 @@ class AuthView : AppCompatActivity(), Auth.View {
         App.component.inject(this)
         presenter.attachView(this)
         AuthButton.setOnClickListener {
-            val callback: () -> Unit = {
-                navigateToMessagesList()
-            }
+            val callback: () -> Unit = { navigateToMessagesList() }
             AuthDialog(this, callback).show()
         }
         presenter.onAuthentication()

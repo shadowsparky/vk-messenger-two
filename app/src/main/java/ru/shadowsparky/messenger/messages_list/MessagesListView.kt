@@ -32,7 +32,6 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     @Inject protected lateinit var presenter: MessagesList.Presenter
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
-    @Inject protected lateinit var toast: ToastUtils
     @Inject protected lateinit var colorize: TextColorUtils
     private var adapter: MessagesAdapter? = null
 
@@ -76,16 +75,6 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         }
     }
 
-    override fun showError(code: Int) {
-        when(code) {
-            Constansts.CONNECTION_ERROR_CODE ->
-                toast.error(this, "При соединении произошла ошибка. Проверьте свое интернет соединение")
-            else ->
-                toast.error(this, "Произошла неизвестная ошибка")
-        }
-        setLoading(false)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.messages_list_menu, menu)
         val item = menu.findItem(R.id.exit_from_account)
@@ -124,7 +113,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.disposeRequests()
+        presenter.onActivityDestroying()
         log.print("MessagesListView activity destroyed")
     }
 }

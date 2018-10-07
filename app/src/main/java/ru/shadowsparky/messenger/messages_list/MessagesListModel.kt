@@ -15,22 +15,25 @@ import javax.inject.Inject
 
 class MessagesListModel : MessagesList.Model {
     @Inject protected lateinit var disposables: CompositeDisposableManager
+
     init {
         App.component.inject(this)
     }
 
-    override fun subscribeToPush(callback: (VKPushResponse) -> Unit, failureHandler: (Throwable) -> Unit) {
+    override fun subscribeToPush(callback: (Response) -> Unit,
+                                 failureHandler: (Throwable) -> Unit) {
         val request = RequestBuilder()
-                .setCallbacks(callback as (Response) -> Unit, failureHandler)
+                .setCallbacks(callback, failureHandler)
                 .subscribeToPushRequest()
                 .build()
         disposables.addRequest(request.getDisposable())
     }
 
-    override fun getAllDialogs(callback: (MessagesResponse) -> Unit, failureHandler: (Throwable) -> Unit, offset: Int) {
+    override fun getAllDialogs(callback: (Response) -> Unit,
+                               failureHandler: (Throwable) -> Unit, offset: Int) {
         val request = RequestBuilder()
                 .setOffset(offset)
-                .setCallbacks(callback as (Response) -> Unit, failureHandler)
+                .setCallbacks(callback, failureHandler)
                 .getDialogsRequest()
                 .build()
         disposables.addRequest(request.getDisposable())

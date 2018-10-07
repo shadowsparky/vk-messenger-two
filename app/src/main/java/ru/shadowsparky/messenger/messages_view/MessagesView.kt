@@ -30,12 +30,11 @@ class MessagesView : AppCompatActivity(), Messages.View {
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var validator: Validator
-    @Inject protected lateinit var toast: ToastUtils
     @Inject protected lateinit var presenter: Messages.Presenter
     private var adapter: HistoryAdapter? = null
-    private var userId: Int = USER_ID_NOT_FOUND
-    private var userData: String = USER_NOT_FOUND
-    private var url: String = URL_NOT_FOUND
+    private var userId = USER_ID_NOT_FOUND
+    private var userData = USER_NOT_FOUND
+    private var url = URL_NOT_FOUND
     private var onlineStatus = ONLINE_STATUS_NOT_FOUND
 
     init {
@@ -48,15 +47,6 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     override fun disposeAdapter() {
         adapter = null
-    }
-
-    override fun showError(code: Int) {
-        when(code) {
-            CONNECTION_ERROR_CODE ->
-                toast.error(this, "При соединении произошла ошибка. Проверьте свое интернет соединение")
-            else ->
-                toast.error(this, "Произошла неизвестная ошибка")
-        }
     }
 
     override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit) {
@@ -82,8 +72,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
         setSupportActionBar(toolbar)
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
                 (url != URL_NOT_FOUND) and (onlineStatus != ONLINE_STATUS_NOT_FOUND)) {
-            presenter
-                    .attachPeerID(userId)
+            presenter.attachPeerID(userId)
                     .attachView(this)
             initToolbar()
             push_message.setOnClickListener {
@@ -117,7 +106,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.disposeRequests()
+        presenter.onActivityDestroying()
         log.print("MessagesView activity destroyed")
     }
 }

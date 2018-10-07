@@ -4,6 +4,7 @@
 
 package ru.shadowsparky.messenger.messages_list
 
+import android.content.Context
 import ru.shadowsparky.messenger.response_utils.DisplayError
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
@@ -11,7 +12,7 @@ import ru.shadowsparky.messenger.response_utils.responses.VKPushResponse
 
 
 interface MessagesList {
-    interface View : DisplayError {
+    interface View {
         fun setLoading(result: Boolean)
         fun disposeAdapter()
         fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit,
@@ -24,16 +25,16 @@ interface MessagesList {
         fun onPushSubscribing()
         fun onScrollFinished(currentOffset: Int)
         fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int)
-        fun onSuccessResponse(response: MessagesResponse)
+        fun onSuccessResponse(response: Response)
         fun onFailureResponse(error: Throwable)
-        fun attachView(view: View)
-        fun disposeRequests()
+        fun attachView(view: MessagesListView)
+        fun onActivityDestroying()
     }
 
     interface Model {
-        fun getAllDialogs(callback: (MessagesResponse) -> Unit,
+        fun getAllDialogs(callback: (Response) -> Unit,
                           failureHandler: (Throwable) -> Unit, offset: Int = 0)
-        fun subscribeToPush(callback: (VKPushResponse) -> Unit,
+        fun subscribeToPush(callback: (Response) -> Unit,
                             failureHandler: (Throwable) -> Unit)
         fun disposeRequests()
     }
