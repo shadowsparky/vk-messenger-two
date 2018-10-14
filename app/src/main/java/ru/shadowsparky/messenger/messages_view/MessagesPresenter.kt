@@ -4,15 +4,12 @@
 
 package ru.shadowsparky.messenger.messages_view
 
-import android.content.Context
 import android.widget.ImageView
 import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import ru.shadowsparky.messenger.response_utils.Response
-import ru.shadowsparky.messenger.response_utils.ResponseHandler
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
 import ru.shadowsparky.messenger.utils.App
-import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
 
 class MessagesPresenter : Messages.Presenter {

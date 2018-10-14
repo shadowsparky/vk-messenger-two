@@ -48,8 +48,7 @@ interface VKApi {
         @Query("access_token") access_token: String,
         @Query("token") token: String,
         @Query("device_id") device_id: String,
-        @Query("push_provider") push_provider: String = "fcm",
-//        @Query("login") login: Long = 805067557592,
+        @Query("provider") provider: String = "fcm",
         @Query("v") version: Double = 5.85,
         @Query("settings") settings: String = "{\"msg\":\"on\", \"chat\":\"on\"}"
     ) : Single<Response<VKPushResponse>>

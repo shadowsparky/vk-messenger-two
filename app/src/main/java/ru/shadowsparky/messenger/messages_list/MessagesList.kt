@@ -4,11 +4,9 @@
 
 package ru.shadowsparky.messenger.messages_list
 
-import android.content.Context
-import ru.shadowsparky.messenger.response_utils.DisplayError
+import ru.shadowsparky.messenger.response_utils.RequestHandler
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
-import ru.shadowsparky.messenger.response_utils.responses.VKPushResponse
 
 
 interface MessagesList {
@@ -20,13 +18,11 @@ interface MessagesList {
         fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int)
     }
 
-    interface Presenter {
+    interface Presenter : RequestHandler {
         fun onActivityOpen()
         fun onPushSubscribing()
         fun onScrollFinished(currentOffset: Int)
         fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int)
-        fun onSuccessResponse(response: Response)
-        fun onFailureResponse(error: Throwable)
         fun attachView(view: MessagesListView)
         fun onActivityDestroying()
     }

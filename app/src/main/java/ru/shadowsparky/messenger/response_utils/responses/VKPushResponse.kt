@@ -7,5 +7,6 @@ package ru.shadowsparky.messenger.response_utils.responses
 import ru.shadowsparky.messenger.response_utils.Response
 
 data class VKPushResponse(
-    val response: Int
+    val response: Int,
+    val error: ErrorResponse?
 ) : Response

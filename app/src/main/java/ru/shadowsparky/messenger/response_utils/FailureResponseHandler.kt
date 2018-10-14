@@ -24,19 +24,14 @@ class FailureResponseHandler {
 
     fun attach(context: Context) { this.context = context }
 
-    private fun showError(code: Int) {
-        when(code) {
-            CONNECTION_ERROR_CODE -> toast.error(context!!, "При соединении произошла ошибка. Проверьте свое интернет соединение")
-            CLASS_CAST_EXCEPTION_CODE -> toast.error(context!!, "Результат был получен, но был неправильно обработан")
-            else -> toast.error(context!!, "Произошла неизвестная ошибка")
-        }
-    }
+    private fun showError(message: String) = toast.error(context!!, message)
 
     fun onFailureResponse(reason: Throwable) {
         when (reason) {
-            is UnknownHostException -> showError(CONNECTION_ERROR_CODE)
-            is ClassCastException -> showError(CLASS_CAST_EXCEPTION_CODE)
-            else -> showError(UNHANDLED_EXCEPTION_CODE)
+            is UnknownHostException -> showError("При соединении с сервером произошла ошибка. Проверьте ваше интернет соединение")
+            is ClassCastException -> showError("При получении результата от сервера произошла критическая ошибка")
+            is VKException -> showError("При соединении с сервером произошла ошибка. Причина: null")
+            else -> showError("Произошла неизвестная ошибка")
         }
     }
 }

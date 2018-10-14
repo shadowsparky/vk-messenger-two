@@ -4,14 +4,10 @@
 
 package ru.shadowsparky.messenger.messages_view
 
-import android.content.Context
 import android.widget.ImageView
-import ru.shadowsparky.messenger.response_utils.DisplayError
+import ru.shadowsparky.messenger.response_utils.RequestHandler
 import ru.shadowsparky.messenger.response_utils.Response
-import ru.shadowsparky.messenger.response_utils.ResponseHandler
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
-import java.lang.Exception
 
 interface Messages {
 
@@ -21,15 +17,13 @@ interface Messages {
         fun clearMessageText()
     }
 
-    interface Presenter {
+    interface Presenter : RequestHandler {
         fun attachPeerID(peerId: Int) : MessagesPresenter
         fun onGetMessageHistoryRequest()
         fun onScrollFinished(position: Int)
         fun attachView(view: MessagesView)
         fun onGetPhoto(url: String, image: ImageView)
         fun onSendMessage(message: String)
-        fun onSuccessResponse(response: Response)
-        fun onFailureResponse(error: Throwable)
         fun onActivityDestroying()
     }
 

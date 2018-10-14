@@ -10,15 +10,18 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
+import ru.shadowsparky.messenger.response_utils.responses.ErrorResponse
+import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
+import java.lang.RuntimeException
 import javax.inject.Inject
 
-open class RequestBuilder {
+class RequestBuilder {
     private var request: Single<*>? = null
     private var result: Disposable? = null
     private var offset: Int? = null
@@ -58,10 +61,11 @@ open class RequestBuilder {
     fun sendMessageRequest() : RequestBuilder {
         log.print("Send message request...")
         request = retrofit
-                .create(VKApi::class.java)
-                .sendMessage(peerId!!, message!!, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+            .create(VKApi::class.java)
+            .sendMessage(peerId!!, message!!, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
+            .doOnSuccess { check(it.body()!!.error) }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
         return this
     }
@@ -69,10 +73,11 @@ open class RequestBuilder {
     fun getHistoryRequest() : RequestBuilder {
         log.print("Get history request...")
         request = retrofit
-                .create(VKApi::class.java)
-                .getHistory(offset!!, 20, peerId!!, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+            .create(VKApi::class.java)
+            .getHistory(offset!!, 20, peerId!!, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
+            .doOnSuccess { check(it.body()!!.error) }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
         return this
     }
@@ -80,10 +85,11 @@ open class RequestBuilder {
     fun getDialogsRequest() : RequestBuilder {
         log.print("Get dialogs request...")
         request = retrofit
-                .create(VKApi::class.java)
-                .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+            .create(VKApi::class.java)
+            .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
+            .doOnSuccess { check(it.body()!!.error) }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
         return this
     }
@@ -91,30 +97,37 @@ open class RequestBuilder {
     fun subscribeToPushRequest() : RequestBuilder {
         log.print("Subscribe to push request...")
         request = retrofit
-                .create(VKApi::class.java)
-                .subscribeToPush(
-                        preferencesUtils.read(TOKEN),
-                        preferencesUtils.read(FIREBASE_TOKEN),
-                        preferencesUtils.read(DEVICE_ID)
-                )
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+            .create(VKApi::class.java)
+            .subscribeToPush(
+                preferencesUtils.read(TOKEN),
+                preferencesUtils.read(FIREBASE_TOKEN),
+                preferencesUtils.read(DEVICE_ID)
+            )
+            .doOnSuccess { check(it.body()!!.error) }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
         return this
     }
 
-    protected fun configureCallbacks() {
+    private fun check(error: ErrorResponse?) {
+        if (error != null) {
+            log.print("ERROR OBJECT: $error")
+            throw VKException(error.error)
+        }
+    }
+
+    private fun configureCallbacks() {
         result = request!!.subscribeBy (
-                onSuccess = {
-                    it as retrofit2.Response<*>
-                    log.print("${it.raw().request().url()}")
-                    log.print("Request successfully executed.")
-                    successCallback!!(it.body() as Response)
-                },
-                onError = {
-                    log.print("Request was unsuccessfully executed. $it")
-                    failureCallback!!(it)
-                }
+            onSuccess = {
+                it as retrofit2.Response<*>
+                successCallback!!(it.body()!! as Response)
+                log.print("Request successfully executed.")
+            },
+            onError = {
+                log.print("Request was unsuccessfully executed. $it")
+                failureCallback!!(it)
+            }
         )
     }
 

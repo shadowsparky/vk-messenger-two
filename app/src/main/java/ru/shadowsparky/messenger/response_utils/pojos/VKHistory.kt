@@ -11,4 +11,4 @@ data class VKHistory(
         val items: ArrayList<VKMessage>?,
         val conversations: ArrayList<VKConversation>?,
         val profiles: ArrayList<VKProfile>?
-) : Response
+)

@@ -8,7 +8,8 @@ import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 
 data class MessagesResponse(
-        val response: VKMessages
+    val error: ErrorResponse,
+    val response: VKMessages
 ) : Response
 
 

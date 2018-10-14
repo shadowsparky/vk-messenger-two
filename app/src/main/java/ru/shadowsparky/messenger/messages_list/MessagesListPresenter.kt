@@ -6,12 +6,10 @@ package ru.shadowsparky.messenger.messages_list
 
 import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import ru.shadowsparky.messenger.response_utils.Response
-import ru.shadowsparky.messenger.response_utils.ResponseHandler
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.response_utils.responses.VKPushResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Logger
-import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import javax.inject.Inject
 
 class MessagesListPresenter : MessagesList.Presenter {
@@ -30,8 +28,10 @@ class MessagesListPresenter : MessagesList.Presenter {
     }
 
     override fun onActivityOpen() {
-        view!!.setLoading(true)
-        model.getAllDialogs(::onSuccessResponse, ::onFailureResponse)
+        for(i in 0..10) {
+//            view!!.setLoading(true)
+            model.getAllDialogs(::onSuccessResponse, ::onFailureResponse)
+        }
     }
 
     override fun onPushSubscribing() = model.subscribeToPush(::onSuccessResponse, ::onFailureResponse)

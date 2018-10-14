@@ -21,4 +21,4 @@ data class VKMessage(
         val random_id: Int?,
         val important: Boolean?,
         val payload: String?
-) : Response
+)

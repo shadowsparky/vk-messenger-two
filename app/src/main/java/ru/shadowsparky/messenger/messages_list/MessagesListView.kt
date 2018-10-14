@@ -106,7 +106,6 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         }
         if (preferencesUtils.read(DEVICE_ID) == "")
             preferencesUtils.write(DEVICE_ID, Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
-        preferencesUtils.write(Constansts.FIREBASE_TOKEN, "805067557592")
         log.print("FIREBASE TOKEN: ${preferencesUtils.read(FIREBASE_TOKEN)}")
         log.print("DEVICE ID: ${preferencesUtils.read(DEVICE_ID)}")
     }
