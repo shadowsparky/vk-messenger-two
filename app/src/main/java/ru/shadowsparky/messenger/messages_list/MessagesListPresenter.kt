@@ -28,10 +28,10 @@ class MessagesListPresenter : MessagesList.Presenter {
     }
 
     override fun onActivityOpen() {
-        for(i in 0..10) {
+//        for(i in 0..10) {
 //            view!!.setLoading(true)
-            model.getAllDialogs(::onSuccessResponse, ::onFailureResponse)
-        }
+        model.getAllDialogs(::onSuccessResponse, ::onFailureResponse)
+//        }
     }
 
     override fun onPushSubscribing() = model.subscribeToPush(::onSuccessResponse, ::onFailureResponse)

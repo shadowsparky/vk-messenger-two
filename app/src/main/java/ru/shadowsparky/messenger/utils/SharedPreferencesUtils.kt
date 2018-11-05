@@ -17,5 +17,5 @@ class SharedPreferencesUtils(val context: Context) {
     fun write(key: String, content: String) : Boolean = preferences.edit().putString(key, content).commit()
     fun remove(key: String) : Boolean = preferences.edit().remove(key).commit()
     fun removeAll() : Boolean = preferences.edit().clear().commit()
-    fun read(key: String) : String = preferences.getString(key, "")
+    fun read(key: String) : String = preferences.getString(key, "")!!
 }

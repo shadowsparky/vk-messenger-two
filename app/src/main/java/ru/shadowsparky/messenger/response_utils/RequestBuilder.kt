@@ -122,7 +122,7 @@ class RequestBuilder {
             onSuccess = {
                 it as retrofit2.Response<*>
                 successCallback!!(it.body()!! as Response)
-                log.print("Request successfully executed.")
+                log.print("Request successfully executed. url: ${it.raw().request().url()}")
             },
             onError = {
                 log.print("Request was unsuccessfully executed. $it")

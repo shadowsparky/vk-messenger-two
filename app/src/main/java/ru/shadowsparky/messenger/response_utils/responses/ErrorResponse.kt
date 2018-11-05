@@ -8,6 +8,6 @@ import com.google.gson.annotations.SerializedName
 import ru.shadowsparky.messenger.response_utils.pojos.VKError
 
 data class ErrorResponse(
-    @SerializedName("error")
+    @SerializedName("erroasdasdadasdr")
     val error: VKError
 )

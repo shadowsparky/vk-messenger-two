@@ -13,6 +13,7 @@ import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
 import ru.shadowsparky.messenger.response_utils.responses.VKPushResponse
+import ru.shadowsparky.messenger.utils.Constansts.Companion.VK_API_VERSION
 
 interface VKApi {
     @GET("method/messages.getConversations")
@@ -21,7 +22,7 @@ interface VKApi {
         @Query("count") count: Int,
         @Query("filter") filter: String,
         @Query("access_token") token: String,
-        @Query("v") version: Double = 5.85,
+        @Query("v") version: Double = VK_API_VERSION,
         @Query("extended") extended: Boolean = true
     ) : Single<Response<MessagesResponse>>
 
@@ -31,7 +32,7 @@ interface VKApi {
         @Query("count") count: Int,
         @Query("user_id") user_id: Int,
         @Query("access_token") token: String,
-        @Query("v") version: Double = 5.85,
+        @Query("v") version: Double = VK_API_VERSION,
         @Query("extended") extended: Boolean = true
     ) : Single<Response<HistoryResponse>>
 
@@ -40,7 +41,7 @@ interface VKApi {
         @Query("peer_id") peer_id: Int,
         @Query("message") message: String,
         @Query("access_token") token: String,
-        @Query("v") version: Double = 5.85
+        @Query("v") version: Double = VK_API_VERSION
     ) : Single<Response<SendMessageResponse>>
 
     @GET("method/account.registerDevice")
@@ -49,7 +50,7 @@ interface VKApi {
         @Query("token") token: String,
         @Query("device_id") device_id: String,
         @Query("provider") provider: String = "fcm",
-        @Query("v") version: Double = 5.85,
+        @Query("v") version: Double = VK_API_VERSION,
         @Query("settings") settings: String = "{\"msg\":\"on\", \"chat\":\"on\"}"
     ) : Single<Response<VKPushResponse>>
 }
