@@ -12,9 +12,9 @@ class Validator {
 
     fun verifyText(text: EditText, callback: (Boolean) -> Unit) {
         RxTextView.textChanges(text)
-                .map { it.isNotBlank() }
-                .subscribeBy (
-                        onNext = { callback(it) }
-                )
+            .map { it.isNotBlank() }
+            .subscribeBy (
+                onNext = { callback(it) }
+            )
     }
 }

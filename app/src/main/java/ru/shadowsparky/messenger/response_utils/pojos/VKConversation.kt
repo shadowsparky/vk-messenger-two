@@ -14,5 +14,6 @@ data class VKConversation(
     val important: Boolean,
     val unanswered: Boolean,
     val push_settings: VKPushSettings,
+    val chat_settings: VKChatSettings,
     val can_write: VKCanWrite
 )

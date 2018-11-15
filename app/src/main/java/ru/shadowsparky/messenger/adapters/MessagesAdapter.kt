@@ -6,8 +6,6 @@ package ru.shadowsparky.messenger.adapters
 
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,11 +13,11 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.hendraanggrian.pikasso.picasso
 import com.hendraanggrian.pikasso.transformations.circle
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
-import io.reactivex.schedulers.Schedulers
 import ru.shadowsparky.messenger.R
+import ru.shadowsparky.messenger.response_utils.pojos.VKItems
+import ru.shadowsparky.messenger.response_utils.pojos.VKProfile
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.DateUtils
@@ -31,8 +29,8 @@ open class MessagesAdapter(
         val callback: (Int) -> Unit,
         val touch_callback: (Int, String, String, Int) -> Unit
 ) : RecyclerView.Adapter<MessagesAdapter.MainViewHolder>() {
-    @Inject lateinit var log: Logger
-    @Inject lateinit var dateUtils: DateUtils
+    @Inject protected lateinit var log: Logger
+    @Inject protected lateinit var dateUtils: DateUtils
     private var TMPDate = ""
 
     init {
@@ -44,34 +42,25 @@ open class MessagesAdapter(
         return MainViewHolder(v)
     }
 
-    override fun getItemCount(): Int = data.response.items!!.size
+    override fun getItemCount(): Int = data.response.items.size
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        if ((position == itemCount - 1) and (position != data.response.count!! - 1)) {
+        if ((position == itemCount - 1) and (position != data.response.count - 1)) {
             callback(position + 1)
         }
-        val profiles = data.response.profiles!!
-        val item = data.response.items!![position]
+        val profiles = data.response.profiles
+        val item = data.response.items[position]
         holder.user_data.text = "null"
-        holder.message_data.text = item.last_message!!.text
+        holder.message_data.text = item.last_message.text
         holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
+        if (item.conversation.peer.type == "chat")
+            chatDialog(item, holder.user_data, holder.card, holder.image)
         profiles.toObservable()
-                .filter { it.id == item.conversation!!.peer!!.id }
-                .subscribeBy(
-                        onNext = {
-                            holder.user_data.text = "${it.first_name} ${it.last_name}"
-                            holder.card.setOnClickListener { _ ->
-                                touch_callback(
-                                        item.conversation!!.peer!!.id!!,
-                                        holder.user_data.text.toString(),
-                                        it.photo_100!!,
-                                        it.online!!
-                                )
-                            }
-                            picasso.load(it.photo_100).circle().into(holder.image)
-                        },
-                        onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
-                )
+            .filter { it.id == item.conversation.peer.id }
+            .subscribeBy(
+                onNext = { userDialog(it, holder.user_data, holder.card, holder.image)                 },
+                onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
+            )
 //        log.print("CURSOR IS: $position. Last cursor: $itemCount")
 //        log.print("TMP DATE: $TMPDate")
 //        log.print("CURRENT DATE: ${dateUtils.fromUnixToDateString(item.last_message.date)}")
@@ -87,15 +76,36 @@ open class MessagesAdapter(
 //        log.print("________________________________")
     }
 
+    private fun userDialog(item: VKProfile, user_data: TextView, card: CardView, image: ImageView) {
+        log.print("USER: ${item.first_name} ${item.last_name}")
+        user_data.text = "${item.first_name} ${item.last_name}"
+        card.setOnClickListener { _ ->
+            touch_callback(
+                item.id,
+                user_data.text.toString(),
+                item.photo_100,
+                item.online
+            )
+        }
+        picasso.load(item.photo_100).circle().into(image)
+    }
+
+    private fun chatDialog(item: VKItems, user_data: TextView, card: CardView, image: ImageView) {
+        val vkChatSettings = item.conversation.chat_settings
+        log.print("CHAT: ${vkChatSettings.title}")
+        user_data.text = vkChatSettings.title
+        card.setOnClickListener { _ ->
+
+        }
+        picasso.load(vkChatSettings.photo.photo_100).circle().into(image)
+    }
+
     fun addData(newData: MessagesResponse) {
         val TMP_MAX = itemCount
-
-        data.response.profiles!!.addAll(newData.response.profiles!!)
-        data.response.items!!.addAll(newData.response.items!!)
-        // fixme: заменить notifyDataSetChanged на notifyItemRangeInserted.
+        data.response.profiles.addAll(newData.response.profiles)
+        data.response.items.addAll(newData.response.items)
 //        notifyDataSetChanged()
         notifyItemRangeInserted(TMP_MAX, TMP_MAX + newData.response.items.size)
-//        log.print("ELEMENT ADD! MAX: $TMP_MAX, SIZE: ${newData.response.items.size}")
     }
 
     open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
