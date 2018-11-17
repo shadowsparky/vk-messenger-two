@@ -5,12 +5,11 @@
 package ru.shadowsparky.messenger.utils
 
 import android.app.Application
+import com.squareup.picasso.OkHttp3Downloader
+import com.squareup.picasso.Picasso
 import ru.shadowsparky.messenger.dagger.AdditionalModule
 import ru.shadowsparky.messenger.dagger.Component
 import ru.shadowsparky.messenger.dagger.DaggerComponent
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.OkHttp3Downloader
-
 
 
 class App : Application() {
