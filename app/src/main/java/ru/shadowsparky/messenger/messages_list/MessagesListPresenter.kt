@@ -25,6 +25,7 @@ class MessagesListPresenter : MessagesList.Presenter {
     @Inject protected lateinit var model: MessagesList.Model
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var errorUtils: FailureResponseHandler
+    // FIXME взаимодействие с бд должно быть в модели
     @Inject protected lateinit var db: DatabaseManager
     private var view: MessagesList.View? = null
 
@@ -46,6 +47,7 @@ class MessagesListPresenter : MessagesList.Presenter {
     override fun onPushSubscribing() = model.subscribeToPush(::onSuccessResponse, ::onFailureResponse)
 
     override fun onFailureResponse(error: Throwable) {
+        // FIXME взаимодействие с бд должно быть в модели
         db.getAllMessagesListWithCallback(::onSuccessResponse)
         view!!.disposeAdapter()
         errorUtils.onFailureResponse(error)
