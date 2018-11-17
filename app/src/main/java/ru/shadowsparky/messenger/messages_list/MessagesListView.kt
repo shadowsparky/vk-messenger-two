@@ -104,7 +104,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         presenter.attachView(this)
         refresher.setOnRefreshListener {
             disposeAdapter()
-            db.removeAllMessagesList()
+//            db.removeAllMessagesList()
             presenter.onActivityOpen()
         }
         if (preferencesUtils.read(DEVICE_ID) == "")

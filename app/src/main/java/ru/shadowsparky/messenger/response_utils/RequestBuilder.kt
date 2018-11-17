@@ -91,7 +91,12 @@ class RequestBuilder {
         request = retrofit
             .create(VKApi::class.java)
             .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
-            .doOnSuccess { db.writeToDB(it.body()!!, it.raw().request().url().toString()) }
+            .doOnSuccess {
+                if (offset == 0)
+                    db.removeAllMessagesList()
+                db.writeToDB(it.body()!!, it.raw().request().url().toString())
+                log.print("OFFSET: $offset")
+            }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
@@ -126,7 +131,6 @@ class RequestBuilder {
             onSuccess = {
                 it as retrofit2.Response<*>
                 successCallback!!(it.body()!! as Response)
-                log.print(Gson().toJson(it.body()!!))
                 log.print("Request successfully executed. url: ${it.raw().request().url()}")
             },
             onError = {

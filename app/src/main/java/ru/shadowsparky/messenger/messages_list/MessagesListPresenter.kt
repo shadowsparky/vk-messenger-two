@@ -38,21 +38,16 @@ class MessagesListPresenter : MessagesList.Presenter {
     }
 
     override fun onActivityOpen() {
-        Thread {
-            db.getAllMessagesList().toObservable()
-                .map { db.convertJsonToObject(it.response) }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onNext = { onSuccessResponse(it as Response) }
-                )
-        }.start()
+//        db.getAllMessagesListWithCallback(::onSuccessResponse)
+//        view!!.disposeAdapter()
         model.getAllDialogs(::onSuccessResponse, ::onFailureResponse)
     }
 
     override fun onPushSubscribing() = model.subscribeToPush(::onSuccessResponse, ::onFailureResponse)
 
     override fun onFailureResponse(error: Throwable) {
+        db.getAllMessagesListWithCallback(::onSuccessResponse)
+        view!!.disposeAdapter()
         errorUtils.onFailureResponse(error)
     }
 
