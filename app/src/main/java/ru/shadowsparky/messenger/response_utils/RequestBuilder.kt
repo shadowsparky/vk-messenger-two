@@ -4,6 +4,7 @@
 
 package ru.shadowsparky.messenger.response_utils
 
+import com.google.gson.Gson
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -16,6 +17,8 @@ import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Logger
+import ru.shadowsparky.messenger.utils.SQLite.DatabaseManager
+import ru.shadowsparky.messenger.utils.SQLite.MessagesDB
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
 import java.lang.RuntimeException
@@ -31,6 +34,7 @@ class RequestBuilder {
     private var failureCallback: ((Throwable) -> Unit)? = null
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var retrofit: Retrofit
+    @Inject protected lateinit var db: DatabaseManager
     @Inject protected lateinit var log: Logger
 
     init {
@@ -87,7 +91,7 @@ class RequestBuilder {
         request = retrofit
             .create(VKApi::class.java)
             .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
-            .doOnSuccess { check(it.body()!!.error) }
+            .doOnSuccess { db.writeToDB(it.body()!!, it.raw().request().url().toString()) }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
@@ -122,6 +126,7 @@ class RequestBuilder {
             onSuccess = {
                 it as retrofit2.Response<*>
                 successCallback!!(it.body()!! as Response)
+                log.print(Gson().toJson(it.body()!!))
                 log.print("Request successfully executed. url: ${it.raw().request().url()}")
             },
             onError = {
@@ -129,6 +134,12 @@ class RequestBuilder {
                 failureCallback!!(it)
             }
         )
+    }
+
+    private fun writeToDB(data: Response) {
+        if (data is MessagesResponse) {
+
+        }
     }
 
     fun build() : BuiltRequest = BuiltRequest(result!!)

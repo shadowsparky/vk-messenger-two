@@ -14,11 +14,6 @@ import javax.inject.Singleton
 
 @Module
 class AdditionalModule(val context: Context) {
-    @Provides
-    @Singleton
-    fun provideDB() : MessagesDB = Room.databaseBuilder(context, MessagesDB::class.java, "db")
-            .fallbackToDestructiveMigration()
-            .build()
 
     @Provides
     @Singleton

@@ -22,10 +22,11 @@ import ru.shadowsparky.messenger.notifications.FirebaseRefresher
 import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.response_utils.RequestBuilder
+import ru.shadowsparky.messenger.utils.SQLite.DatabaseManager
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AdditionalModule::class, RequestModule::class, DateModule::class,
+@Component(modules = [AdditionalModule::class, RequestModule::class, DateModule::class, DatabaseModule::class,
     MessagesListModule::class, MessagesViewModule::class, RxModule::class, AuthModule::class])
 interface Component {
     fun inject(target: AuthView)
@@ -45,4 +46,5 @@ interface Component {
     fun inject(target: RequestBuilder)
     fun inject(target: CompositeDisposableManager)
     fun inject(target: FailureResponseHandler)
+    fun inject(target: DatabaseManager)
 }

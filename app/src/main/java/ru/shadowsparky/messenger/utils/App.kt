@@ -10,6 +10,7 @@ import com.squareup.picasso.Picasso
 import ru.shadowsparky.messenger.dagger.AdditionalModule
 import ru.shadowsparky.messenger.dagger.Component
 import ru.shadowsparky.messenger.dagger.DaggerComponent
+import ru.shadowsparky.messenger.dagger.DatabaseModule
 
 
 class App : Application() {
@@ -27,6 +28,7 @@ class App : Application() {
         component = DaggerComponent
                 .builder()
                 .additionalModule(AdditionalModule(applicationContext))
+                .databaseModule(DatabaseModule(applicationContext))
                 .build()
     }
 

@@ -26,6 +26,7 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
+import ru.shadowsparky.messenger.utils.SQLite.DatabaseManager
 import javax.inject.Inject
 
 open class MessagesListView : AppCompatActivity(), MessagesList.View {
@@ -33,6 +34,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var colorize: TextColorUtils
+    @Inject protected lateinit var db: DatabaseManager
     private var adapter: MessagesAdapter? = null
 
     override fun setLoading(result: Boolean) {
@@ -102,6 +104,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         presenter.attachView(this)
         refresher.setOnRefreshListener {
             disposeAdapter()
+            db.removeAllMessagesList()
             presenter.onActivityOpen()
         }
         if (preferencesUtils.read(DEVICE_ID) == "")
