@@ -7,6 +7,8 @@ package ru.shadowsparky.messenger.utils
 open class Constansts {
     companion object {
         val USER_ID = "id"
+        val EMPTY_STRING = ""
+        val VK_PEER_CHAT = "chat"
         val VK_API_VERSION = 5.87
         val USER_ID_NOT_FOUND = -1
         val DEFAULT_SPAN_VALUE = 1

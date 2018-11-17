@@ -20,6 +20,8 @@ import ru.shadowsparky.messenger.response_utils.pojos.VKItems
 import ru.shadowsparky.messenger.response_utils.pojos.VKProfile
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
+import ru.shadowsparky.messenger.utils.Constansts.Companion.VK_PEER_CHAT
 import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
@@ -50,15 +52,15 @@ open class MessagesAdapter(
         }
         val profiles = data.response.profiles
         val item = data.response.items[position]
-        holder.user_data.text = "null"
+        holder.user_data.text = EMPTY_STRING
         holder.message_data.text = item.last_message.text
         holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
-        if (item.conversation.peer.type == "chat")
+        if (item.conversation.peer.type == VK_PEER_CHAT)
             chatDialog(item, holder.user_data, holder.card, holder.image)
         profiles.toObservable()
             .filter { it.id == item.conversation.peer.id }
             .subscribeBy(
-                onNext = { userDialog(it, holder.user_data, holder.card, holder.image)                 },
+                onNext = { userDialog(it, holder.user_data, holder.card, holder.image) },
                 onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
             )
 //        log.print("CURSOR IS: $position. Last cursor: $itemCount")
@@ -97,7 +99,8 @@ open class MessagesAdapter(
         card.setOnClickListener { _ ->
 
         }
-        picasso.load(vkChatSettings.photo.photo_100).circle().into(image)
+        if (vkChatSettings.photo != null)
+            picasso.load(vkChatSettings.photo.photo_100).circle().into(image)
     }
 
     fun addData(newData: MessagesResponse) {
