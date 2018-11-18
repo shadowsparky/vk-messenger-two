@@ -47,7 +47,7 @@ class DBListTableWrapper : DatabaseManager {
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
-                    onNext = { callback(it as Response) }
+                onNext = { callback(it as Response) }
             )
     }.start()
 

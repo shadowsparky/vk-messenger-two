@@ -23,6 +23,7 @@ import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.response_utils.RequestBuilder
 import ru.shadowsparky.messenger.utils.SQLite.DBListTableWrapper
+import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
 import javax.inject.Singleton
 
 @Singleton
@@ -47,4 +48,5 @@ interface Component {
     fun inject(target: CompositeDisposableManager)
     fun inject(target: FailureResponseHandler)
     fun inject(target: DBListTableWrapper)
+    fun inject(target: DBViewTableWrapper)
 }

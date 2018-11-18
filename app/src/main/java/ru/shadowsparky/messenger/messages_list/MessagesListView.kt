@@ -42,15 +42,10 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         adapter = null
     }
 
-    override fun disableLoading() {
-        refresher.isRefreshing = false
-    }
-
     override fun onResume() {
         super.onResume()
         disposeAdapter()
-        refresher.isRefreshing = true
-        presenter.onActivityOpen()
+        presenter.onScrollFinished()
         log.print("MessagesListView activity loaded")
     }
 
@@ -106,7 +101,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         presenter.attachView(this)
         refresher.setOnRefreshListener {
             disposeAdapter()
-            presenter.onActivityOpen()
+            presenter.onScrollFinished()
         }
         if (preferencesUtils.read(DEVICE_ID) == "")
             preferencesUtils.write(DEVICE_ID, Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))

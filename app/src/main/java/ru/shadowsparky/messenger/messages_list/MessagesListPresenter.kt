@@ -27,37 +27,30 @@ class MessagesListPresenter : MessagesList.Presenter {
         errorUtils.attach(view)
     }
 
-    override fun onActivityOpen() {
-        model.getAllDialogs(::onSuccessResponse, ::onFailureResponse)
-    }
-
     override fun onPushSubscribing() = model.subscribeToPush(::onSuccessResponse, ::onFailureResponse)
 
     override fun onFailureResponse(error: Throwable) {
         model.getCachedDialogs(::onSuccessResponse) // Загрузка закешированных данных с устройства
         view!!.disposeAdapter()
-        view!!.disableLoading()
         errorUtils.onFailureResponse(error)
     }
 
     override fun onActivityDestroying() = model.disposeRequests()
 
-    override fun onScrollFinished(currentOffset: Int) =
-            model.getAllDialogs(::onSuccessResponse, ::onFailureResponse, currentOffset)
+    override fun onScrollFinished(currentOffset: Int) {
+        view!!.setLoading(true)
+        model.getAllDialogs(::onSuccessResponse, ::onFailureResponse, currentOffset)
+    }
 
     override fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int) =
             view!!.navigateToHistory(id, user_data, url, online_status)
 
     override fun onSuccessResponse(response: Response) {
         when(response) {
-            is MessagesResponse ->
-                view!!.run {
-                    setAdapter(response, ::onScrollFinished, ::onItemClicked)
-                    setLoading(false)
-                }
+            is MessagesResponse -> view!!.setAdapter(response, ::onScrollFinished, ::onItemClicked)
             is VKPushResponse -> log.print("Вы подписались на пуш уведомления")
             else -> onFailureResponse(ClassCastException())
         }
-        view!!.disableLoading()
+        view!!.setLoading(false)
     }
 }
