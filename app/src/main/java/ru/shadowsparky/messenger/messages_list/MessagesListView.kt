@@ -7,11 +7,8 @@ package ru.shadowsparky.messenger.messages_list
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_list_view.*
 import ru.shadowsparky.messenger.R
@@ -26,7 +23,7 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
-import ru.shadowsparky.messenger.utils.SQLite.DatabaseManager
+import ru.shadowsparky.messenger.utils.SQLite.DBListTableWrapper
 import javax.inject.Inject
 
 open class MessagesListView : AppCompatActivity(), MessagesList.View {
@@ -34,7 +31,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var colorize: TextColorUtils
-    @Inject protected lateinit var db: DatabaseManager
+    @Inject protected lateinit var db: DBListTableWrapper
     private var adapter: MessagesAdapter? = null
 
     override fun setLoading(result: Boolean) {
@@ -45,12 +42,15 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         adapter = null
     }
 
+    override fun disableLoading() {
+        refresher.isRefreshing = false
+    }
+
     override fun onResume() {
         super.onResume()
         disposeAdapter()
         refresher.isRefreshing = true
         presenter.onActivityOpen()
-        refresher.isRefreshing = false
         log.print("MessagesListView activity loaded")
     }
 

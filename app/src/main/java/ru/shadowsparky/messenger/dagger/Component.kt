@@ -22,7 +22,7 @@ import ru.shadowsparky.messenger.notifications.FirebaseRefresher
 import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.response_utils.RequestBuilder
-import ru.shadowsparky.messenger.utils.SQLite.DatabaseManager
+import ru.shadowsparky.messenger.utils.SQLite.DBListTableWrapper
 import javax.inject.Singleton
 
 @Singleton
@@ -46,5 +46,5 @@ interface Component {
     fun inject(target: RequestBuilder)
     fun inject(target: CompositeDisposableManager)
     fun inject(target: FailureResponseHandler)
-    fun inject(target: DatabaseManager)
+    fun inject(target: DBListTableWrapper)
 }

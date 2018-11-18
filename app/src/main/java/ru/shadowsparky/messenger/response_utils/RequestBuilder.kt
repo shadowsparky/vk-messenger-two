@@ -4,7 +4,6 @@
 
 package ru.shadowsparky.messenger.response_utils
 
-import com.google.gson.Gson
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -17,11 +16,10 @@ import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Logger
+import ru.shadowsparky.messenger.utils.SQLite.DBListTableWrapper
 import ru.shadowsparky.messenger.utils.SQLite.DatabaseManager
-import ru.shadowsparky.messenger.utils.SQLite.MessagesDB
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
-import java.lang.RuntimeException
 import javax.inject.Inject
 
 class RequestBuilder {
@@ -32,9 +30,9 @@ class RequestBuilder {
     private var message: String? = null
     private var successCallback: ((Response) -> Unit)? = null
     private var failureCallback: ((Throwable) -> Unit)? = null
+    private var db: DatabaseManager? = null
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var retrofit: Retrofit
-    @Inject protected lateinit var db: DatabaseManager
     @Inject protected lateinit var log: Logger
 
     init {
@@ -44,6 +42,12 @@ class RequestBuilder {
     fun setOffset(offset: Int) : RequestBuilder {
         this.offset = offset
         return this
+    }
+
+    private fun cacher(response: retrofit2.Response<*>) {
+        if (offset == 0)
+            db!!.removeAll()
+        db!!.writeToDB(response.body()!! as Response, response.raw().request().url().toString())
     }
 
     fun setPeerId(peerId: Int) : RequestBuilder {
@@ -87,16 +91,12 @@ class RequestBuilder {
     }
 
     fun getDialogsRequest() : RequestBuilder {
+        db = DBListTableWrapper()
         log.print("Get dialogs request...")
         request = retrofit
             .create(VKApi::class.java)
             .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
-            .doOnSuccess {
-                if (offset == 0)
-                    db.removeAllMessagesList()
-                db.writeToDB(it.body()!!, it.raw().request().url().toString())
-                log.print("OFFSET: $offset")
-            }
+            .doOnSuccess { cacher(it) }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
@@ -131,6 +131,7 @@ class RequestBuilder {
             onSuccess = {
                 it as retrofit2.Response<*>
                 successCallback!!(it.body()!! as Response)
+                // FIXME проверка error body и кодов при ошибках
                 log.print("Request successfully executed. url: ${it.raw().request().url()}")
             },
             onError = {
@@ -138,12 +139,6 @@ class RequestBuilder {
                 failureCallback!!(it)
             }
         )
-    }
-
-    private fun writeToDB(data: Response) {
-        if (data is MessagesResponse) {
-
-        }
     }
 
     fun build() : BuiltRequest = BuiltRequest(result!!)

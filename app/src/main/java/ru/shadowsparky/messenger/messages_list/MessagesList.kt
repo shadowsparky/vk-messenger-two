@@ -13,6 +13,7 @@ interface MessagesList {
     interface View {
         fun setLoading(result: Boolean)
         fun disposeAdapter()
+        fun disableLoading()
         fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit,
                        touch_callback: (Int, String, String, online_status: Int) -> Unit)
         fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int)
