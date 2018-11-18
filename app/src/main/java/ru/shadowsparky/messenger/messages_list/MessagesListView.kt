@@ -90,12 +90,6 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
             presenter.onPushSubscribing()
             return@setOnMenuItemClickListener true
         }
-        val db_remover = menu.findItem(R.id.remove_db)
-        db_remover.title = colorize.getBlackText(db_remover.title.toString())
-        db_remover.setOnMenuItemClickListener {
-            presenter.removeData()
-            return@setOnMenuItemClickListener true
-        }
         return super.onCreateOptionsMenu(menu)
     }
 

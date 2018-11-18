@@ -32,7 +32,7 @@ interface Messages {
         fun getMessageHistory(peerId: Int, callback: (Response) -> Unit,
                               failureHandler: (Throwable) -> Unit, offset: Int = 0)
         fun getPhoto(url: String, image: ImageView)
-        fun getCachedDialogs(callback: (Response) -> Unit, user_id: Long)
+        fun getCachedHistory(callback: (Response) -> Unit, user_id: Long)
         fun sendMessage(peerId: Int, message: String, callback: (Response) -> Unit,
                         failureHandler: (Throwable) -> Unit)
         fun disposeRequests()

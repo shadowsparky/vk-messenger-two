@@ -19,13 +19,10 @@ class MessagesListPresenter : MessagesList.Presenter {
     @Inject protected lateinit var errorUtils: FailureResponseHandler
     @Inject protected lateinit var db: DBViewTableWrapper
     private var view: MessagesList.View? = null
+    private var loadingError = false
 
     init {
         App.component.inject(this)
-    }
-
-    override fun removeData() {
-        db.removeAll()
     }
 
     override fun attachView(view: MessagesListView) {
@@ -36,8 +33,15 @@ class MessagesListPresenter : MessagesList.Presenter {
     override fun onPushSubscribing() = model.subscribeToPush(::onSuccessResponse, ::onFailureResponse)
 
     override fun onFailureResponse(error: Throwable) {
-        model.getCachedDialogs(::onSuccessResponse) // Загрузка закешированных данных с устройства
-        view!!.disposeAdapter()
+        val callback: (response: Response) -> Unit = {
+            view!!.setAdapter(it as MessagesResponse, ::onScrollFinished, ::onItemClicked)
+            loadingError = true
+        }
+        if (!loadingError) {
+            model.getCachedDialogs(callback) // Загрузка закешированных данных с устройства
+            view!!.disposeAdapter()
+        }
+        view!!.setLoading(false)
         errorUtils.onFailureResponse(error)
     }
 
@@ -58,5 +62,6 @@ class MessagesListPresenter : MessagesList.Presenter {
             else -> onFailureResponse(ClassCastException())
         }
         view!!.setLoading(false)
+        loadingError = false
     }
 }

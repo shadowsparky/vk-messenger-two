@@ -38,7 +38,7 @@ class MessagesModel : Messages.Model {
         disposables.addRequest(request.getDisposable())
     }
 
-    override fun getCachedDialogs(callback: (Response) -> Unit, user_id: Long) = db.getAllByIDWithCallback(callback, user_id)
+    override fun getCachedHistory(callback: (Response) -> Unit, user_id: Long) = db.getAllByIDWithCallback(callback, user_id)
 
     override fun sendMessage(peerId: Int, message: String, callback: (Response) -> Unit,
                              failureHandler: (Throwable) -> Unit) {

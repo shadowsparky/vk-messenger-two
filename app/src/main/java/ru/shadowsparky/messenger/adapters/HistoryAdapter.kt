@@ -61,12 +61,12 @@ class HistoryAdapter(
     override fun getItemCount(): Int = data.response!!.items!!.size
 
     override fun onBindViewHolder(holder: HistoryAdapter.MainViewHolder, position: Int) {
-        if ((position == 0) and (itemCount > current_cursor)) {
-            scroll_callback(current_cursor + 1)
-            current_cursor += 20
-            log.print("Message history loading request... position: $current_cursor")
+        if ((position == 0) and (itemCount < data.response.count!!)) {
+//            current_cursor = itemCount
+            scroll_callback(itemCount)
+            log.print("Message history loading request... position: $itemCount")
         }
-        val item = data.response!!.items!![position]
+        val item = data.response.items!![position]
         configureCard(holder.card, item.from_id!!)
         holder.text.text = item.text
         dateUtils.fromUnixToDateAndTimeCalendar(item.date!!)

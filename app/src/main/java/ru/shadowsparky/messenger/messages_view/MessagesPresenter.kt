@@ -17,6 +17,7 @@ class MessagesPresenter : Messages.Presenter {
     @Inject protected lateinit var errorUtils: FailureResponseHandler
     private var view: Messages.View? = null
     private var peerId: Int? = null
+    private var loadingError = false
 
     init {
         App.component.inject(this)
@@ -42,8 +43,14 @@ class MessagesPresenter : Messages.Presenter {
             model.sendMessage(peerId!!, message, ::onSuccessResponse, ::onFailureResponse)
 
     override fun onFailureResponse(error: Throwable) {
-        model.getCachedDialogs(::onSuccessResponse, peerId!!.toLong())
-        view!!.disposeAdapter()
+        val callback: (response: Response) -> Unit = {
+            loadingError = true
+            view!!.setAdapter(it as HistoryResponse, ::onScrollFinished)
+        }
+        if (!loadingError) {
+            model.getCachedHistory(callback, peerId!!.toLong())
+            view!!.disposeAdapter()
+        }
         errorUtils.onFailureResponse(error)
     }
 
@@ -63,5 +70,6 @@ class MessagesPresenter : Messages.Presenter {
             }
             else -> onFailureResponse(ClassCastException())
         }
+        loadingError = false
     }
 }

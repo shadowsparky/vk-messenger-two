@@ -144,7 +144,7 @@ class RequestBuilder {
                 successCallback!!(it.body()!! as Response)
                 // FIXME проверка error body и кодов при ошибках
                 log.print("Request successfully executed. url: ${it.raw().request().url()}")
-            },
+            } ,
             onError = {
                 log.print("Request was unsuccessfully executed. $it")
                 failureCallback!!(it)

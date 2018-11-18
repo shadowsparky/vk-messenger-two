@@ -10,9 +10,4 @@
         android:id="@+id/subscribe_to_push"
         android:title="Подписаться на уведомления">
     </item>
-
-    <item
-        android:id="@+id/remove_db"
-        android:title="Удалить данные из базы">
-    </item>
 </menu>
