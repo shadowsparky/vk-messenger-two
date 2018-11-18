@@ -25,19 +25,17 @@ class DBListTableWrapper : DatabaseManager {
     }
 
     override fun writeToDB(data: Response, url: String) {
-        when(data) {
-            is MessagesResponse -> {
-                val element = MessagesListTable()
-                element.response = Gson().toJson(data)
-                element.url = url
-                for (el in getAll()) {
-                    if (el.response == element.response) {
-                        return
-                    }
+        if (data is MessagesResponse) {
+            val element = MessagesListTable()
+            element.response = Gson().toJson(data)
+            element.url = url
+            for (el in getAll()) {
+                if (el.response == element.response) {
+                    return
                 }
-                db.MessagesListDao().insert(element)
-                log.print("Элемент списка сообщений был успешно записан в базу данных")
             }
+            db.MessagesListDao().insert(element)
+            log.print("Элемент списка сообщений был успешно записан в базу данных")
         }
     }
 

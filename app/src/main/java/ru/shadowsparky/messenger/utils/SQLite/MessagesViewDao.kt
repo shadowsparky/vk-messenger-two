@@ -10,7 +10,7 @@ interface MessagesViewDao {
     fun getAll() : List<MessagesViewTable>
 
     @Query("SELECT id, response, url, user_id FROM MessagesViewTable WHERE id = :id")
-    fun getByID(id: Long) : List<MessagesViewTable>
+    fun getByID(id: Long) : MessagesViewTable
 
     @Query("SELECT id, response, url, user_id FROM MessagesViewTable WHERE user_id = :user_id")
     fun getByUserID(user_id: Long) : List<MessagesViewTable>
