@@ -11,12 +11,14 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
 import ru.shadowsparky.messenger.response_utils.responses.ErrorResponse
+import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SQLite.DBListTableWrapper
+import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
 import ru.shadowsparky.messenger.utils.SQLite.DatabaseManager
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
@@ -45,10 +47,18 @@ class RequestBuilder {
     }
 
     private fun cacher(response: retrofit2.Response<*>) {
-        if (offset == 0)
-            db!!.removeAll()
+        if ((db is DBViewTableWrapper) and (offset == 0)) {
+            val db_view = (db as DBViewTableWrapper)
+            val peer_id = db_view.getPeerID(response.body()!! as HistoryResponse)
+            db_view.removeAllByUserID(peer_id)
+        } else {
+            if (offset == 0)
+                db!!.removeAll()
+        }
         db!!.writeToDB(response.body()!! as Response, response.raw().request().url().toString())
     }
+
+
 
     fun setPeerId(peerId: Int) : RequestBuilder {
         this.peerId = peerId
@@ -80,10 +90,11 @@ class RequestBuilder {
 
     fun getHistoryRequest() : RequestBuilder {
         log.print("Get history request...")
+        db = DBViewTableWrapper()
         request = retrofit
             .create(VKApi::class.java)
             .getHistory(offset!!, 20, peerId!!, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
-            .doOnSuccess { check(it.body()!!.error) }
+            .doOnSuccess { cacher(it) }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()

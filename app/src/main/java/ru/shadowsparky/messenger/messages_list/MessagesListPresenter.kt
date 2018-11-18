@@ -10,16 +10,22 @@ import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.response_utils.responses.VKPushResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Logger
+import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
 import javax.inject.Inject
 
 class MessagesListPresenter : MessagesList.Presenter {
     @Inject protected lateinit var model: MessagesList.Model
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var errorUtils: FailureResponseHandler
+    @Inject protected lateinit var db: DBViewTableWrapper
     private var view: MessagesList.View? = null
 
     init {
         App.component.inject(this)
+    }
+
+    override fun removeData() {
+        db.removeAll()
     }
 
     override fun attachView(view: MessagesListView) {

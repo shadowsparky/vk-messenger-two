@@ -8,5 +8,5 @@ class MessagesViewTable : Table {
     @PrimaryKey(autoGenerate = true) var id: Long = 0
     var url: String = ""
     var response: String = ""
-    var user_id: Int = -1
+    var user_id: Long = -1
 }

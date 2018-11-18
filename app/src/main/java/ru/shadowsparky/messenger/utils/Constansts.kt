@@ -25,5 +25,6 @@ open class Constansts {
         val UNHANDLED_EXCEPTION_CODE = 99999
         val DEVICE_ID = "device_id"
         val CLASS_CAST_EXCEPTION_CODE = -101
+        val FIRST_ELEMENT = 0
     }
 }

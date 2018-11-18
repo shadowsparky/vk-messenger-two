@@ -5,6 +5,7 @@ import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import ru.shadowsparky.messenger.utils.SQLite.DBListTableWrapper
+import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
 import ru.shadowsparky.messenger.utils.SQLite.MessagesDB
 import javax.inject.Singleton
 
@@ -18,5 +19,9 @@ class DatabaseModule(val context: Context) {
 
     @Provides
     @Singleton
-    fun provideDbManager() : DBListTableWrapper = DBListTableWrapper()
+    fun provideDBListTableWrapper() : DBListTableWrapper = DBListTableWrapper()
+
+    @Provides
+    @Singleton
+    fun provideDBViewTableWrapper() : DBViewTableWrapper = DBViewTableWrapper()
 }

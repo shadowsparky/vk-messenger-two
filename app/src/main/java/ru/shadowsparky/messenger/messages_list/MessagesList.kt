@@ -24,6 +24,7 @@ interface MessagesList {
         fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int)
         fun attachView(view: MessagesListView)
         fun onActivityDestroying()
+        fun removeData()
     }
 
     interface Model {

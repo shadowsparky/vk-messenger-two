@@ -13,12 +13,16 @@ import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
+import ru.shadowsparky.messenger.utils.SQLite.MessagesViewTable
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import javax.inject.Inject
 
 class MessagesModel : Messages.Model {
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var disposables: CompositeDisposableManager
+    @Inject protected lateinit var db: DBViewTableWrapper
+
     init {
         App.component.inject(this)
     }
@@ -33,6 +37,8 @@ class MessagesModel : Messages.Model {
                 .build()
         disposables.addRequest(request.getDisposable())
     }
+
+    override fun getCachedDialogs(callback: (Response) -> Unit, user_id: Long) = db.getAllByIDWithCallback(callback, user_id)
 
     override fun sendMessage(peerId: Int, message: String, callback: (Response) -> Unit,
                              failureHandler: (Throwable) -> Unit) {

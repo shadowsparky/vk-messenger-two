@@ -41,7 +41,11 @@ class MessagesPresenter : Messages.Presenter {
     override fun onSendMessage(message: String) =
             model.sendMessage(peerId!!, message, ::onSuccessResponse, ::onFailureResponse)
 
-    override fun onFailureResponse(error: Throwable) = errorUtils.onFailureResponse(error)
+    override fun onFailureResponse(error: Throwable) {
+        model.getCachedDialogs(::onSuccessResponse, peerId!!.toLong())
+        view!!.disposeAdapter()
+        errorUtils.onFailureResponse(error)
+    }
 
     override fun onGetPhoto(url: String, image: ImageView) = model.getPhoto(url, image)
 
