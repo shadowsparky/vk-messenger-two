@@ -5,9 +5,9 @@
 package ru.shadowsparky.messenger.response_utils.responses
 
 import com.google.gson.annotations.SerializedName
+import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.pojos.VKError
 
 data class ErrorResponse(
-    @SerializedName("erroasdasdadasdr")
     val error: VKError
-)
+) : Response

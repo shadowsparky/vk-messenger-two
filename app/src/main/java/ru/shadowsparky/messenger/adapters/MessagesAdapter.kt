@@ -44,14 +44,14 @@ open class MessagesAdapter(
         return MainViewHolder(v)
     }
 
-    override fun getItemCount(): Int = data.response.items.size
+    override fun getItemCount(): Int = data.response!!.items.size
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        if ((position == itemCount - 1) and (position != data.response.count - 1)) {
+        if ((position == itemCount - 1) and (position != data.response!!.count - 1)) {
             callback(position + 1)
         }
-        val profiles = data.response.profiles
-        val item = data.response.items[position]
+        val profiles = data.response!!.profiles
+        val item = data.response!!.items[position]
         holder.user_data.text = EMPTY_STRING
         holder.message_data.text = item.last_message.text
         holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
@@ -79,7 +79,7 @@ open class MessagesAdapter(
     }
 
     private fun userDialog(item: VKProfile, user_data: TextView, card: CardView, image: ImageView) {
-        log.print("USER: ${item.first_name} ${item.last_name}")
+//        log.print("USER: ${item.first_name} ${item.last_name}")
         user_data.text = "${item.first_name} ${item.last_name}"
         card.setOnClickListener { _ ->
             touch_callback(
@@ -94,7 +94,7 @@ open class MessagesAdapter(
 
     private fun chatDialog(item: VKItems, user_data: TextView, card: CardView, image: ImageView) {
         val vkChatSettings = item.conversation.chat_settings
-        log.print("CHAT: ${vkChatSettings.title}")
+//        log.print("CHAT: ${vkChatSettings.title}")
         user_data.text = vkChatSettings.title
         card.setOnClickListener { _ ->
 
@@ -105,9 +105,9 @@ open class MessagesAdapter(
 
     fun addData(newData: MessagesResponse) {
         val TMP_MAX = itemCount
-        data.response.profiles.addAll(newData.response.profiles)
+        data.response!!.profiles.addAll(newData.response!!.profiles)
         data.response.items.addAll(newData.response.items)
-//        notifyDataSetChanged()
+        notifyDataSetChanged()
         notifyItemRangeInserted(TMP_MAX, TMP_MAX + newData.response.items.size)
     }
 

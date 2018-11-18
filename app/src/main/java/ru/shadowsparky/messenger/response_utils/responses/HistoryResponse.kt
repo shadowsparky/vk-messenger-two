@@ -8,6 +8,6 @@ import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.pojos.VKHistory
 
 data class HistoryResponse(
-    val response: VKHistory,
-    val error: ErrorResponse?
+    val response: VKHistory//,
+//    val error: ErrorResponse?
 ) : Response

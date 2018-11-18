@@ -48,8 +48,10 @@ class MessagesListPresenter : MessagesList.Presenter {
     override fun onActivityDestroying() = model.disposeRequests()
 
     override fun onScrollFinished(currentOffset: Int) {
-        view!!.setLoading(true)
+//        for (i: Int in 1..10) {
         model.getAllDialogs(::onSuccessResponse, ::onFailureResponse, currentOffset)
+//        }
+        view!!.setLoading(true)
     }
 
     override fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int) =

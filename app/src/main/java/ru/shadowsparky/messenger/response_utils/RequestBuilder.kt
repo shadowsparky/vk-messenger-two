@@ -4,12 +4,14 @@
 
 package ru.shadowsparky.messenger.response_utils
 
+import com.google.gson.Gson
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
+import ru.shadowsparky.messenger.messages_list.MessagesList
 import ru.shadowsparky.messenger.response_utils.responses.ErrorResponse
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
@@ -81,7 +83,7 @@ class RequestBuilder {
         request = retrofit
             .create(VKApi::class.java)
             .sendMessage(peerId!!, message!!, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
-            .doOnSuccess { check(it.body()!!.error) }
+            .doOnSuccess { /*check(it.body()!!.error)*/ }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
@@ -94,7 +96,7 @@ class RequestBuilder {
         request = retrofit
             .create(VKApi::class.java)
             .getHistory(offset!!, 20, peerId!!, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
-            .doOnSuccess { cacher(it) }
+            .doOnSuccess { cacher(it); /*check(it.body()!!.error) */}
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
@@ -107,7 +109,7 @@ class RequestBuilder {
         request = retrofit
             .create(VKApi::class.java)
             .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
-            .doOnSuccess { cacher(it) }
+            .doOnSuccess { cacher(it); check(it.body()!!.error) }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
@@ -123,27 +125,38 @@ class RequestBuilder {
                 preferencesUtils.read(FIREBASE_TOKEN),
                 preferencesUtils.read(DEVICE_ID)
             )
-            .doOnSuccess { check(it.body()!!.error) }
+            .doOnSuccess { /*check(it.body()!!.error)*/ }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
         return this
     }
 
-    private fun check(error: ErrorResponse?) {
-        if (error != null) {
-            log.print("ERROR OBJECT: $error")
-            throw VKException(error.error)
+
+    private fun check(response: ErrorResponse?) {
+//        log.print("checking body: ${Gson().toJson(response)}")
+        if (response != null){
+            log.print("checking body: ${Gson().toJson(response)}")
+            throw VKException(response.error)
+        } else {
+            return
         }
     }
 
     private fun configureCallbacks() {
         result = request!!.subscribeBy (
             onSuccess = {
-                it as retrofit2.Response<*>
-                successCallback!!(it.body()!! as Response)
+//                it as retrofit2.Response<*>
+//                log.print("checking body: ${Gson().toJson(it)}")
+//                if (it.body() is Response) {
+//                    successCallback!!(it.body()!! as Response)
+//                    log.print("Request successfully executed. url: ${it.raw().request().url()}")
+//                } else {
+//                    log.print("DEBUG? ERROR")
+//                }
+//                log.print("body: ${Gson().toJson(it.body())}")
+//                log.print("ebody ${it.errorBody()} code ${it.code()}")
                 // FIXME проверка error body и кодов при ошибках
-                log.print("Request successfully executed. url: ${it.raw().request().url()}")
             } ,
             onError = {
                 log.print("Request was unsuccessfully executed. $it")
