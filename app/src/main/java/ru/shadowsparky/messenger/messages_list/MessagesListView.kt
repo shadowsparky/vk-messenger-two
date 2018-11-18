@@ -48,7 +48,9 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     override fun onResume() {
         super.onResume()
         disposeAdapter()
+        refresher.isRefreshing = true
         presenter.onActivityOpen()
+        refresher.isRefreshing = false
         log.print("MessagesListView activity loaded")
     }
 
@@ -104,7 +106,6 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         presenter.attachView(this)
         refresher.setOnRefreshListener {
             disposeAdapter()
-//            db.removeAllMessagesList()
             presenter.onActivityOpen()
         }
         if (preferencesUtils.read(DEVICE_ID) == "")

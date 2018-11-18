@@ -11,6 +11,7 @@ import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.response_utils.responses.VKPushResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Logger
+import ru.shadowsparky.messenger.utils.SQLite.DatabaseManager
 import ru.shadowsparky.messenger.utils.SQLite.MessagesDB
 import ru.shadowsparky.messenger.utils.SQLite.MessagesListTable
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
@@ -18,6 +19,7 @@ import javax.inject.Inject
 
 class MessagesListModel : MessagesList.Model {
     @Inject protected lateinit var disposables: CompositeDisposableManager
+    @Inject protected lateinit var db: DatabaseManager
 
     init {
         App.component.inject(this)
@@ -41,6 +43,8 @@ class MessagesListModel : MessagesList.Model {
                 .build()
         disposables.addRequest(request.getDisposable())
     }
+
+    override fun getCachedDialogs(callback: (Response) -> Unit) = db.getAllMessagesListWithCallback(callback)
 
     override fun disposeRequests() = disposables.disposeAllRequests()
 }

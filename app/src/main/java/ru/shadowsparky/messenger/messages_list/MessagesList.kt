@@ -32,6 +32,7 @@ interface MessagesList {
                           failureHandler: (Throwable) -> Unit, offset: Int = 0)
         fun subscribeToPush(callback: (Response) -> Unit,
                             failureHandler: (Throwable) -> Unit)
+        fun getCachedDialogs(callback: (Response) -> Unit)
         fun disposeRequests()
     }
 }
