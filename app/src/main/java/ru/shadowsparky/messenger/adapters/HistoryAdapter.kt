@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import ru.shadowsparky.messenger.R
+import ru.shadowsparky.messenger.response_utils.pojos.VKMessage
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.DateUtils
@@ -67,7 +68,7 @@ class HistoryAdapter(
             log.print("Message history loading request... position: $itemCount")
         }
         val item = data.response.items!![position]
-        configureCard(holder.card, item.from_id!!)
+        configureCard(holder.card, item)
         holder.text.text = item.text
         dateUtils.fromUnixToDateAndTimeCalendar(item.date!!)
         val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
@@ -79,16 +80,18 @@ class HistoryAdapter(
         }
     }
 
-    protected fun configureCard(card: CardView, from_id: Int) {
+    protected fun configureCard(card: CardView, item: VKMessage) {
         val params = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         params.setMargins(8,8,8,8)
-        if (from_id == user_id) {
+        if (item.out == 0) {
+//        if (from_id == user_id) {
             params.gravity = Gravity.LEFT
             params.rightMargin = 60
         } else {
             params.gravity = Gravity.RIGHT
             params.leftMargin = 60
         }
+//        log.print("FROM: $from_id USER ID: $user_id")
         card.layoutParams = params
     }
 

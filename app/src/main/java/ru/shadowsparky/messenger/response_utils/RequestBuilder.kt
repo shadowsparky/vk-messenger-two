@@ -146,11 +146,11 @@ class RequestBuilder {
     private fun configureCallbacks() {
         result = request!!.subscribeBy (
             onSuccess = {
-//                it as retrofit2.Response<*>
+                it as retrofit2.Response<*>
 //                log.print("checking body: ${Gson().toJson(it)}")
 //                if (it.body() is Response) {
-//                    successCallback!!(it.body()!! as Response)
-//                    log.print("Request successfully executed. url: ${it.raw().request().url()}")
+                successCallback!!(it.body()!! as Response)
+                log.print("Request successfully executed. url: ${it.raw().request().url()}")
 //                } else {
 //                    log.print("DEBUG? ERROR")
 //                }

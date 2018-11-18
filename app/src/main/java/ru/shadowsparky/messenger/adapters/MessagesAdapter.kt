@@ -16,15 +16,19 @@ import com.hendraanggrian.pikasso.transformations.circle
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toObservable
 import ru.shadowsparky.messenger.R
+import ru.shadowsparky.messenger.response_utils.pojos.VKGroup
 import ru.shadowsparky.messenger.response_utils.pojos.VKItems
 import ru.shadowsparky.messenger.response_utils.pojos.VKProfile
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
+import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.VK_PEER_CHAT
+import ru.shadowsparky.messenger.utils.Constansts.Companion.VK_PEER_GROUP
 import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
+import kotlin.math.abs
 
 open class MessagesAdapter(
         val data: MessagesResponse,
@@ -51,17 +55,25 @@ open class MessagesAdapter(
             callback(position + 1)
         }
         val profiles = data.response!!.profiles
+        val groups = data.response.groups
         val item = data.response!!.items[position]
         holder.user_data.text = EMPTY_STRING
         holder.message_data.text = item.last_message.text
         holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
         if (item.conversation.peer.type == VK_PEER_CHAT)
             chatDialog(item, holder.user_data, holder.card, holder.image)
+
         profiles.toObservable()
             .filter { it.id == item.conversation.peer.id }
             .subscribeBy(
                 onNext = { userDialog(it, holder.user_data, holder.card, holder.image) },
                 onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
+            )
+        groups.toObservable()
+            .filter { it.id == abs(item.conversation.peer.id!!) }
+            .subscribeBy(
+                onNext = { groupDialog(it, holder.user_data, holder.card, holder.image) },
+                onError = {}
             )
 //        log.print("CURSOR IS: $position. Last cursor: $itemCount")
 //        log.print("TMP DATE: $TMPDate")
@@ -93,14 +105,41 @@ open class MessagesAdapter(
     }
 
     private fun chatDialog(item: VKItems, user_data: TextView, card: CardView, image: ImageView) {
-        val vkChatSettings = item.conversation.chat_settings
-//        log.print("CHAT: ${vkChatSettings.title}")
-        user_data.text = vkChatSettings.title
+        val conversation = item.conversation
+        var photo = ""
+        user_data.text = conversation .chat_settings.title
+        if (conversation.chat_settings.photo == null)
+            photo = "https://vk.com/images/camera_100.png?ava=1"
+        else
+            photo = conversation.chat_settings.photo.photo_100
         card.setOnClickListener { _ ->
-
+            touch_callback(
+                conversation.peer.id!!,
+                user_data.text.toString(),
+                photo,
+                STATUS_HIDE
+            )
         }
-        if (vkChatSettings.photo != null)
-            picasso.load(vkChatSettings.photo.photo_100).circle().into(image)
+        picasso.load(photo).circle().into(image)
+    }
+
+    private fun groupDialog(item: VKGroup, user_data: TextView, card: CardView, image: ImageView) {
+//        val conversation = item.conversation
+        var photo = ""
+        user_data.text = item.name
+        if (item.photo_100 == null)
+            photo = "https://vk.com/images/camera_100.png?ava=1"
+        else
+            photo = item.photo_100
+        card.setOnClickListener { _ ->
+            touch_callback(
+                    -item.id,
+                    user_data.text.toString(),
+                    photo,
+                    STATUS_HIDE
+            )
+        }
+        picasso.load(photo).circle().into(image)
     }
 
     fun addData(newData: MessagesResponse) {

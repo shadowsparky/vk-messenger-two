@@ -9,6 +9,7 @@ open class Constansts {
         val USER_ID = "id"
         val EMPTY_STRING = ""
         val VK_PEER_CHAT = "chat"
+        val VK_PEER_GROUP = "group"
         val VK_API_VERSION = 5.87
         val USER_ID_NOT_FOUND = -1
         val DEFAULT_SPAN_VALUE = 1
@@ -17,9 +18,9 @@ open class Constansts {
         val URL = "url"
         val URL_NOT_FOUND = "url not found"
         val ONLINE_STATUS = "online status"
-        val ONLINE_STATUS_NOT_FOUND = -1
         val STATUS_OFFLINE = 0
         val STATUS_ONLINE = 1
+        val STATUS_HIDE = -1
         val FIREBASE_TOKEN = "firebase_token"
         val CONNECTION_ERROR_CODE = -1
         val UNHANDLED_EXCEPTION_CODE = 99999

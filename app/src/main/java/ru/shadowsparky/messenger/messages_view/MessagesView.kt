@@ -5,6 +5,7 @@
 package ru.shadowsparky.messenger.messages_view
 
 import android.os.Bundle
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -16,7 +17,7 @@ import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.CONNECTION_ERROR_CODE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
-import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS_NOT_FOUND
+import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL_NOT_FOUND
@@ -35,7 +36,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
     private var userId = USER_ID_NOT_FOUND
     private var userData = USER_NOT_FOUND
     private var url = URL_NOT_FOUND
-    private var onlineStatus = ONLINE_STATUS_NOT_FOUND
+    private var onlineStatus = STATUS_HIDE
 
     init {
         App.component.inject(this)
@@ -68,10 +69,10 @@ class MessagesView : AppCompatActivity(), Messages.View {
         userId = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
         userData = intent.getStringExtra(USER_DATA)
         url = intent.getStringExtra(URL)
-        onlineStatus = intent.getIntExtra(ONLINE_STATUS, ONLINE_STATUS_NOT_FOUND)
+        onlineStatus = intent.getIntExtra(ONLINE_STATUS, STATUS_HIDE)
         setSupportActionBar(toolbar)
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
-                (url != URL_NOT_FOUND) and (onlineStatus != ONLINE_STATUS_NOT_FOUND)) {
+                (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
                     .attachView(this)
             initToolbar()
@@ -98,6 +99,8 @@ class MessagesView : AppCompatActivity(), Messages.View {
         message_history_user_data.text = userData
         if (onlineStatus == STATUS_OFFLINE) {
             message_history_user_online.text = "Не в сети"
+        } else if (onlineStatus == STATUS_HIDE) {
+            message_history_user_online.visibility = GONE
         } else {
             message_history_user_online.text = "В сети"
         }
