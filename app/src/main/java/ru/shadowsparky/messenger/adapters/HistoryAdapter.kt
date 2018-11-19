@@ -4,18 +4,25 @@
 
 package ru.shadowsparky.messenger.adapters
 
+import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.hendraanggrian.pikasso.picasso
+import com.hendraanggrian.pikasso.transformations.circle
 import ru.shadowsparky.messenger.R
+import ru.shadowsparky.messenger.response_utils.pojos.VKAttachments
 import ru.shadowsparky.messenger.response_utils.pojos.VKMessage
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.App
@@ -31,9 +38,7 @@ class HistoryAdapter(
 ) : RecyclerView.Adapter<HistoryAdapter.MainViewHolder>() {
     @Inject lateinit var log: Logger
     @Inject lateinit var dateUtils: DateUtils
-
-    var current_cursor = 19
-        private set
+    private var context: Context? = null
 
     init {
         App.component.inject(this)
@@ -41,6 +46,7 @@ class HistoryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryAdapter.MainViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.message_history_item, parent, false)
+        context = parent.context
         return HistoryAdapter.MainViewHolder(v)
     }
 
@@ -63,7 +69,6 @@ class HistoryAdapter(
 
     override fun onBindViewHolder(holder: HistoryAdapter.MainViewHolder, position: Int) {
         if ((position == 0) and (itemCount < data.response.count!!)) {
-//            current_cursor = itemCount
             scroll_callback(itemCount)
             log.print("Message history loading request... position: $itemCount")
         }
@@ -78,20 +83,53 @@ class HistoryAdapter(
         } else {
             holder.time.text = dateUtils.fromUnixToTimeString(item.date)
         }
+        includeAttachments(item, holder)
+    }
+
+    private fun includePhoto(attachment: VKAttachments, holder: HistoryAdapter.MainViewHolder) {
+        if (attachment.photo != null) {
+            val url = attachment.photo.sizes[attachment.photo.sizes.size - 1].url
+            val image = ImageView(context)
+            holder.attachment_container.addView(image)
+            picasso.load(url).into(image)
+            holder.attachment_container.visibility = VISIBLE
+        }
+    }
+
+    private fun includeAttachments(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
+        if (item.text == "")
+            holder.text.visibility = GONE
+        for (attachment in item.attachments) {
+            if (attachment.sticker != null) {
+                includeSticker(attachment, holder)
+            }
+
+            if (attachment.photo != null) {
+                includePhoto(attachment, holder)
+            }
+        }
+    }
+
+    private fun includeSticker(attachment: VKAttachments, holder: HistoryAdapter.MainViewHolder) {
+        if (attachment.sticker != null) {
+            val url = attachment.sticker.images[attachment.sticker.images.size - 1].url
+            val image = ImageView(context)
+            holder.attachment_container.addView(image)
+            picasso.load(url).into(image)
+            holder.attachment_container.visibility = VISIBLE
+        }
     }
 
     protected fun configureCard(card: CardView, item: VKMessage) {
         val params = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         params.setMargins(8,8,8,8)
         if (item.out == 0) {
-//        if (from_id == user_id) {
             params.gravity = Gravity.LEFT
             params.rightMargin = 60
         } else {
             params.gravity = Gravity.RIGHT
             params.leftMargin = 60
         }
-//        log.print("FROM: $from_id USER ID: $user_id")
         card.layoutParams = params
     }
 
@@ -99,5 +137,6 @@ class HistoryAdapter(
         val text: TextView = itemView.findViewById(R.id.message_text)
         val card: CardView = itemView.findViewById(R.id.message_history_card)
         val time: TextView = itemView.findViewById(R.id.message_history_time)
+        val attachment_container: LinearLayout = itemView.findViewById(R.id.message_history_attachment)
     }
 }

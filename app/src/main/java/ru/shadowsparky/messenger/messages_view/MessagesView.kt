@@ -19,6 +19,7 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_ONLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
@@ -97,12 +98,10 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     private fun initToolbar() {
         message_history_user_data.text = userData
-        if (onlineStatus == STATUS_OFFLINE) {
-            message_history_user_online.text = "Не в сети"
-        } else if (onlineStatus == STATUS_HIDE) {
-            message_history_user_online.visibility = GONE
-        } else {
-            message_history_user_online.text = "В сети"
+        when (onlineStatus) {
+            STATUS_OFFLINE -> message_history_user_online.text = "Не в сети"
+            STATUS_HIDE -> message_history_user_online.visibility = GONE
+            STATUS_ONLINE -> message_history_user_online.text = "В сети"
         }
         presenter.onGetPhoto(url, message_history_user_photo)
     }
