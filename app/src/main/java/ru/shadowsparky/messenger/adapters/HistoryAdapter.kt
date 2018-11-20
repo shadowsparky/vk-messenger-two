@@ -51,21 +51,22 @@ class HistoryAdapter(
     }
 
     fun reverse() {
-        data.response!!.items!!.reverse()
+        data.response.items!!.reverse()
         data.response.conversations!!.reverse()
         data.response.profiles!!.reverse()
     }
 
     fun addData(response: HistoryResponse) {
         reverse()
-        data.response!!.items!!.addAll(response.response!!.items!!)
+        data.response.items!!.addAll(response.response.items!!)
         data.response.conversations!!.addAll(response.response.conversations!!)
         data.response.profiles!!.addAll(response.response.profiles!!)
         reverse()
+//        notifyDataSetChanged()
         notifyItemRangeInserted(0, response.response.items!!.size)
     }
 
-    override fun getItemCount(): Int = data.response!!.items!!.size
+    override fun getItemCount(): Int = data.response.items!!.size
 
     override fun onBindViewHolder(holder: HistoryAdapter.MainViewHolder, position: Int) {
         if ((position == 0) and (itemCount < data.response.count!!)) {
@@ -86,38 +87,54 @@ class HistoryAdapter(
         includeAttachments(item, holder)
     }
 
-    private fun includePhoto(attachment: VKAttachments, holder: HistoryAdapter.MainViewHolder) {
-        if (attachment.photo != null) {
-            val url = attachment.photo.sizes[attachment.photo.sizes.size - 1].url
-            val image = ImageView(context)
-            holder.attachment_container.addView(image)
-            picasso.load(url).into(image)
-            holder.attachment_container.visibility = VISIBLE
+    private fun includePhotos(attachments: ArrayList<VKAttachments>, holder: HistoryAdapter.MainViewHolder) {
+        if (attachments != null) {
+            for (attachment in attachments) {
+                if (attachment.photo != null) {
+                    if (attachment.type == "photo") {
+                        val url = attachment.photo.sizes[attachment.photo.sizes.size - 1].url
+                        val image = ImageView(context)
+                        holder.attachment_container.addView(image)
+                        picasso.load(url).into(image)
+                        holder.attachment_container.visibility = VISIBLE
+                    }
+                }
+            }
         }
+//        if (attachment.photo != null) {
+//        val url = attachment.photo.sizes[attachment.photo.sizes.size - 1].url
+//        val image = ImageView(context)
+//        holder.attachment_container.addView(image)
+//        picasso.load(url).into(image)
+//        holder.attachment_container.visibility = VISIBLE
+//        }
     }
 
     private fun includeAttachments(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
-        if (item.text == "")
-            holder.text.visibility = GONE
-        for (attachment in item.attachments) {
-            if (attachment.sticker != null) {
-                includeSticker(attachment, holder)
-            }
-
-            if (attachment.photo != null) {
-                includePhoto(attachment, holder)
-            }
-        }
+        includePhotos(item.attachments, holder)
+//        if (item.text == "")
+//            holder.text.visibility = GONE
+//        for (attachment in item.attachments) {
+//            if (attachment.sticker != null) {
+//                log.print("add sticker... ${item.text}")
+//                includeSticker(attachment, holder)
+//            }
+//
+//            if (attachment.photo != null) {
+//                log.print("add photo... Text: ${item.text}")
+//                includePhotos(item.attachments, holder)
+//            }
+//        }
     }
 
     private fun includeSticker(attachment: VKAttachments, holder: HistoryAdapter.MainViewHolder) {
-        if (attachment.sticker != null) {
-            val url = attachment.sticker.images[attachment.sticker.images.size - 1].url
-            val image = ImageView(context)
-            holder.attachment_container.addView(image)
-            picasso.load(url).into(image)
-            holder.attachment_container.visibility = VISIBLE
-        }
+//        if (attachment.sticker != null) {
+//        val url = attachment.sticker.images[attachment.sticker.images.size - 1].url
+//        val image = ImageView(context)
+//        holder.attachment_container.addView(image)
+//        picasso.load(url).into(image)
+//        holder.attachment_container.visibility = VISIBLE
+//        }
     }
 
     protected fun configureCard(card: CardView, item: VKMessage) {
