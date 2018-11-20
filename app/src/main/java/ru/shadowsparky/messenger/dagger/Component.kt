@@ -5,6 +5,7 @@
 package ru.shadowsparky.messenger.dagger
 
 import dagger.Component
+import ru.shadowsparky.messenger.utils.Startup
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthModel
@@ -49,4 +50,5 @@ interface Component {
     fun inject(target: FailureResponseHandler)
     fun inject(target: DBListTableWrapper)
     fun inject(target: DBViewTableWrapper)
+    fun inject(target: Startup)
 }
