@@ -67,8 +67,10 @@ class MessagesView : AppCompatActivity(), Messages.View {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_messages_view)
+        setSupportActionBar(toolbar)
         userId = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
         userData = intent.getStringExtra(USER_DATA)
         url = intent.getStringExtra(URL)
@@ -78,25 +80,18 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
                     .attachView(this)
+            presenter.onGetMessageHistoryRequest()
             push_message.setOnClickListener {
                 presenter.onSendMessage(add_message.text.toString())
             }
         }
         initToolbar()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_messages_view)
-        setSupportActionBar(toolbar)
         val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
         validator.verifyText(add_message, verifyCallback)
     }
 
     override fun onResume() {
         super.onResume()
-        disposeAdapter()
-        presenter.onGetMessageHistoryRequest()
         log.print("MessagesView activity loaded")
     }
 
