@@ -6,15 +6,13 @@ package ru.shadowsparky.messenger.messages_view
 
 import android.os.Bundle
 import android.view.View.GONE
-import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.utils.*
-import ru.shadowsparky.messenger.utils.Constansts.Companion.CONNECTION_ERROR_CODE
+import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
@@ -26,6 +24,9 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
+import ru.shadowsparky.messenger.utils.Logger
+import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
+import ru.shadowsparky.messenger.utils.Validator
 import javax.inject.Inject
 
 class MessagesView : AppCompatActivity(), Messages.View {
@@ -64,25 +65,29 @@ class MessagesView : AppCompatActivity(), Messages.View {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_messages_view)
+    override fun onStart() {
+        super.onStart()
         userId = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
         userData = intent.getStringExtra(USER_DATA)
         url = intent.getStringExtra(URL)
         onlineStatus = intent.getIntExtra(ONLINE_STATUS, STATUS_HIDE)
-        setSupportActionBar(toolbar)
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
                 (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
-                    .attachView(this)
-            initToolbar()
+                .attachView(this)
             push_message.setOnClickListener {
                 presenter.onSendMessage(add_message.text.toString())
             }
         }
         val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
         validator.verifyText(add_message, verifyCallback)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_messages_view)
+        setSupportActionBar(toolbar)
+        initToolbar()
     }
 
     override fun onResume() {

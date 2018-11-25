@@ -10,7 +10,7 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "ru.shadowsparky.messenger"
         minSdkVersion 21
@@ -53,5 +53,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
     implementation "android.arch.persistence.room:runtime:1.1.1"
+    androidTestImplementation('com.android.support.test.espresso:espresso-contrib:2.0') {
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude module: 'recyclerview-v7'
+    }
     kapt "android.arch.persistence.room:compiler:1.1.1"
 }

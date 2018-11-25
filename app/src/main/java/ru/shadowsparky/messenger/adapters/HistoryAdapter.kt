@@ -5,11 +5,11 @@
 package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -62,8 +62,10 @@ class HistoryAdapter(
         data.response.conversations!!.addAll(response.response.conversations!!)
         data.response.profiles!!.addAll(response.response.profiles!!)
         reverse()
-//        notifyDataSetChanged()
-        notifyItemRangeInserted(0, response.response.items!!.size)
+        log.print("ADD DATA: ${data.response.items.size} ${response.response.items.size}")
+        notifyItemRangeChanged(0, data.response.items.size - 1)
+        //notifyDataSetChanged()
+//        notifyItemInserted(data.response.items.size - 1)
     }
 
     override fun getItemCount(): Int = data.response.items!!.size
@@ -87,54 +89,33 @@ class HistoryAdapter(
         includeAttachments(item, holder)
     }
 
-    private fun includePhotos(attachments: ArrayList<VKAttachments>, holder: HistoryAdapter.MainViewHolder) {
-        if (attachments != null) {
-            for (attachment in attachments) {
-                if (attachment.photo != null) {
-                    if (attachment.type == "photo") {
-                        val url = attachment.photo.sizes[attachment.photo.sizes.size - 1].url
-                        val image = ImageView(context)
-                        holder.attachment_container.addView(image)
-                        picasso.load(url).into(image)
-                        holder.attachment_container.visibility = VISIBLE
-                    }
-                }
-            }
-        }
-//        if (attachment.photo != null) {
-//        val url = attachment.photo.sizes[attachment.photo.sizes.size - 1].url
-//        val image = ImageView(context)
-//        holder.attachment_container.addView(image)
-//        picasso.load(url).into(image)
-//        holder.attachment_container.visibility = VISIBLE
-//        }
+    private fun includeAttachment(attachments: LinearLayout, url: String) {
+        val layout = LinearLayout(context)
+        layout.orientation = LinearLayout.VERTICAL
+        val image = ImageView(context)
+        picasso.load(url).into(image)
+        layout.addView(image)
+        attachments.addView(layout, 300, 300)
+    }
+
+    private fun includePhoto(info: VKAttachments, attachments: LinearLayout) {
+        includeAttachment(attachments, info.photo.sizes[info.photo.sizes.size - 1].url)
     }
 
     private fun includeAttachments(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
-        includePhotos(item.attachments, holder)
-//        if (item.text == "")
-//            holder.text.visibility = GONE
-//        for (attachment in item.attachments) {
-//            if (attachment.sticker != null) {
-//                log.print("add sticker... ${item.text}")
-//                includeSticker(attachment, holder)
-//            }
-//
-//            if (attachment.photo != null) {
-//                log.print("add photo... Text: ${item.text}")
-//                includePhotos(item.attachments, holder)
-//            }
-//        }
+        if (item.attachments != null) {
+            holder.attachments.removeAllViews()
+            for (attachment in item.attachments) {
+                when(attachment.type) {
+                    "photo" -> includePhoto(attachment, holder.attachments)
+                    "sticker" -> includeSticker(attachment, holder.attachments)
+                }
+            }
+        }
     }
 
-    private fun includeSticker(attachment: VKAttachments, holder: HistoryAdapter.MainViewHolder) {
-//        if (attachment.sticker != null) {
-//        val url = attachment.sticker.images[attachment.sticker.images.size - 1].url
-//        val image = ImageView(context)
-//        holder.attachment_container.addView(image)
-//        picasso.load(url).into(image)
-//        holder.attachment_container.visibility = VISIBLE
-//        }
+    private fun includeSticker(info: VKAttachments, attachments: LinearLayout) {
+        includeAttachment(attachments, info.sticker.images[info.sticker.images.size - 1].url)
     }
 
     protected fun configureCard(card: CardView, item: VKMessage) {
@@ -154,6 +135,6 @@ class HistoryAdapter(
         val text: TextView = itemView.findViewById(R.id.message_text)
         val card: CardView = itemView.findViewById(R.id.message_history_card)
         val time: TextView = itemView.findViewById(R.id.message_history_time)
-        val attachment_container: LinearLayout = itemView.findViewById(R.id.message_history_attachment)
+        val attachments: LinearLayout = itemView.findViewById(R.id.message_history_attachments)
     }
 }
