@@ -63,9 +63,7 @@ class HistoryAdapter(
         data.response.profiles!!.addAll(response.response.profiles!!)
         reverse()
         log.print("ADD DATA: ${data.response.items.size} ${response.response.items.size}")
-        notifyItemRangeChanged(0, data.response.items.size - 1)
-        //notifyDataSetChanged()
-//        notifyItemInserted(data.response.items.size - 1)
+        notifyItemRangeInserted(0, response.response.items.size)
     }
 
     override fun getItemCount(): Int = data.response.items!!.size
