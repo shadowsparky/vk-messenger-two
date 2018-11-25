@@ -6,6 +6,7 @@ package ru.shadowsparky.messenger.messages_view
 
 import android.os.Bundle
 import android.view.View.GONE
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_view.*
@@ -52,9 +53,10 @@ class MessagesView : AppCompatActivity(), Messages.View {
         adapter = null
     }
 
-    override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit) {
+    override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit,
+                            photo_touch_callback: (ImageView, String) -> Unit) {
         if (adapter == null) {
-            adapter = HistoryAdapter(response, scroll_callback, userId)
+            adapter = HistoryAdapter(response, scroll_callback, photo_touch_callback, userId)
             adapter!!.reverse()
             message_history_list.setHasFixedSize(true)
             message_history_list.layoutManager = GridLayoutManager(this, DEFAULT_SPAN_VALUE)
@@ -93,6 +95,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     override fun onResume() {
         super.onResume()
+        disposeAdapter()
         presenter.onGetMessageHistoryRequest()
         log.print("MessagesView activity loaded")
     }

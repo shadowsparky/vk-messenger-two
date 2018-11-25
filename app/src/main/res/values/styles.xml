@@ -9,6 +9,12 @@
         <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
+    <style name="AppThemeBlack" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@android:color/background_dark</item>
+        <item name="colorPrimaryDark">@android:color/background_dark</item>
+        <item name="android:navigationBarColor">@android:color/black</item>
+    </style>
+
     <style name="AppTheme.toolbar" parent="AppTheme">
         <item name="android:actionMenuTextColor">@android:color/black</item>
         <item name="android:textColorPrimary">@android:color/white</item>

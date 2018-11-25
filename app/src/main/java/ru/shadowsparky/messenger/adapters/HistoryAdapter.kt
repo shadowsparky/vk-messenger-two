@@ -30,10 +30,17 @@ import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
 import java.util.*
 import javax.inject.Inject
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.app.ActivityOptionsCompat
+import ru.shadowsparky.messenger.open_photo.OpenPhotoView
+import android.content.Intent
+import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
+
 
 class HistoryAdapter(
         val data: HistoryResponse,
         val scroll_callback: (Int) -> Unit,
+        val touch_photo_callback: (ImageView, String) -> Unit,
         val user_id: Int
 ) : RecyclerView.Adapter<HistoryAdapter.MainViewHolder>() {
     @Inject lateinit var log: Logger
@@ -87,17 +94,22 @@ class HistoryAdapter(
         includeAttachments(item, holder)
     }
 
-    private fun includeAttachment(attachments: LinearLayout, url: String) {
+    private fun includeAttachment(attachments: LinearLayout, url: String, callback: (ImageView, String) -> Unit = { _, _ -> }) {
         val layout = LinearLayout(context)
         layout.orientation = LinearLayout.VERTICAL
         val image = ImageView(context)
+        image.transitionName = context!!.getString(R.string.transition)
         picasso.load(url).into(image)
+        image.setOnClickListener {
+            callback(image, url)
+        }
         layout.addView(image)
         attachments.addView(layout)
     }
 
     private fun includePhoto(info: VKAttachments, attachments: LinearLayout) {
-        includeAttachment(attachments, info.photo.sizes[info.photo.sizes.size - 1].url)
+        val url = info.photo.sizes[info.photo.sizes.size - 1].url
+        includeAttachment(attachments, url, touch_photo_callback)
     }
 
     private fun includeAttachments(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {

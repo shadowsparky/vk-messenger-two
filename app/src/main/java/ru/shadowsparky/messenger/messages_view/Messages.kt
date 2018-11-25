@@ -13,7 +13,7 @@ import ru.shadowsparky.messenger.utils.SQLite.MessagesViewTable
 interface Messages {
 
     interface View {
-        fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit)
+        fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit, photo_touch_callback: (ImageView, String) -> Unit)
         fun disposeAdapter()
         fun clearMessageText()
     }
@@ -22,6 +22,7 @@ interface Messages {
         fun attachPeerID(peerId: Int) : MessagesPresenter
         fun onGetMessageHistoryRequest()
         fun onScrollFinished(position: Int)
+        fun onPhotoTouched(image: ImageView, url: String)
         fun attachView(view: MessagesView)
         fun onGetPhoto(url: String, image: ImageView)
         fun onSendMessage(message: String)
