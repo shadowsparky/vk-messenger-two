@@ -93,7 +93,7 @@ class HistoryAdapter(
         val image = ImageView(context)
         picasso.load(url).into(image)
         layout.addView(image)
-        attachments.addView(layout, 300, 300)
+        attachments.addView(layout)
     }
 
     private fun includePhoto(info: VKAttachments, attachments: LinearLayout) {

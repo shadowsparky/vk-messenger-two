@@ -71,23 +71,24 @@ class MessagesView : AppCompatActivity(), Messages.View {
         userData = intent.getStringExtra(USER_DATA)
         url = intent.getStringExtra(URL)
         onlineStatus = intent.getIntExtra(ONLINE_STATUS, STATUS_HIDE)
+        log.print("$userId $userData $url $onlineStatus")
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
                 (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
-                .attachView(this)
+                    .attachView(this)
             push_message.setOnClickListener {
                 presenter.onSendMessage(add_message.text.toString())
             }
         }
-        val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
-        validator.verifyText(add_message, verifyCallback)
+        initToolbar()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages_view)
         setSupportActionBar(toolbar)
-        initToolbar()
+        val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
+        validator.verifyText(add_message, verifyCallback)
     }
 
     override fun onResume() {
