@@ -38,7 +38,7 @@ class DBViewTableWrapper : DatabaseManager {
 
     fun getPeerID(data: HistoryResponse) : Long {
         val items = data.response.items
-        if (items!!.size < 0)
+        if (items!!.size <= 0)
             return -1
         return items[0].peer_id!!.toLong()
     }

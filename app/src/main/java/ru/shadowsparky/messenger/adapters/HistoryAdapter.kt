@@ -94,22 +94,23 @@ class HistoryAdapter(
         includeAttachments(item, holder)
     }
 
-    private fun includeAttachment(attachments: LinearLayout, url: String, callback: (ImageView, String) -> Unit = { _, _ -> }) {
+    private fun includeAttachment(attachments: LinearLayout, info: VKAttachments, callback: (ImageView, String) -> Unit = { _, _ -> }) {
         val layout = LinearLayout(context)
         layout.orientation = LinearLayout.VERTICAL
         val image = ImageView(context)
         image.transitionName = context!!.getString(R.string.transition)
-        picasso.load(url).into(image)
+        picasso.load(info.photo.sizes[info.photo.sizes.size - 1].url).into(image)
         image.setOnClickListener {
-            callback(image, url)
+            for (item in info.photo.sizes)
+                if (item.type == "w")
+                    callback(image, item.url)
         }
         layout.addView(image)
         attachments.addView(layout)
     }
 
     private fun includePhoto(info: VKAttachments, attachments: LinearLayout) {
-        val url = info.photo.sizes[info.photo.sizes.size - 1].url
-        includeAttachment(attachments, url, touch_photo_callback)
+        includeAttachment(attachments, info, touch_photo_callback)
     }
 
     private fun includeAttachments(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
@@ -125,7 +126,7 @@ class HistoryAdapter(
     }
 
     private fun includeSticker(info: VKAttachments, attachments: LinearLayout) {
-        includeAttachment(attachments, info.sticker.images[info.sticker.images.size - 1].url)
+        includeAttachment(attachments, info)
     }
 
     protected fun configureCard(card: CardView, item: VKMessage) {
