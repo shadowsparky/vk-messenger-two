@@ -34,7 +34,12 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.core.app.ActivityOptionsCompat
 import ru.shadowsparky.messenger.open_photo.OpenPhotoView
 import android.content.Intent
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.toObservable
+import io.reactivex.schedulers.Schedulers
+import ru.shadowsparky.messenger.response_utils.pojos.VKPhotoSize
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
+import kotlin.collections.HashMap
 
 
 class HistoryAdapter(
@@ -94,17 +99,33 @@ class HistoryAdapter(
         includeAttachments(item, holder)
     }
 
+    private fun getHashmapCard(list: ArrayList<VKPhotoSize>) : HashMap<String, String> {
+        val hashmap = HashMap<String, String>()
+        for (element in list)
+            hashmap[element.type] = element.url
+        return hashmap
+    }
+
+    private fun getOptimalImage(map: HashMap<String, String>) : String? {
+        return when {
+            map["w"] != null -> map["w"]!!
+            map["z"] != null -> map["z"]!!
+            map["y"] != null -> map["y"]!!
+            map["x"] != null -> map["x"]!!
+            map["m"] != null -> map["m"]!!
+            map["s"] != null -> map["s"]!!
+            else -> null
+        }
+    }
+
     private fun includeAttachment(attachments: LinearLayout, info: VKAttachments, callback: (ImageView, String) -> Unit = { _, _ -> }) {
         val layout = LinearLayout(context)
+        val url = getOptimalImage(getHashmapCard(info.photo.sizes))
         layout.orientation = LinearLayout.VERTICAL
         val image = ImageView(context)
         image.transitionName = context!!.getString(R.string.transition)
-        picasso.load(info.photo.sizes[info.photo.sizes.size - 1].url).into(image)
-        image.setOnClickListener {
-            for (item in info.photo.sizes)
-                if (item.type == "w")
-                    callback(image, item.url)
-        }
+        picasso.load(url).into(image)
+        image.setOnClickListener { callback(image, url!!) }
         layout.addView(image)
         attachments.addView(layout)
     }
