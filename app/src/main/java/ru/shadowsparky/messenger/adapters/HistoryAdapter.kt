@@ -5,40 +5,27 @@
 package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
-import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.hendraanggrian.pikasso.picasso
-import com.hendraanggrian.pikasso.transformations.circle
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.response_utils.pojos.VKAttachments
 import ru.shadowsparky.messenger.response_utils.pojos.VKMessage
+import ru.shadowsparky.messenger.response_utils.pojos.VKPhotoSize
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
 import java.util.*
 import javax.inject.Inject
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.app.ActivityOptionsCompat
-import ru.shadowsparky.messenger.open_photo.OpenPhotoView
-import android.content.Intent
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.toObservable
-import io.reactivex.schedulers.Schedulers
-import ru.shadowsparky.messenger.response_utils.pojos.VKPhotoSize
-import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
 import kotlin.collections.HashMap
 
 
@@ -48,8 +35,8 @@ class HistoryAdapter(
         val touch_photo_callback: (ImageView, String) -> Unit,
         val user_id: Int
 ) : RecyclerView.Adapter<HistoryAdapter.MainViewHolder>() {
-    @Inject lateinit var log: Logger
-    @Inject lateinit var dateUtils: DateUtils
+    @Inject protected lateinit var log: Logger
+    @Inject protected lateinit var dateUtils: DateUtils
     private var context: Context? = null
 
     init {
@@ -106,32 +93,35 @@ class HistoryAdapter(
         return hashmap
     }
 
-    private fun getOptimalImage(map: HashMap<String, String>) : String? {
-        return when {
-            map["w"] != null -> map["w"]!!
-            map["z"] != null -> map["z"]!!
-            map["y"] != null -> map["y"]!!
-            map["x"] != null -> map["x"]!!
-            map["m"] != null -> map["m"]!!
-            map["s"] != null -> map["s"]!!
-            else -> null
-        }
+    private fun getOptimalImage(map: HashMap<String, String>) : String? = when {
+        map["w"] != null -> map["w"]!!
+        map["z"] != null -> map["z"]!!
+        map["y"] != null -> map["y"]!!
+        map["x"] != null -> map["x"]!!
+        map["m"] != null -> map["m"]!!
+        map["s"] != null -> map["s"]!!
+        else -> null
     }
 
     private fun includeAttachment(attachments: LinearLayout, info: VKAttachments, callback: (ImageView, String) -> Unit = { _, _ -> }) {
-        val layout = LinearLayout(context)
-        val url = getOptimalImage(getHashmapCard(info.photo.sizes))
-        layout.orientation = LinearLayout.VERTICAL
-        val image = ImageView(context)
-        image.transitionName = context!!.getString(R.string.transition)
-        picasso.load(url).into(image)
-        image.setOnClickListener { callback(image, url!!) }
-        layout.addView(image)
-        attachments.addView(layout)
+        try {
+            val layout = LinearLayout(context)
+            val url = getOptimalImage(getHashmapCard(info.photo.sizes))
+            layout.orientation = LinearLayout.VERTICAL
+            val image = ImageView(context)
+            image.transitionName = context!!.getString(R.string.transition)
+            picasso.load(url).into(image)
+            image.setOnClickListener { callback(image, url!!) }
+            layout.addView(image)
+            attachments.addView(layout)
+        } catch (e: Exception) {
+            log.printError("Ignored exception in History Adapter $e", false)
+        }
     }
 
     private fun includePhoto(info: VKAttachments, attachments: LinearLayout) {
-        includeAttachment(attachments, info, touch_photo_callback)
+        if (info.photo != null)
+            includeAttachment(attachments, info, touch_photo_callback)
     }
 
     private fun includeAttachments(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
@@ -150,7 +140,7 @@ class HistoryAdapter(
         includeAttachment(attachments, info)
     }
 
-    protected fun configureCard(card: CardView, item: VKMessage) {
+    private fun configureCard(card: CardView, item: VKMessage) {
         val params = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         params.setMargins(8,8,8,8)
         if (item.out == 0) {

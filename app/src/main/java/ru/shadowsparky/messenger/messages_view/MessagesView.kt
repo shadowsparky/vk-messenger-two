@@ -70,7 +70,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages_view)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbarview)
         userId = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
         userData = intent.getStringExtra(USER_DATA)
         url = intent.getStringExtra(URL)
@@ -107,7 +107,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
             STATUS_HIDE -> message_history_user_online.visibility = GONE
             STATUS_ONLINE -> message_history_user_online.text = "В сети"
         }
-        presenter.onGetPhoto(url, message_history_user_photo)
+//        presenter.onGetPhoto(url, message_history_user_photo)
     }
 
     override fun onDestroy() {

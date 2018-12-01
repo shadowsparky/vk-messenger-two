@@ -2,13 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/messageitem_date_card"
         android:layout_width="match_parent"
-        app:cardCornerRadius="0dp"
+        app:cardCornerRadius="1dp"
         android:visibility="gone"
         android:layout_height="40dp">
 
@@ -36,6 +39,7 @@
             android:layout_width="match_parent">
 
             <ImageView
+                android:layout_margin="3dp"
                 android:id="@+id/messageitem_photo"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -54,45 +58,38 @@
                 android:padding="5dp"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <TextView
-                    android:layout_marginTop="8dp"
-                    android:textSize="16sp"
-                    android:id="@+id/messageitem_user_data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/app_name" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/messageitem_user_message"
-                        android:layout_height="20dp"
-                        android:text="fffffffffffffffffffffffffffffffffffffffffffff"
-                        android:textColor="@color/messageColor"
-                        android:layout_weight="1"
-                        android:layout_width="match_parent"
-                        android:layout_marginRight="3dp"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        android:id="@+id/messageitem_user_data"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Евгений Самсонов"
+                        android:maxLength="25"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/messageitem_time"
-                        android:layout_height="20dp"
-                        android:layout_gravity="right"
+                        android:layout_width="match_parent"
                         android:gravity="right"
-                        android:textColor="@color/messageColor"
+                        android:layout_height="wrap_content"
                         android:text="10:00"
-                        android:layout_weight="5"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_width="match_parent">
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                    </TextView>
                 </LinearLayout>
-
+                <TextView
+                    android:layout_marginTop="3dp"
+                    android:id="@+id/messageitem_user_message"
+                    android:layout_height="20dp"
+                    android:text="Текст"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#4db6ac</color>
-    <color name="colorPrimaryDark">#4db6ac</color>
-    <color name="colorAccent">#cfd8dc</color>
-    <color name="authBackground">#bf8fdfe9</color>
-    <color name="messageColor">#9e9e9e</color>
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#ffffff</color>
+    <color name="colorAccent">#1e88e5</color>
+    <color name="authBackground">#ffffff</color>
+    <color name="messageColor">#1e88e5</color>
 
     <color name="yellow1">#F9E60E</color>
     <color name="yellow2">#F9F89D</color>
