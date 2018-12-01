@@ -37,6 +37,8 @@ open class MessagesAdapter(
 ) : RecyclerView.Adapter<MessagesAdapter.MainViewHolder>() {
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var dateUtils: DateUtils
+    private val profiles = HashMap<Int, VKProfile>()
+    private val groups = HashMap<Int, VKGroup>()
     private var TMPDate = ""
 
     init {
@@ -45,36 +47,64 @@ open class MessagesAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.message_item, parent, false)
+        addProfiles(data)
         return MainViewHolder(v)
     }
 
     override fun getItemCount(): Int = data.response!!.items.size
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        if ((position == itemCount - 1) and (position != data.response!!.count - 1)) {
-            callback(position + 1)
-        }
-        val profiles = data.response!!.profiles
-        val groups = data.response.groups
         val item = data.response!!.items[position]
+        if ((position == itemCount - 1) and (position != data.response!!.count - 1))
+            callback(position + 1)
         holder.user_data.text = EMPTY_STRING
         holder.message_data.text = item.last_message.text
         holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
-        if (item.conversation.peer.type == VK_PEER_CHAT)
-            chatDialog(item, holder.user_data, holder.card, holder.image)
+        when {
+            item.conversation.peer.type == VK_PEER_CHAT -> chatDialog(item, holder.user_data, holder.card, holder.image)
+            profiles[item.conversation.peer.id] != null -> userDialog(profiles[item.conversation.peer.id]!!, holder.user_data, holder.card, holder.image)
+            groups[abs(item.conversation.peer.id!!)] != null -> groupDialog(groups[abs(item.conversation.peer.id)]!!, holder.user_data, holder.card, holder.image)
+        }
 
-        profiles.toObservable()
-            .filter { it.id == item.conversation.peer.id }
-            .subscribeBy(
-                onNext = { userDialog(it, holder.user_data, holder.card, holder.image) },
-                onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
-            )
-        groups.toObservable()
-            .filter { it.id == abs(item.conversation.peer.id!!) }
-            .subscribeBy(
-                onNext = { groupDialog(it, holder.user_data, holder.card, holder.image) },
-                onError = {}
-            )
+//        profiles.toObservable()
+//            .filter { it.id == item.conversation.peer.id }
+//            .subscribeBy(
+//                onNext = { userDialog(it, holder.user_data, holder.card, holder.image) },
+//                onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
+//            )
+//        groups.toObservable()
+//            .filter { it.id == abs(item.conversation.peer.id!!) }
+//            .subscribeBy(
+//                onNext = { groupDialog(it, holder.user_data, holder.card, holder.image) },
+//                onError = {}
+//            )
+//        log.print("CURSOR IS: $position. Last cursor: $itemCount")
+//        log.print("TMP DATE: $TMPDate")
+//        log.print("CURRENT DATE: ${dateUtils.fromUnixToDateString(item.last_message.date)}")
+//        if (TMPDate != dateUtils.fromUnixToDateString(item.last_message.date)) {
+//            TMPDate = dateUtils.fromUnixToDateString(item.last_message.date)
+//            holder.date_card.visibility = VISIBLE
+//            holder.date_text.text = TMPDate
+//            log.print("ELEMENT VISIBLE")
+//        } else {
+//            holder.date_card.visibility = GONE
+//            log.print("ELEMENT GONE")
+//        }
+//        log.print("________________________________")
+//        }
+
+//        profiles.toObservable()
+//            .filter { it.id == item.conversation.peer.id }
+//            .subscribeBy(
+//                onNext = { userDialog(it, holder.user_data, holder.card, holder.image) },
+//                onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
+//            )
+//        groups.toObservable()
+//            .filter { it.id == abs(item.conversation.peer.id!!) }
+//            .subscribeBy(
+//                onNext = { groupDialog(it, holder.user_data, holder.card, holder.image) },
+//                onError = {}
+//            )
 //        log.print("CURSOR IS: $position. Last cursor: $itemCount")
 //        log.print("TMP DATE: $TMPDate")
 //        log.print("CURRENT DATE: ${dateUtils.fromUnixToDateString(item.last_message.date)}")
@@ -146,8 +176,15 @@ open class MessagesAdapter(
         val TMP_MAX = itemCount
         data.response!!.profiles.addAll(newData.response!!.profiles)
         data.response.items.addAll(newData.response.items)
-        notifyDataSetChanged()
+        addProfiles(newData)
         notifyItemRangeInserted(TMP_MAX, TMP_MAX + newData.response.items.size)
+    }
+
+    private fun addProfiles(newData: MessagesResponse) {
+        for (item in newData.response!!.profiles)
+            profiles[item.id] = item
+        for (item in newData.response.groups)
+            groups[item.id] = item
     }
 
     open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
