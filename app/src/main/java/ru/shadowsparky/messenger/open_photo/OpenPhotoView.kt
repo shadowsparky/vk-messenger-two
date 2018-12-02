@@ -2,6 +2,7 @@ package ru.shadowsparky.messenger.open_photo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.github.chrisbanes.photoview.PhotoViewAttacher
 import kotlinx.android.synthetic.main.activity_open_photo_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.utils.App
