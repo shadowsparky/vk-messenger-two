@@ -58,17 +58,35 @@ open class MessagesAdapter(
         if ((position == itemCount - 1) and (position != data.response!!.count - 1))
             callback(position + 1)
         holder.user_data.text = EMPTY_STRING
-        if (item.last_message.out == 1) {
-            holder.message_data.text = "Вы: ${item.last_message.text}"
-        } else if (profiles[item.conversation.peer.id] != null) {
-            holder.message_data.text = "${profiles[item.conversation.peer.id]!!.first_name}: ${item.last_message.text}"
-        }
-        holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
         when {
             item.conversation.peer.type == VK_PEER_CHAT -> chatDialog(item, holder.user_data, holder.card, holder.image)
             profiles[item.conversation.peer.id] != null -> userDialog(profiles[item.conversation.peer.id]!!, holder.user_data, holder.card, holder.image)
             groups[abs(item.conversation.peer.id!!)] != null -> groupDialog(groups[abs(item.conversation.peer.id)]!!, holder.user_data, holder.card, holder.image)
         }
+        setText(item, holder)
+        setDate(item, holder)
+        setReading(item, holder)
+    }
+
+    private fun setText(item: VKItems, holder: MainViewHolder) {
+        if (item.last_message.out == 1) {
+            holder.message_data.text = "Вы: ${item.last_message.text}"
+        } else if (profiles[item.conversation.peer.id] != null) {
+            holder.message_data.text = "${profiles[item.conversation.peer.id]!!.first_name}: ${item.last_message.text}"
+        }
+    }
+
+    private fun setDate(item: VKItems, holder: MainViewHolder) {
+        val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
+        val messageDate = dateUtils.fromUnixToStrictDate(item.last_message.date!!)
+        if (todayDate > messageDate) {
+            holder.time.text = dateUtils.fromUnixToDateAndTime(item.last_message.date)
+        } else {
+            holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date)
+        }
+    }
+
+    private fun setReading(item: VKItems, holder: MainViewHolder) {
         if (item.conversation.in_read != item.conversation.out_read) {
             holder.user_data.setTypeface(holder.user_data.typeface, Typeface.BOLD)
             holder.message_data.setTypeface(holder.message_data.typeface, Typeface.BOLD)
