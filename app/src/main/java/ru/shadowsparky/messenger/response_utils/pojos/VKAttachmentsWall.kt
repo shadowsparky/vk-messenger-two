@@ -10,5 +10,6 @@ data class VKAttachmentsWall(
     val post_type: String,
     val text: String,
     val market_as_ads: Int,
-    val attachments: ArrayList<VKAttachments>
+    val attachments: ArrayList<VKAttachments>,
+    val copy_history: ArrayList<VKAttachmentsWall>
 ) : Serializable

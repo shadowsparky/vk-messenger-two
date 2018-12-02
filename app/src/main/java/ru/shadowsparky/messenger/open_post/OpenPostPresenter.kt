@@ -34,10 +34,11 @@ class OpenPostPresenter : OpenPost.Presenter {
                 val image = PhotoView(context)
                 model.getImageRequest(image, item.photo.sizes[item.photo.sizes.size - 1].url)
                 layout.addView(image)
-                if (item.wall != null) {
-                    onActivityLoading(item.wall, layout)
-                }
             }
+        }
+        if (data.copy_history != null) {
+            for (item in data.copy_history)
+                onActivityLoading(item, layout)
         }
     }
 }

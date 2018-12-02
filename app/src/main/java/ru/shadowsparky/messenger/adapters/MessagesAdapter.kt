@@ -63,7 +63,11 @@ open class MessagesAdapter(
             profiles[item.conversation.peer.id] != null -> userDialog(profiles[item.conversation.peer.id]!!, holder.user_data, holder.card, holder.image)
             groups[abs(item.conversation.peer.id!!)] != null -> groupDialog(groups[abs(item.conversation.peer.id)]!!, holder.user_data, holder.card, holder.image)
         }
-        setText(item, holder)
+        if ((groups[abs(item.conversation.peer.id!!)] == null) and (item.conversation.peer.type != VK_PEER_CHAT)) {
+            setText(item, holder)
+        } else {
+            holder.message_data.text = item.last_message.text!!
+        }
         setDate(item, holder)
         setReading(item, holder)
     }
