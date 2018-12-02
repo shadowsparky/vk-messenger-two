@@ -32,6 +32,8 @@ class OpenPostPresenter : OpenPost.Presenter {
         if (data.attachments != null) {
             for (item in data.attachments) {
                 val image = PhotoView(context)
+                image.scaleType = ImageView.ScaleType.FIT_CENTER
+                image.adjustViewBounds = true
                 model.getImageRequest(image, item.photo.sizes[item.photo.sizes.size - 1].url)
                 layout.addView(image)
             }

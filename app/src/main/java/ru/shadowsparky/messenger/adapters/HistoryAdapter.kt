@@ -28,9 +28,11 @@ import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
 import ru.shadowsparky.messenger.utils.Constansts.Companion.WALL_DATA
 import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
+import java.lang.RuntimeException
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
@@ -103,7 +105,7 @@ class HistoryAdapter(
     private fun addProfiles(newData: HistoryResponse) {
         for (item in newData.response.profiles!!)
             profiles[item.id] = item
-//        for (item in newData.response)
+//        for (item in newData.response.)
 //            groups[item.id] = item
     }
 
@@ -124,10 +126,16 @@ class HistoryAdapter(
         else -> null
     }
 
-    private fun includeAttachment(attachments: LinearLayout, info: VKAttachments, callback: (ImageView, String) -> Unit = { _, _ -> }) {
+    private fun includeAttachment(attachments: LinearLayout, info: Any, callback: (ImageView, String) -> Unit = { _, _ -> }) {
         try {
             val layout = LinearLayout(context)
-            val url = getOptimalImage(getHashmapCard(info.photo.sizes))
+            var url = when (info) {
+                is VKAttachmentsPhoto -> getOptimalImage(getHashmapCard(info.sizes))
+                is VKAttachmentsSticker -> info.images[info.images.size - 1].url
+                else -> EMPTY_STRING
+            }
+            if (url == EMPTY_STRING)
+                throw RuntimeException()
             layout.orientation = LinearLayout.VERTICAL
             val image = ImageView(context)
             image.transitionName = context!!.getString(R.string.transition)
@@ -141,8 +149,7 @@ class HistoryAdapter(
     }
 
     private fun includePhoto(info: VKAttachments, attachments: LinearLayout) {
-        if (info.photo != null)
-            includeAttachment(attachments, info, touch_photo_callback)
+        includeAttachment(attachments, info.photo, touch_photo_callback)
     }
 
     private fun includeAttachments(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
@@ -172,18 +179,7 @@ class HistoryAdapter(
     }
 
     private fun includeSticker(info: VKAttachments, attachments: LinearLayout) {
-        try {
-            val layout = LinearLayout(context)
-            val url = info.sticker.images.get(info.sticker.images.size - 1).url
-            layout.orientation = LinearLayout.VERTICAL
-            val image = ImageView(context)
-            image.transitionName = context!!.getString(R.string.transition)
-            picasso.load(url).into(image)
-            layout.addView(image)
-            attachments.addView(layout)
-        } catch (e: Exception) {
-            log.printError("Ignored exception in History Adapter $e", false)
-        }
+        includeAttachment(attachments, info.sticker)
     }
 
     private fun configureCard(card: CardView, item: VKMessage, holder: MainViewHolder) {
@@ -197,11 +193,8 @@ class HistoryAdapter(
             holder.image.visibility = GONE
             params.gravity = Gravity.RIGHT
             params.leftMargin = 60
-//            holder.text.setTextColor(context!!.getColor(R.color.messageColor))
-//            card.background = context!!.getDrawable(R.color.current_user_color)
         }
         card.layoutParams = params
-//        holder.card.radius = 8.toFloat()
     }
 
     open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
