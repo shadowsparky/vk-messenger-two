@@ -8,6 +8,8 @@ import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
@@ -16,11 +18,11 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.hendraanggrian.pikasso.picasso
+import com.hendraanggrian.pikasso.transformations.circle
 import ru.shadowsparky.messenger.R
-import ru.shadowsparky.messenger.response_utils.pojos.VKAttachments
-import ru.shadowsparky.messenger.response_utils.pojos.VKMessage
-import ru.shadowsparky.messenger.response_utils.pojos.VKPhotoSize
+import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
+import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
@@ -37,6 +39,7 @@ class HistoryAdapter(
 ) : RecyclerView.Adapter<HistoryAdapter.MainViewHolder>() {
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var dateUtils: DateUtils
+    private val profiles = HashMap<Int, VKProfile>()
     private var context: Context? = null
 
     init {
@@ -46,6 +49,7 @@ class HistoryAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryAdapter.MainViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.message_history_item, parent, false)
         context = parent.context
+        addProfiles(data)
         return HistoryAdapter.MainViewHolder(v)
     }
 
@@ -61,6 +65,7 @@ class HistoryAdapter(
         data.response.conversations!!.addAll(response.response.conversations!!)
         data.response.profiles!!.addAll(response.response.profiles!!)
         reverse()
+        addProfiles(response)
         log.print("ADD DATA: ${data.response.items.size} ${response.response.items.size}")
         notifyItemRangeInserted(0, response.response.items.size)
     }
@@ -73,7 +78,7 @@ class HistoryAdapter(
             log.print("Message history loading request... position: $itemCount")
         }
         val item = data.response.items!![position]
-        configureCard(holder.card, item)
+        configureCard(holder.card, item, holder)
         holder.text.text = item.text
         dateUtils.fromUnixToDateAndTimeCalendar(item.date!!)
         val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
@@ -83,7 +88,15 @@ class HistoryAdapter(
         } else {
             holder.time.text = dateUtils.fromUnixToTimeString(item.date)
         }
+        picasso.load(profiles[item.from_id]?.photo_100)
+                .circle()
+                .into(holder.image)
         includeAttachments(item, holder)
+    }
+
+    private fun addProfiles(newData: HistoryResponse) {
+        for (item in newData.response.profiles!!)
+            profiles[item.id] = item
     }
 
     private fun getHashmapCard(list: ArrayList<VKPhotoSize>) : HashMap<String, String> {
@@ -140,17 +153,22 @@ class HistoryAdapter(
         includeAttachment(attachments, info)
     }
 
-    private fun configureCard(card: CardView, item: VKMessage) {
+    private fun configureCard(card: CardView, item: VKMessage, holder: MainViewHolder) {
         val params = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         params.setMargins(8,8,8,8)
         if (item.out == 0) {
+            holder.image.visibility = VISIBLE
             params.gravity = Gravity.LEFT
             params.rightMargin = 60
         } else {
+            holder.image.visibility = GONE
             params.gravity = Gravity.RIGHT
             params.leftMargin = 60
+//            holder.text.setTextColor(context!!.getColor(R.color.messageColor))
+//            card.background = context!!.getDrawable(R.color.current_user_color)
         }
         card.layoutParams = params
+//        holder.card.radius = 8.toFloat()
     }
 
     open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -158,5 +176,6 @@ class HistoryAdapter(
         val card: CardView = itemView.findViewById(R.id.message_history_card)
         val time: TextView = itemView.findViewById(R.id.message_history_time)
         val attachments: LinearLayout = itemView.findViewById(R.id.message_history_attachments)
+        val image: ImageView = itemView.findViewById(R.id.message_history_user_card)
     }
 }

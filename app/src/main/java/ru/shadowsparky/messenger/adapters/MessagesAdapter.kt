@@ -138,10 +138,10 @@ open class MessagesAdapter(
         val conversation = item.conversation
         var photo = ""
         user_data.text = conversation .chat_settings.title
-        if (conversation.chat_settings.photo == null)
-            photo = "https://vk.com/images/camera_100.png?ava=1"
+        photo = if (conversation.chat_settings.photo == null)
+            "https://vk.com/images/camera_100.png?ava=1"
         else
-            photo = conversation.chat_settings.photo.photo_100
+            conversation.chat_settings.photo.photo_100
         card.setOnClickListener { _ ->
             touch_callback(
                 conversation.peer.id!!,
@@ -157,10 +157,10 @@ open class MessagesAdapter(
 //        val conversation = item.conversation
         var photo = ""
         user_data.text = item.name
-        if (item.photo_100 == null)
-            photo = "https://vk.com/images/camera_100.png?ava=1"
+        photo = if (item.photo_100 == null)
+            "https://vk.com/images/camera_100.png?ava=1"
         else
-            photo = item.photo_100
+            item.photo_100
         card.setOnClickListener { _ ->
             touch_callback(
                     -item.id,
