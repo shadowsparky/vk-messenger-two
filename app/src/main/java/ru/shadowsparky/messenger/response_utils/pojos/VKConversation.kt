@@ -5,6 +5,7 @@
 package ru.shadowsparky.messenger.response_utils.pojos
 
 import ru.shadowsparky.messenger.response_utils.Response
+import java.io.Serializable
 
 data class VKConversation(
     val peer: VKPeer,
@@ -16,4 +17,4 @@ data class VKConversation(
     val push_settings: VKPushSettings,
     val chat_settings: VKChatSettings,
     val can_write: VKCanWrite
-)
+) : Serializable

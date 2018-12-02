@@ -5,6 +5,7 @@
 package ru.shadowsparky.messenger.response_utils.pojos
 
 import ru.shadowsparky.messenger.response_utils.Response
+import java.io.Serializable
 
 data class VKAttachmentsVideo (
     val vid: Int,
@@ -17,4 +18,4 @@ data class VKAttachmentsVideo (
     val image_small: String,
     val views: Int,
     val date: Long
-)
+)  : Serializable

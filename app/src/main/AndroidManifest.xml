@@ -29,7 +29,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".open_photo.OpenPhotoView"></activity>
+        <activity android:name=".open_photo.OpenPhotoView" />
+        <activity android:name=".open_post.OpenPostView"></activity>
     </application>
 
 </manifest>

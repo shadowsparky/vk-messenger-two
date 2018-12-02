@@ -4,6 +4,8 @@
 
 package ru.shadowsparky.messenger.response_utils.pojos
 
+import java.io.Serializable
+
 data class VKProfile(
     val id: Int,
     val first_name: String,
@@ -14,4 +16,4 @@ data class VKProfile(
     val photo_100: String,
     val online: Int,
     val online_mobile: Int
-)
+) : Serializable

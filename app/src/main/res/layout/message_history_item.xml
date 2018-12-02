@@ -11,8 +11,7 @@
         android:layout_width="30dp"
         android:layout_margin="8dp"
         android:layout_gravity="center"
-        android:layout_height="30dp"
-        android:background="@color/colorAccent">
+        android:layout_height="30dp">
 
     </ImageView>
 

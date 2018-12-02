@@ -5,6 +5,7 @@
 package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -18,13 +19,16 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.hendraanggrian.pikasso.picasso
 import com.hendraanggrian.pikasso.transformations.circle
 import ru.shadowsparky.messenger.R
+import ru.shadowsparky.messenger.open_post.OpenPostView
 import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.Constansts.Companion.WALL_DATA
 import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
 import java.util.*
@@ -148,13 +152,38 @@ class HistoryAdapter(
                 when(attachment.type) {
                     "photo" -> includePhoto(attachment, holder.attachments)
                     "sticker" -> includeSticker(attachment, holder.attachments)
+                    "wall" -> includeWall(attachment, holder.attachments)
                 }
             }
         }
     }
 
+    private fun includeWall(info: VKAttachments, attachments: LinearLayout) {
+        val button = MaterialButton(context, null, R.style.Widget_MaterialComponents_Button_OutlinedButton)
+        button.text = "Открыть запись"
+        button.setOnClickListener {
+            if (info.wall != null) {
+                val i = Intent(context, OpenPostView::class.java)
+                i.putExtra(WALL_DATA, info.wall)
+                context!!.startActivity(i)
+            }
+        }
+        attachments.addView(button)
+    }
+
     private fun includeSticker(info: VKAttachments, attachments: LinearLayout) {
-        includeAttachment(attachments, info)
+        try {
+            val layout = LinearLayout(context)
+            val url = info.sticker.images.get(info.sticker.images.size - 1).url
+            layout.orientation = LinearLayout.VERTICAL
+            val image = ImageView(context)
+            image.transitionName = context!!.getString(R.string.transition)
+            picasso.load(url).into(image)
+            layout.addView(image)
+            attachments.addView(layout)
+        } catch (e: Exception) {
+            log.printError("Ignored exception in History Adapter $e", false)
+        }
     }
 
     private fun configureCard(card: CardView, item: VKMessage, holder: MainViewHolder) {

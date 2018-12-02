@@ -23,6 +23,9 @@ import ru.shadowsparky.messenger.notifications.FirebaseRefresher
 import ru.shadowsparky.messenger.open_photo.OpenPhotoModel
 import ru.shadowsparky.messenger.open_photo.OpenPhotoPresenter
 import ru.shadowsparky.messenger.open_photo.OpenPhotoView
+import ru.shadowsparky.messenger.open_post.OpenPostModel
+import ru.shadowsparky.messenger.open_post.OpenPostPresenter
+import ru.shadowsparky.messenger.open_post.OpenPostView
 import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.response_utils.RequestBuilder
@@ -32,7 +35,9 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [AdditionalModule::class, RequestModule::class, DateModule::class, DatabaseModule::class,
-    MessagesListModule::class, MessagesViewModule::class, RxModule::class, AuthModule::class, OpenPhotoModule::class])
+    MessagesListModule::class, MessagesViewModule::class, RxModule::class, AuthModule::class, OpenPhotoModule::class,
+    OpenPostModule::class
+])
 interface Component {
     fun inject(target: AuthView)
     fun inject(target: AuthPresenter)
@@ -57,4 +62,7 @@ interface Component {
     fun inject(target: OpenPhotoPresenter)
     fun inject(target: OpenPhotoModel)
     fun inject(target: OpenPhotoView)
+    fun inject(target: OpenPostView)
+    fun inject(target: OpenPostPresenter)
+    fun inject(target: OpenPostModel)
 }
