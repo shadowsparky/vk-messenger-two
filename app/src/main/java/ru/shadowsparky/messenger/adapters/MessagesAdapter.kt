@@ -4,6 +4,7 @@
 
 package ru.shadowsparky.messenger.adapters
 
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +40,6 @@ open class MessagesAdapter(
     @Inject protected lateinit var dateUtils: DateUtils
     private val profiles = HashMap<Int, VKProfile>()
     private val groups = HashMap<Int, VKGroup>()
-    private var TMPDate = ""
 
     init {
         App.component.inject(this)
@@ -58,70 +58,27 @@ open class MessagesAdapter(
         if ((position == itemCount - 1) and (position != data.response!!.count - 1))
             callback(position + 1)
         holder.user_data.text = EMPTY_STRING
-        holder.message_data.text = item.last_message.text
+        if (item.last_message.out == 1) {
+            holder.message_data.text = "Вы: ${item.last_message.text}"
+        } else if (profiles[item.conversation.peer.id] != null) {
+            holder.message_data.text = "${profiles[item.conversation.peer.id]!!.first_name}: ${item.last_message.text}"
+        }
         holder.time.text = dateUtils.fromUnixToTimeString(item.last_message.date!!)
         when {
             item.conversation.peer.type == VK_PEER_CHAT -> chatDialog(item, holder.user_data, holder.card, holder.image)
             profiles[item.conversation.peer.id] != null -> userDialog(profiles[item.conversation.peer.id]!!, holder.user_data, holder.card, holder.image)
             groups[abs(item.conversation.peer.id!!)] != null -> groupDialog(groups[abs(item.conversation.peer.id)]!!, holder.user_data, holder.card, holder.image)
         }
-
-//        profiles.toObservable()
-//            .filter { it.id == item.conversation.peer.id }
-//            .subscribeBy(
-//                onNext = { userDialog(it, holder.user_data, holder.card, holder.image) },
-//                onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
-//            )
-//        groups.toObservable()
-//            .filter { it.id == abs(item.conversation.peer.id!!) }
-//            .subscribeBy(
-//                onNext = { groupDialog(it, holder.user_data, holder.card, holder.image) },
-//                onError = {}
-//            )
-//        log.print("CURSOR IS: $position. Last cursor: $itemCount")
-//        log.print("TMP DATE: $TMPDate")
-//        log.print("CURRENT DATE: ${dateUtils.fromUnixToDateString(item.last_message.date)}")
-//        if (TMPDate != dateUtils.fromUnixToDateString(item.last_message.date)) {
-//            TMPDate = dateUtils.fromUnixToDateString(item.last_message.date)
-//            holder.date_card.visibility = VISIBLE
-//            holder.date_text.text = TMPDate
-//            log.print("ELEMENT VISIBLE")
-//        } else {
-//            holder.date_card.visibility = GONE
-//            log.print("ELEMENT GONE")
-//        }
-//        log.print("________________________________")
-//        }
-
-//        profiles.toObservable()
-//            .filter { it.id == item.conversation.peer.id }
-//            .subscribeBy(
-//                onNext = { userDialog(it, holder.user_data, holder.card, holder.image) },
-//                onError = { log.print("Во время изменения Holder произошла критическая ошибка... $it") }
-//            )
-//        groups.toObservable()
-//            .filter { it.id == abs(item.conversation.peer.id!!) }
-//            .subscribeBy(
-//                onNext = { groupDialog(it, holder.user_data, holder.card, holder.image) },
-//                onError = {}
-//            )
-//        log.print("CURSOR IS: $position. Last cursor: $itemCount")
-//        log.print("TMP DATE: $TMPDate")
-//        log.print("CURRENT DATE: ${dateUtils.fromUnixToDateString(item.last_message.date)}")
-//        if (TMPDate != dateUtils.fromUnixToDateString(item.last_message.date)) {
-//            TMPDate = dateUtils.fromUnixToDateString(item.last_message.date)
-//            holder.date_card.visibility = VISIBLE
-//            holder.date_text.text = TMPDate
-//            log.print("ELEMENT VISIBLE")
-//        } else {
-//            holder.date_card.visibility = GONE
-//            log.print("ELEMENT GONE")
-//        }
-//        log.print("________________________________")
+        if (item.conversation.in_read != item.conversation.out_read) {
+            holder.user_data.setTypeface(holder.user_data.typeface, Typeface.BOLD)
+            holder.message_data.setTypeface(holder.message_data.typeface, Typeface.BOLD)
+        } else {
+            holder.user_data.setTypeface(holder.user_data.typeface, Typeface.NORMAL)
+            holder.message_data.setTypeface(holder.message_data.typeface, Typeface.NORMAL)
+        }
     }
 
     private fun userDialog(item: VKProfile, user_data: TextView, card: CardView, image: ImageView) {
-//        log.print("USER: ${item.first_name} ${item.last_name}")
         user_data.text = "${item.first_name} ${item.last_name}"
         card.setOnClickListener { _ ->
             touch_callback(
@@ -154,7 +111,6 @@ open class MessagesAdapter(
     }
 
     private fun groupDialog(item: VKGroup, user_data: TextView, card: CardView, image: ImageView) {
-//        val conversation = item.conversation
         var photo = ""
         user_data.text = item.name
         photo = if (item.photo_100 == null)

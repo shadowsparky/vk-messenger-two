@@ -16,7 +16,6 @@
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_marginEnd="8dp"
-
         android:layout_marginBottom="8dp"
         android:transitionName="@string/transition"
         app:layout_constraintBottom_toBottomOf="parent"

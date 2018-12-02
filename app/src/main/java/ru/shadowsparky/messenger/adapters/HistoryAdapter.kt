@@ -5,6 +5,7 @@
 package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
+import android.graphics.Typeface
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -40,6 +41,7 @@ class HistoryAdapter(
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var dateUtils: DateUtils
     private val profiles = HashMap<Int, VKProfile>()
+    private val groups = HashMap<Int, VKGroup>()
     private var context: Context? = null
 
     init {
@@ -97,6 +99,8 @@ class HistoryAdapter(
     private fun addProfiles(newData: HistoryResponse) {
         for (item in newData.response.profiles!!)
             profiles[item.id] = item
+//        for (item in newData.response)
+//            groups[item.id] = item
     }
 
     private fun getHashmapCard(list: ArrayList<VKPhotoSize>) : HashMap<String, String> {
