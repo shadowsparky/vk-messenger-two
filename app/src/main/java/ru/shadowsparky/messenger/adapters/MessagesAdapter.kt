@@ -159,10 +159,12 @@ open class MessagesAdapter(
     }
 
     private fun addProfiles(newData: MessagesResponse) {
-        for (item in newData.response!!.profiles)
-            profiles[item.id] = item
-        for (item in newData.response.groups)
-            groups[item.id] = item
+        if (newData.response!!.profiles != null)
+            for (item in newData.response!!.profiles)
+                profiles[item.id] = item
+        if (newData.response.groups != null)
+            for (item in newData.response.groups)
+                groups[item.id] = item
     }
 
     open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
