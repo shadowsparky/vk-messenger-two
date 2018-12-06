@@ -30,7 +30,12 @@
         </service>
 
         <activity android:name=".open_photo.OpenPhotoView" />
-        <activity android:name=".open_post.OpenPostView"></activity>
+        <activity android:name=".open_post.OpenPostView" />
+
+        <service
+            android:name=".services.SynchronizingService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

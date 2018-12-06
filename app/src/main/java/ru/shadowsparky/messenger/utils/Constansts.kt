@@ -28,5 +28,6 @@ open class Constansts {
         val CLASS_CAST_EXCEPTION_CODE = -101
         val FIRST_ELEMENT = 0
         val WALL_DATA = "wall data"
+        val BROADCAST_RECEIVER_CODE = "brc"
     }
 }
