@@ -4,7 +4,10 @@
 
 package ru.shadowsparky.messenger.messages_list
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
@@ -16,7 +19,9 @@ import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthView
 import ru.shadowsparky.messenger.messages_view.MessagesView
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
+import ru.shadowsparky.messenger.services.SynchronizingService
 import ru.shadowsparky.messenger.utils.*
+import ru.shadowsparky.messenger.utils.Constansts.Companion.BROADCAST_RECEIVER_CODE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
@@ -33,6 +38,8 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     @Inject protected lateinit var colorize: TextColorUtils
     @Inject protected lateinit var db: DBListTableWrapper
     private var adapter: MessagesAdapter? = null
+    private var service: Intent? = null
+    private var receiver: MessagesListView.ResponseReceiver? = null
 
     override fun setLoading(result: Boolean) {
         refresher.isRefreshing = result
@@ -47,6 +54,18 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         disposeAdapter()
         presenter.onScrollFinished()
         log.print("MessagesListView activity loaded")
+        registerReceiver(receiver, IntentFilter(BROADCAST_RECEIVER_CODE))
+        startService()
+    }
+
+    override fun startService() {
+        service = Intent(this, SynchronizingService::class.java)
+        startService(service)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(receiver)
     }
 
     override fun onPause() {
@@ -99,6 +118,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         setContentView(R.layout.activity_messages_list_view)
         setSupportActionBar(toolbar)
         presenter.attachView(this)
+        receiver = MessagesListView.ResponseReceiver(presenter, log)
         refresher.setOnRefreshListener {
             disposeAdapter()
             presenter.onScrollFinished()
@@ -113,5 +133,14 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         super.onDestroy()
         presenter.onActivityDestroying()
         log.print("MessagesListView activity destroyed")
+    }
+
+    class ResponseReceiver(val presenter: MessagesList.Presenter, val log: Logger) : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent!!.action == BROADCAST_RECEIVER_CODE) {
+                val result = intent.getSerializableExtra("test")
+                log.print(result.toString())
+            }
+        }
     }
 }

@@ -132,6 +132,18 @@ class RequestBuilder {
         return this
     }
 
+    fun getLongPollServerRequest() : RequestBuilder {
+        log.print("Subscribe to get long poll server request...")
+        request = retrofit
+                .create(VKApi::class.java)
+                .getLongPollServer(preferencesUtils.read(TOKEN))
+                .doOnSuccess { /*check(it.body()!!.error)*/ }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+        configureCallbacks()
+        return this
+    }
+
 
     private fun check(response: ErrorResponse?) {
 //        log.print("checking body: ${Gson().toJson(response)}")

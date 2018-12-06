@@ -4,15 +4,13 @@
 
 package ru.shadowsparky.messenger.response_utils
 
-import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
-import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
-import ru.shadowsparky.messenger.response_utils.responses.VKPushResponse
+import ru.shadowsparky.messenger.response_utils.pojos.VKLongPollServer
+import ru.shadowsparky.messenger.response_utils.responses.*
+import ru.shadowsparky.messenger.utils.Constansts.Companion.LONG_POLL_VERSION
 import ru.shadowsparky.messenger.utils.Constansts.Companion.VK_API_VERSION
 
 interface VKApi {
@@ -53,4 +51,12 @@ interface VKApi {
         @Query("v") version: Double = VK_API_VERSION,
         @Query("settings") settings: String = "{\"msg\":\"on\", \"chat\":\"on\"}"
     ) : Single<Response<VKPushResponse>>
+
+    @GET("method/messages.getLongPollServer")
+    fun getLongPollServer(
+        @Query("access_token") access_token: String,
+        @Query("need_pts") need_pts: Boolean = true,
+        @Query("lp_version") lp_version: Int = LONG_POLL_VERSION,
+        @Query("v") version: Double = VK_API_VERSION
+    ) : Single<Response<LongPollServerResponse>>
 }

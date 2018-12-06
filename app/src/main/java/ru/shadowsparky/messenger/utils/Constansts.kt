@@ -29,5 +29,6 @@ open class Constansts {
         val FIRST_ELEMENT = 0
         val WALL_DATA = "wall data"
         val BROADCAST_RECEIVER_CODE = "brc"
+        val LONG_POLL_VERSION = 3
     }
 }

@@ -29,6 +29,7 @@ import ru.shadowsparky.messenger.open_post.OpenPostView
 import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.response_utils.RequestBuilder
+import ru.shadowsparky.messenger.services.SynchronizingService
 import ru.shadowsparky.messenger.utils.SQLite.DBListTableWrapper
 import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
 import javax.inject.Singleton
@@ -65,4 +66,5 @@ interface Component {
     fun inject(target: OpenPostView)
     fun inject(target: OpenPostPresenter)
     fun inject(target: OpenPostModel)
+    fun inject(target: SynchronizingService)
 }
