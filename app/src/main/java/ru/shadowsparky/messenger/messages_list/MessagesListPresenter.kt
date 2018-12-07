@@ -48,6 +48,8 @@ class MessagesListPresenter : MessagesList.Presenter {
     override fun onActivityDestroying() = model.disposeRequests()
 
     override fun onScrollFinished(currentOffset: Int) {
+        if (currentOffset == 0)
+            view!!.disposeAdapter()
         model.getAllDialogs(::onSuccessResponse, ::onFailureResponse, currentOffset)
         view!!.setLoading(true)
     }

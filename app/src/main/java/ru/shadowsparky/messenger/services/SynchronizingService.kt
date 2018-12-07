@@ -2,10 +2,15 @@ package ru.shadowsparky.messenger.services
 
 import android.app.IntentService
 import android.content.Intent
+import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import ru.shadowsparky.messenger.response_utils.RequestBuilder
 import ru.shadowsparky.messenger.response_utils.Response
+import ru.shadowsparky.messenger.response_utils.VKApi
+import ru.shadowsparky.messenger.response_utils.VKLongPollApi
+import ru.shadowsparky.messenger.response_utils.pojos.VKLongPoll
+import ru.shadowsparky.messenger.response_utils.pojos.VKLongPollServer
 import ru.shadowsparky.messenger.response_utils.responses.LongPollServerResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
@@ -14,16 +19,16 @@ import ru.shadowsparky.messenger.utils.Logger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SynchronizingService() : IntentService("Synchronizing Service") {
+class SynchronizingService : IntentService("Synchronizing Service") {
     @Inject protected lateinit var disposables: CompositeDisposableManager
     @Inject protected lateinit var log: Logger
     private var broadcast: Intent? = null
     private val TAG = "SYNCHRONIZING_SERVICE"
+    private var long_poll: Retrofit? = null
     private val client = OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
-    private var long_poll: Retrofit? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -49,12 +54,34 @@ class SynchronizingService() : IntentService("Synchronizing Service") {
         if (response is LongPollServerResponse) {
             val response = response.response
             val path = response.server.split('/')
-            if (path.isNotEmpty()) {
+            if (path.size > 1){
                 initLongPoll(path[0])
+                getLongPoll(path[1], response)
             }
         } else {
             failureCallback(RuntimeException("Unrecognized result. Result should be LongPollServerResponse"))
         }
+    }
+
+    private fun getLongPoll(path: String, response: VKLongPollServer) {
+        long_poll!!.create(VKApi::class.java)
+            .getLongPoll(path, response.key, response.ts)
+            .subscribeBy(
+                onSuccess = {
+                    if (it.body()!!.updates.size > 0) {
+                        for (element in it.body()!!.updates)
+                            if (element[0] is Double) {
+                                if (element[0] == 4.0) {
+                                    initBroadcast()
+                                    broadcast!!.putExtra("test", true)
+                                    sendBroadcast(broadcast)
+                                }
+                            }
+                    }
+                },
+                onError = { log.print("ERROR $it", true, TAG)}
+            )
+        getLongPollServer()
     }
 
     private fun getLongPollServer() {

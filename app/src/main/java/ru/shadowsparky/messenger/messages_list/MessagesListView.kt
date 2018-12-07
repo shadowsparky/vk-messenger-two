@@ -138,8 +138,9 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     class ResponseReceiver(val presenter: MessagesList.Presenter, val log: Logger) : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent!!.action == BROADCAST_RECEIVER_CODE) {
-                val result = intent.getSerializableExtra("test")
-                log.print(result.toString())
+                val result = intent.getBooleanExtra("test", false)
+                if (result)
+                    presenter.onScrollFinished()
             }
         }
     }

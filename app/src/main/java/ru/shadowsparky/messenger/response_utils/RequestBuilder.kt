@@ -139,7 +139,7 @@ class RequestBuilder {
                 .getLongPollServer(preferencesUtils.read(TOKEN))
                 .doOnSuccess { /*check(it.body()!!.error)*/ }
                 .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
+//                .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
         return this
     }

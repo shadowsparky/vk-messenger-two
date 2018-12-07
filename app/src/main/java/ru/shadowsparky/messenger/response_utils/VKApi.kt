@@ -7,7 +7,9 @@ package ru.shadowsparky.messenger.response_utils
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
+import ru.shadowsparky.messenger.response_utils.pojos.VKLongPoll
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPollServer
 import ru.shadowsparky.messenger.response_utils.responses.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.LONG_POLL_VERSION
@@ -59,4 +61,15 @@ interface VKApi {
         @Query("lp_version") lp_version: Int = LONG_POLL_VERSION,
         @Query("v") version: Double = VK_API_VERSION
     ) : Single<Response<LongPollServerResponse>>
+
+    @GET("/{method}")
+    fun getLongPoll(
+        @Path("method") method: String,
+        @Query("key") key: String,
+        @Query("ts") ts: Long,
+        @Query("wait") wait: Long = 25,
+        @Query("mode") mode: Long = 8,
+        @Query("version") version: Long = 3,
+        @Query("act") a_check: String = "a_check"
+    ) : Single<Response<VKLongPoll>>
 }
