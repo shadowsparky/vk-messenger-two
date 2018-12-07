@@ -137,8 +137,8 @@ class RequestBuilder {
         request = retrofit
                 .create(VKApi::class.java)
                 .getLongPollServer(preferencesUtils.read(TOKEN))
-                .doOnSuccess { /*check(it.body()!!.error)*/ }
-                .subscribeOn(Schedulers.computation())
+//                .doOnSuccess { /*check(it.body()!!.error)*/ }
+//                .subscribeOn(Schedulers.computation())
 //                .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
         return this

@@ -47,8 +47,10 @@ class MessagesPresenter : Messages.Presenter {
         view!!.startActivity(i, options.toBundle())
     }
 
-    override fun onGetMessageHistoryRequest() =
-            model.getMessageHistory(peerId!!, ::onSuccessResponse, ::onFailureResponse)
+    override fun onGetMessageHistoryRequest() {
+        view!!.disposeAdapter()
+        model.getMessageHistory(peerId!!, ::onSuccessResponse, ::onFailureResponse)
+    }
 
     override fun onScrollFinished(position: Int) =
             model.getMessageHistory(peerId!!,::onSuccessResponse, ::onFailureResponse, position)

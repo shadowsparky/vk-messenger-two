@@ -1,7 +1,10 @@
 package ru.shadowsparky.messenger.services
 
 import android.app.IntentService
+import android.content.BroadcastReceiver
+import android.content.ComponentCallbacks
 import android.content.Intent
+import android.content.IntentFilter
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -29,6 +32,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
+    private var status = false
 
     override fun onCreate() {
         super.onCreate()
@@ -46,6 +50,17 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             .client(client)
             .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
             .build()
+    }
+
+    override fun unregisterReceiver(receiver: BroadcastReceiver?) {
+        super.unregisterReceiver(receiver)
+        disposables.disposeAllRequests()
+        status = true
+    }
+
+    override fun registerReceiver(receiver: BroadcastReceiver?, filter: IntentFilter?): Intent? {
+        return super.registerReceiver(receiver, filter)
+        status = false
     }
 
     private fun failureCallback(e: Throwable) {
@@ -85,7 +100,8 @@ class SynchronizingService : IntentService("Synchronizing Service") {
                 },
                 onError = { log.print("ERROR $it", true, TAG)}
             )
-        getLongPollServer()
+        if (!status)
+            getLongPollServer()
     }
 
     private fun getLongPollServer() {

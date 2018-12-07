@@ -4,6 +4,10 @@
 
 package ru.shadowsparky.messenger.messages_view
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View.GONE
 import android.widget.ImageView
@@ -12,8 +16,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
+import ru.shadowsparky.messenger.messages_list.MessagesList
+import ru.shadowsparky.messenger.messages_list.MessagesListView
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.services.SynchronizingService
+import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
@@ -25,9 +32,6 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
-import ru.shadowsparky.messenger.utils.Logger
-import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
-import ru.shadowsparky.messenger.utils.Validator
 import javax.inject.Inject
 
 class MessagesView : AppCompatActivity(), Messages.View {
@@ -40,6 +44,8 @@ class MessagesView : AppCompatActivity(), Messages.View {
     private var userData = USER_NOT_FOUND
     private var url = URL_NOT_FOUND
     private var onlineStatus = STATUS_HIDE
+    private var service: Intent? = null
+    private var receiver: MessagesView.ResponseReceiver? = null
 
     init {
         App.component.inject(this)
@@ -51,6 +57,15 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     override fun disposeAdapter() {
         adapter = null
+    }
+
+    override fun startService() {
+        service = Intent(this, SynchronizingService::class.java)
+        startService(service)
+    }
+
+    override fun stopService() {
+        stopService(service)
     }
 
     override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit,
@@ -80,6 +95,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
                     .attachView(this)
+            receiver = ResponseReceiver(presenter, log)
             presenter.onGetMessageHistoryRequest()
             push_message.setOnClickListener {
                 presenter.onSendMessage(add_message.text.toString())
@@ -93,10 +109,14 @@ class MessagesView : AppCompatActivity(), Messages.View {
     override fun onResume() {
         super.onResume()
         log.print("MessagesView activity loaded")
+        registerReceiver(receiver, IntentFilter(Constansts.BROADCAST_RECEIVER_CODE))
+        startService()
     }
 
     override fun onPause() {
         super.onPause()
+        unregisterReceiver(receiver)
+        stopService()
         log.print("MessagesView activity paused")
     }
 
@@ -114,5 +134,15 @@ class MessagesView : AppCompatActivity(), Messages.View {
         super.onDestroy()
         presenter.onActivityDestroying()
         log.print("MessagesView activity destroyed")
+    }
+
+    class ResponseReceiver(val presenter: Messages.Presenter, val log: Logger) : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent!!.action == Constansts.BROADCAST_RECEIVER_CODE) {
+                val result = intent.getBooleanExtra("test", false)
+                if (result)
+                    presenter.onGetMessageHistoryRequest()
+            }
+        }
     }
 }

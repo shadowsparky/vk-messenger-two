@@ -69,11 +69,12 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
 
     override fun onStop() {
         super.onStop()
-        unregisterReceiver(receiver)
     }
 
     override fun onPause() {
         super.onPause()
+        unregisterReceiver(receiver)
+        stopService()
         log.print("MessagesListView activity on pause...")
     }
 
