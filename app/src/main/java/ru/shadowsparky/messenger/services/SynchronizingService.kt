@@ -48,7 +48,10 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             .build()
     }
 
-    private fun failureCallback(e: Throwable) = log.printError(e.toString())
+    private fun failureCallback(e: Throwable) {
+        log.printError(e.toString())
+        getLongPollServer()
+    }
 
     private fun longPollServerHandler(response: Response) {
         if (response is LongPollServerResponse) {
@@ -68,10 +71,11 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             .getLongPoll(path, response.key, response.ts)
             .subscribeBy(
                 onSuccess = {
+                    log.print("${it.raw().request().url()}", true, TAG)
                     if (it.body()!!.updates.size > 0) {
                         for (element in it.body()!!.updates)
                             if (element[0] is Double) {
-                                if (element[0] == 4.0) {
+                                if ((element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0) ) {
                                     initBroadcast()
                                     broadcast!!.putExtra("test", true)
                                     sendBroadcast(broadcast)

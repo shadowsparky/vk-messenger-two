@@ -63,6 +63,10 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         startService(service)
     }
 
+    override fun stopService() {
+        stopService(service)
+    }
+
     override fun onStop() {
         super.onStop()
         unregisterReceiver(receiver)
