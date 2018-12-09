@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver
 import android.content.ComponentCallbacks
 import android.content.Intent
 import android.content.IntentFilter
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -38,15 +39,12 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
     private var count = 0
+    private var response: VKLongPollServer? = null
+    private var path: List<String>? = null
 
     override fun onCreate() {
         super.onCreate()
         App.component.inject(this)
-    }
-
-    private fun reInitDisposables() {
-        disposables.disposeAllRequests()
-        disposables = CompositeDisposableManager()
     }
 
     private fun initBroadcast() {
@@ -54,12 +52,14 @@ class SynchronizingService : IntentService("Synchronizing Service") {
         broadcast!!.action = BROADCAST_RECEIVER_CODE
     }
 
-    fun initLongPoll(path: String) {
-        long_poll = Retrofit.Builder().baseUrl("https://$path/")
-            .addCallAdapterFactory(retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory.create())
-            .client(client)
-            .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
-            .build()
+    private fun initLongPoll(path: String) {
+        if (long_poll == null) {
+            long_poll = Retrofit.Builder().baseUrl("https://$path/")
+                .addCallAdapterFactory(retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory.create())
+                .client(client)
+                .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
+                .build()
+        }
     }
 
     override fun onDestroy() {
@@ -71,45 +71,51 @@ class SynchronizingService : IntentService("Synchronizing Service") {
 
     private fun failureCallback(e: Throwable) {
         log.printError(e.toString())
-        reInitDisposables()
         Thread.sleep(5000)
-        getLongPollServer()
+        sendRequest()
     }
 
-    private fun longPollServerHandler(response: Response) {
-        if (response is LongPollServerResponse) {
-            val response = response.response
-            if (response.server != null) {
-                val path = response.server.split('/')
-                if (path.size > 1) {
-                    initLongPoll(path[0])
-                    getLongPoll(path[1], response)
+
+    private fun splitServerPath(data: VKLongPollServer) : List<String>? {
+        if (data.server != null) {
+            val path = data.server.split('/')
+            if (path.size > 1) {
+                return path
+            } else
+                failureCallback(RuntimeException("Request error: Path size too small"))
+        } else
+            failureCallback(RuntimeException("Request error: Server is null"))
+        return null
+    }
+    private fun longPollServerHandler(data: Response) {
+        if (data is LongPollServerResponse) {
+            val data = data.response
+            if (data != null) {
+                path = splitServerPath(data)
+                if (path != null) {
+                    response = data
+                    initLongPoll(path!![0])
+                    getLongPoll(path!![1], response!!)
                 }
-                else {
-                    failureCallback(RuntimeException("Request error: Path size too small"))
-                }
-            } else {
-                failureCallback(RuntimeException("Request error: Server is null"))
-            }
-        } else {
+            } else
+                failureCallback(RuntimeException("Request error: Response is null"))
+        } else
             failureCallback(RuntimeException("Request error: Unrecognized result. Result should be LongPollServerResponse"))
-        }
     }
-
-    private fun getLongPoll(path: String, response: VKLongPollServer) {
-        val request = long_poll!!.create(VKApi::class.java)
-            .getLongPoll(path, response.key, response.ts)
+    private var request: Disposable? = null
+    private fun getLongPoll(path: String, data: VKLongPollServer) {
+        request = long_poll!!.create(VKApi::class.java)
+            .getLongPoll(path, data.key, data.ts)
             .subscribeBy(
                 onSuccess = { longPollHandler(it) },
                 onError = { failureCallback(it) }
             )
-        disposables.addRequest(request)
+        disposables.addRequest(request!!)
     }
 
     private fun longPollHandler(data: retrofit2.Response<VKLongPoll>) {
         log.print("${data.raw().request().url()}", true, TAG)
-        count++
-        log.print("COUNT $count", false, TAG)
+        response!!.ts = data.body()!!.ts.toLong()
         if (data.body()!!.updates.size > 0) {
             for (element in data.body()!!.updates)
                 if (element[0] is Double) {
@@ -119,20 +125,29 @@ class SynchronizingService : IntentService("Synchronizing Service") {
                         sendBroadcast(broadcast)
                     }
                 }
+
         }
-        reInitDisposables()
-        getLongPollServer()
+        sendRequest()
+    }
+
+    private fun sendRequest() {
+        Thread.sleep(2000)
+        if ((response == null) or (path == null))
+            getLongPollServer()
+        else
+            getLongPoll(path!![1], response!!)
     }
 
     private fun getLongPollServer() {
-        val disposable = RequestBuilder()
-            .setCallbacks(this::longPollServerHandler, this::failureCallback)
+        request = RequestBuilder()
+            .setCallbacks(::longPollServerHandler, ::failureCallback)
             .getLongPollServerRequest()
             .build()
-        disposables.addRequest(disposable.getDisposable())
+            .getDisposable()
+        disposables.addRequest(request!!)
     }
 
     override fun onHandleIntent(intent: Intent?) {
-        getLongPollServer()
+        sendRequest()
     }
 }

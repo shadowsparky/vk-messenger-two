@@ -3,8 +3,8 @@ package ru.shadowsparky.messenger.response_utils.pojos
 import java.io.Serializable
 
 data class VKLongPollServer(
-    val key: String,
-    val server: String,
-    val ts: Long,
-    val pts: Long
+    var key: String,
+    var server: String,
+    var ts: Long,
+    var pts: Long
 ) : Serializable
