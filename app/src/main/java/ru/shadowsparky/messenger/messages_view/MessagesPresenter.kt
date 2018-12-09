@@ -78,11 +78,11 @@ class MessagesPresenter : Messages.Presenter {
         when (response) {
             is HistoryResponse -> view!!.setAdapter(response, ::onScrollFinished, ::onPhotoTouched)
             is SendMessageResponse -> {
-                view!!.run {
-                    disposeAdapter()
-                    clearMessageText()
-                }
-                onGetMessageHistoryRequest()
+//                view!!.run {
+//                    disposeAdapter()
+                view!!.clearMessageText()
+//                }
+//                onGetMessageHistoryRequest()
             }
             else -> onFailureResponse(ClassCastException())
         }

@@ -45,6 +45,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
     private var url = URL_NOT_FOUND
     private var onlineStatus = STATUS_HIDE
     private var receiver: MessagesView.ResponseReceiver? = null
+    private val TAG = javaClass.name
 
     init {
         App.component.inject(this)
@@ -60,6 +61,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit,
                             photo_touch_callback: (ImageView, String) -> Unit) {
+        log.print("Current adapter is $adapter", false, TAG)
         if (adapter == null) {
             adapter = HistoryAdapter(response, scroll_callback, photo_touch_callback, userId)
             adapter!!.reverse()
@@ -98,14 +100,14 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     override fun onResume() {
         super.onResume()
-        log.print("MessagesView activity loaded")
+        log.print("MessagesView activity loaded", false, TAG)
         registerReceiver(receiver, IntentFilter(Constansts.BROADCAST_RECEIVER_CODE))
     }
 
     override fun onPause() {
         super.onPause()
         unregisterReceiver(receiver)
-        log.print("MessagesView activity paused")
+        log.print("MessagesView activity paused", false, TAG)
     }
 
     private fun initToolbar() {
@@ -120,15 +122,17 @@ class MessagesView : AppCompatActivity(), Messages.View {
     override fun onDestroy() {
         super.onDestroy()
         presenter.onActivityDestroying()
-        log.print("MessagesView activity destroyed")
+        log.print("MessagesView activity destroyed", false, TAG)
     }
 
     class ResponseReceiver(val presenter: Messages.Presenter, val log: Logger) : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent!!.action == Constansts.BROADCAST_RECEIVER_CODE) {
                 val result = intent.getBooleanExtra("test", false)
-                if (result)
+                if (result) {
                     presenter.onGetMessageHistoryRequest()
+                    log.print("MessageHistoryRequest Long Poll Handled")
+                }
             }
         }
     }

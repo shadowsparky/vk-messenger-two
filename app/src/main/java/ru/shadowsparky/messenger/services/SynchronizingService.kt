@@ -1,3 +1,7 @@
+/*
+ * Copyright Samsonov Eugene (c) 2018
+ */
+
 package ru.shadowsparky.messenger.services
 
 import android.app.IntentService
@@ -22,6 +26,7 @@ import ru.shadowsparky.messenger.utils.Logger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+// FIXME Переполнение стека.
 class SynchronizingService : IntentService("Synchronizing Service") {
     @Inject protected lateinit var disposables: CompositeDisposableManager
     @Inject protected lateinit var log: Logger
@@ -37,6 +42,11 @@ class SynchronizingService : IntentService("Synchronizing Service") {
     override fun onCreate() {
         super.onCreate()
         App.component.inject(this)
+    }
+
+    private fun reInitDisposables() {
+        disposables.disposeAllRequests()
+        disposables = CompositeDisposableManager()
     }
 
     private fun initBroadcast() {
@@ -55,25 +65,34 @@ class SynchronizingService : IntentService("Synchronizing Service") {
     override fun onDestroy() {
         super.onDestroy()
         disposables.disposeAllRequests()
-        log.print("Service killed", true, TAG)
+        log.print("$TAG dead. Rest in Peace", true, TAG)
     }
 
 
     private fun failureCallback(e: Throwable) {
         log.printError(e.toString())
+        reInitDisposables()
+        Thread.sleep(5000)
         getLongPollServer()
     }
 
     private fun longPollServerHandler(response: Response) {
         if (response is LongPollServerResponse) {
             val response = response.response
-            val path = response.server.split('/')
-            if (path.size > 1){
-                initLongPoll(path[0])
-                getLongPoll(path[1], response)
+            if (response.server != null) {
+                val path = response.server.split('/')
+                if (path.size > 1) {
+                    initLongPoll(path[0])
+                    getLongPoll(path[1], response)
+                }
+                else {
+                    failureCallback(RuntimeException("Request error: Path size too small"))
+                }
+            } else {
+                failureCallback(RuntimeException("Request error: Server is null"))
             }
         } else {
-            failureCallback(RuntimeException("Unrecognized result. Result should be LongPollServerResponse"))
+            failureCallback(RuntimeException("Request error: Unrecognized result. Result should be LongPollServerResponse"))
         }
     }
 
@@ -82,7 +101,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             .getLongPoll(path, response.key, response.ts)
             .subscribeBy(
                 onSuccess = { longPollHandler(it) },
-                onError = { log.print("ERROR $it", true, TAG)}
+                onError = { failureCallback(it) }
             )
         disposables.addRequest(request)
     }
@@ -101,6 +120,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
                     }
                 }
         }
+        reInitDisposables()
         getLongPollServer()
     }
 
