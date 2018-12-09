@@ -44,7 +44,6 @@ class MessagesView : AppCompatActivity(), Messages.View {
     private var userData = USER_NOT_FOUND
     private var url = URL_NOT_FOUND
     private var onlineStatus = STATUS_HIDE
-    private var service: Intent? = null
     private var receiver: MessagesView.ResponseReceiver? = null
 
     init {
@@ -57,15 +56,6 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     override fun disposeAdapter() {
         adapter = null
-    }
-
-    override fun startService() {
-        service = Intent(this, SynchronizingService::class.java)
-        startService(service)
-    }
-
-    override fun stopService() {
-        stopService(service)
     }
 
     override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit,
@@ -110,13 +100,11 @@ class MessagesView : AppCompatActivity(), Messages.View {
         super.onResume()
         log.print("MessagesView activity loaded")
         registerReceiver(receiver, IntentFilter(Constansts.BROADCAST_RECEIVER_CODE))
-        startService()
     }
 
     override fun onPause() {
         super.onPause()
         unregisterReceiver(receiver)
-        stopService()
         log.print("MessagesView activity paused")
     }
 
@@ -127,7 +115,6 @@ class MessagesView : AppCompatActivity(), Messages.View {
             STATUS_HIDE -> message_history_user_online.visibility = GONE
             STATUS_ONLINE -> message_history_user_online.text = "В сети"
         }
-//        presenter.onGetPhoto(url, message_history_user_photo)
     }
 
     override fun onDestroy() {

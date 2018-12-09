@@ -32,7 +32,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
-    private var status = false
+    private var count = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -52,16 +52,12 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             .build()
     }
 
-    override fun unregisterReceiver(receiver: BroadcastReceiver?) {
-        super.unregisterReceiver(receiver)
+    override fun onDestroy() {
+        super.onDestroy()
         disposables.disposeAllRequests()
-        status = true
+        log.print("Service killed", true, TAG)
     }
 
-    override fun registerReceiver(receiver: BroadcastReceiver?, filter: IntentFilter?): Intent? {
-        return super.registerReceiver(receiver, filter)
-        status = false
-    }
 
     private fun failureCallback(e: Throwable) {
         log.printError(e.toString())
@@ -82,26 +78,30 @@ class SynchronizingService : IntentService("Synchronizing Service") {
     }
 
     private fun getLongPoll(path: String, response: VKLongPollServer) {
-        long_poll!!.create(VKApi::class.java)
+        val request = long_poll!!.create(VKApi::class.java)
             .getLongPoll(path, response.key, response.ts)
             .subscribeBy(
-                onSuccess = {
-                    log.print("${it.raw().request().url()}", true, TAG)
-                    if (it.body()!!.updates.size > 0) {
-                        for (element in it.body()!!.updates)
-                            if (element[0] is Double) {
-                                if ((element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0) ) {
-                                    initBroadcast()
-                                    broadcast!!.putExtra("test", true)
-                                    sendBroadcast(broadcast)
-                                }
-                            }
-                    }
-                },
+                onSuccess = { longPollHandler(it) },
                 onError = { log.print("ERROR $it", true, TAG)}
             )
-        if (!status)
-            getLongPollServer()
+        disposables.addRequest(request)
+    }
+
+    private fun longPollHandler(data: retrofit2.Response<VKLongPoll>) {
+        log.print("${data.raw().request().url()}", true, TAG)
+        count++
+        log.print("COUNT $count", false, TAG)
+        if (data.body()!!.updates.size > 0) {
+            for (element in data.body()!!.updates)
+                if (element[0] is Double) {
+                    if ((element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0) ) {
+                        initBroadcast()
+                        broadcast!!.putExtra("test", true)
+                        sendBroadcast(broadcast)
+                    }
+                }
+        }
+        getLongPollServer()
     }
 
     private fun getLongPollServer() {

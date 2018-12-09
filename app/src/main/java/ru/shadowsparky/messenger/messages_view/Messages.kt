@@ -15,8 +15,6 @@ interface Messages {
     interface View {
         fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit, photo_touch_callback: (ImageView, String) -> Unit)
         fun disposeAdapter()
-        fun startService()
-        fun stopService()
         fun clearMessageText()
     }
 

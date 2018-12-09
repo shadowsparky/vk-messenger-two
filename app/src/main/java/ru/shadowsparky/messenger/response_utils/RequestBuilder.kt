@@ -38,6 +38,7 @@ class RequestBuilder {
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var retrofit: Retrofit
     @Inject protected lateinit var log: Logger
+    private val TAG = this.javaClass.name
 
     init {
         App.component.inject(this)
@@ -79,7 +80,7 @@ class RequestBuilder {
     }
 
     fun sendMessageRequest() : RequestBuilder {
-        log.print("Send message request...")
+        log.print("Send message request...", true, TAG)
         request = retrofit
             .create(VKApi::class.java)
             .sendMessage(peerId!!, message!!, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
@@ -91,7 +92,7 @@ class RequestBuilder {
     }
 
     fun getHistoryRequest() : RequestBuilder {
-        log.print("Get history request...")
+        log.print("Get history request...", true, TAG)
         db = DBViewTableWrapper()
         request = retrofit
             .create(VKApi::class.java)
@@ -105,7 +106,7 @@ class RequestBuilder {
 
     fun getDialogsRequest() : RequestBuilder {
         db = DBListTableWrapper()
-        log.print("Get dialogs request...")
+        log.print("Get dialogs request...", true, TAG)
         request = retrofit
             .create(VKApi::class.java)
             .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
@@ -117,7 +118,7 @@ class RequestBuilder {
     }
 
     fun subscribeToPushRequest() : RequestBuilder {
-        log.print("Subscribe to push request...")
+        log.print("Subscribe to push request...", true, TAG)
         request = retrofit
             .create(VKApi::class.java)
             .subscribeToPush(
@@ -133,7 +134,7 @@ class RequestBuilder {
     }
 
     fun getLongPollServerRequest() : RequestBuilder {
-        log.print("Subscribe to get long poll server request...")
+        log.print("Subscribe to get long poll server request...", true, TAG)
         request = retrofit
                 .create(VKApi::class.java)
                 .getLongPollServer(preferencesUtils.read(TOKEN))
@@ -148,7 +149,7 @@ class RequestBuilder {
     private fun check(response: ErrorResponse?) {
 //        log.print("checking body: ${Gson().toJson(response)}")
         if (response != null){
-            log.print("checking body: ${Gson().toJson(response)}")
+            log.print("checking body: ${Gson().toJson(response)}", true, TAG)
             throw VKException(response.error)
         } else {
             return
@@ -162,7 +163,7 @@ class RequestBuilder {
 //                log.print("checking body: ${Gson().toJson(it)}")
 //                if (it.body() is Response) {
                 successCallback!!(it.body()!! as Response)
-                log.print("Request successfully executed. url: ${it.raw().request().url()}")
+                log.print("Request successfully executed. url: ${it.raw().request().url()}", true, TAG)
 //                } else {
 //                    log.print("DEBUG? ERROR")
 //                }
@@ -171,7 +172,7 @@ class RequestBuilder {
                 // FIXME проверка error body и кодов при ошибках
             } ,
             onError = {
-                log.print("Request was unsuccessfully executed. $it")
+                log.print("Request was unsuccessfully executed. $it", true, TAG)
                 failureCallback!!(it)
             }
         )

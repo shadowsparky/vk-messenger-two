@@ -37,9 +37,10 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var colorize: TextColorUtils
     @Inject protected lateinit var db: DBListTableWrapper
+    private val TAG = javaClass.name
     private var adapter: MessagesAdapter? = null
-    private var service: Intent? = null
-    private var receiver: MessagesListView.ResponseReceiver? = null
+//    private lateinit var service: Intent
+    private lateinit var receiver: MessagesListView.ResponseReceiver
 
     override fun setLoading(result: Boolean) {
         refresher.isRefreshing = result
@@ -53,29 +54,24 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         super.onResume()
         disposeAdapter()
         presenter.onScrollFinished()
-        log.print("MessagesListView activity loaded")
+        log.print("MessagesListView activity loaded", true, TAG)
         registerReceiver(receiver, IntentFilter(BROADCAST_RECEIVER_CODE))
-        startService()
     }
 
     override fun startService() {
-        service = Intent(this, SynchronizingService::class.java)
+        val service = Intent(this, SynchronizingService::class.java)
         startService(service)
     }
 
     override fun stopService() {
+        val service = Intent(this, SynchronizingService::class.java)
         stopService(service)
-    }
-
-    override fun onStop() {
-        super.onStop()
     }
 
     override fun onPause() {
         super.onPause()
         unregisterReceiver(receiver)
-        stopService()
-        log.print("MessagesListView activity on pause...")
+        log.print("MessagesListView activity on pause...", true, TAG)
     }
 
     override fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int) {
@@ -123,11 +119,9 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         setContentView(R.layout.activity_messages_list_view)
         setSupportActionBar(toolbar)
         presenter.attachView(this)
+        startService()
         receiver = MessagesListView.ResponseReceiver(presenter, log)
-        refresher.setOnRefreshListener {
-            disposeAdapter()
-            presenter.onScrollFinished()
-        }
+        refresher.setOnRefreshListener{ presenter.onScrollFinished() }
         if (preferencesUtils.read(DEVICE_ID) == "")
             preferencesUtils.write(DEVICE_ID, Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
         log.print("FIREBASE TOKEN: ${preferencesUtils.read(FIREBASE_TOKEN)}")
@@ -137,7 +131,8 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     override fun onDestroy() {
         super.onDestroy()
         presenter.onActivityDestroying()
-        log.print("MessagesListView activity destroyed")
+        stopService()
+        log.print("MessagesListView activity destroyed", true, TAG)
     }
 
     class ResponseReceiver(val presenter: MessagesList.Presenter, val log: Logger) : BroadcastReceiver() {

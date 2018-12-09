@@ -17,6 +17,7 @@ import javax.inject.Inject
 class DBListTableWrapper : DatabaseManager {
     @Inject protected lateinit var db: MessagesDB
     @Inject protected lateinit var log: Logger
+    private val TAG = this.javaClass.name
 
     override fun getLastID() : Long = db.MessagesListDao().getLastID()
 
@@ -35,7 +36,7 @@ class DBListTableWrapper : DatabaseManager {
                 }
             }
             db.MessagesListDao().insert(element)
-            log.print("Элемент списка сообщений был успешно записан в базу данных")
+            log.print("Элемент списка сообщений был успешно записан в базу данных", true, TAG)
         }
     }
 
@@ -55,7 +56,7 @@ class DBListTableWrapper : DatabaseManager {
 
     override fun removeAll() = Thread {
         db.MessagesListDao().removeAll()
-        log.print("БД списка сообщений была очищена")
+        log.print("БД списка сообщений была очищена", true, TAG)
     }.start()
 
     override fun convertJsonToObject(json: String) : MessagesResponse = Gson().fromJson(json, MessagesResponse::class.java)

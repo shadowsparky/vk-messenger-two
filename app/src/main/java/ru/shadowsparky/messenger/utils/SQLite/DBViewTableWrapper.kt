@@ -15,6 +15,7 @@ import javax.inject.Inject
 class DBViewTableWrapper : DatabaseManager {
     @Inject protected lateinit var db: MessagesDB
     @Inject protected lateinit var log: Logger
+    private val TAG = this.javaClass.name
 
     init {
         App.component.inject(this)
@@ -32,7 +33,7 @@ class DBViewTableWrapper : DatabaseManager {
                 }
             }
             db.MessagesViewDao().insert(element)
-            log.print("История с пользователем ${getPeerID(data)} была успешно записана в базу данных")
+            log.print("История с пользователем ${getPeerID(data)} была успешно записана в базу данных", true, TAG)
         }
     }
 
@@ -63,7 +64,7 @@ class DBViewTableWrapper : DatabaseManager {
             .subscribeBy(
                 onNext = { callback(it as Response) }
             )
-        log.print("Запрос переписки с пользователем $user_id был выполнен")
+        log.print("Запрос переписки с пользователем $user_id был выполнен", true, TAG)
     }.start()
 
     override fun getAll(): List<MessagesViewTable> = db.MessagesViewDao().getAll()
@@ -74,12 +75,12 @@ class DBViewTableWrapper : DatabaseManager {
 
     fun removeAllByUserID(user_id: Long)  {
         db.MessagesViewDao().removeAllByUserID(user_id)
-        log.print("Переписка с пользователем $user_id была очищена")
+        log.print("Переписка с пользователем $user_id была очищена", true, TAG)
     }
 
     override fun removeAll() = Thread {
         db.MessagesViewDao().removeAll()
-        log.print("БД истории сообщений со всеми пользователями была очищена")
+        log.print("БД истории сообщений со всеми пользователями была очищена", true, TAG)
     }.start()
 
     override fun convertJsonToObject(json: String): HistoryResponse = Gson().fromJson(json, HistoryResponse::class.java)
