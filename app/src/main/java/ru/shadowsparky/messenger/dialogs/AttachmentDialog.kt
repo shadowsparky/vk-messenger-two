@@ -30,7 +30,6 @@ class AttachmentDialog : Dialog {
     }
 
     private fun injectWallAttachments(data: VKAttachmentsWall?) {
-        val fd =
         if (data != null) {
             if (data.text != null) {
                 val text = TextView(context)

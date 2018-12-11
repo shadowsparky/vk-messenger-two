@@ -10,8 +10,7 @@ import android.graphics.Typeface
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
@@ -167,18 +166,16 @@ class HistoryAdapter(
     }
 
     private fun includeWall(info: VKAttachments, attachments: LinearLayout) {
-        val button = MaterialButton(context, null, R.style.Widget_MaterialComponents_Button_OutlinedButton)
+        val button = MaterialButton(context)
         button.text = "Открыть запись"
-//        button.width = 500
-//        button.textAlignment
-//        button.height = 200
+        button.width = 500
+        button.height = 200
+        button.gravity = Gravity.CENTER
+        button.textAlignment = TEXT_ALIGNMENT_CENTER
         button.setOnClickListener {
             if (info.wall != null) {
                 val dialog = AttachmentDialog(context!!, info.wall)
                 dialog.show()
-//                val i = Intent(context, OpenPostView::class.java)
-//                i.putExtra(WALL_DATA, info.wall)
-//                context!!.startActivity(i)
             }
         }
         attachments.addView(button)
