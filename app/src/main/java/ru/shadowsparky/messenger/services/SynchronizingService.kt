@@ -117,23 +117,26 @@ class SynchronizingService : IntentService("Synchronizing Service") {
     private fun longPollHandler(data: retrofit2.Response<VKLongPoll>) {
         log.print("${data.raw().request().url()}", true, TAG)
         response!!.ts = data.body()!!.ts.toLong()
-        if (data.body()!!.updates.size > 0) {
-            for (element in data.body()!!.updates)
-                if (element[0] is Double) {
-                    if ((element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0) ) {
-                        initBroadcast()
-                        broadcast!!.putExtra("test", true)
-                        sendBroadcast(broadcast)
+        if (data.body()!!.updates != null) {
+            if (data.body()!!.updates.size > 0) {
+                for (element in data.body()!!.updates)
+                    if (element[0] is Double) {
+                        if ((element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0)) {
+                            initBroadcast()
+                            broadcast!!.putExtra("test", true)
+                            sendBroadcast(broadcast)
+                        }
                     }
-                }
-
-        }
+                    else
+                        failureCallback(RuntimeException("Request Error: First element unrecognized"))
+            } else
+                failureCallback(RuntimeException("Request Error: Updates size is 0"))
+        } else
+            failureCallback(RuntimeException("Request Error: Updates is null"))
         Request_Flag = true
-//        sendRequest()
     }
 
     private fun sendRequest() {
-//        Thread.sleep(2000)
         if ((response == null) or (path == null))
             getLongPollServer()
         else
