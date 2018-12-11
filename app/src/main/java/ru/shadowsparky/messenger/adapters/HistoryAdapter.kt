@@ -152,6 +152,12 @@ class HistoryAdapter(
         includeAttachment(attachments, info.photo, touch_photo_callback)
     }
 
+    private fun includeReplyMessage(info: VKMessage) {
+        if (info.reply_message != null) {
+
+        }
+    }
+
     private fun includeAttachments(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
         if (item.attachments != null) {
             holder.attachments.removeAllViews()

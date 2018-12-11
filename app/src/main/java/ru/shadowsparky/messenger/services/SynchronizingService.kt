@@ -41,6 +41,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
     private var count = 0
     private var response: VKLongPollServer? = null
     private var path: List<String>? = null
+    private var Request_Flag = true
 
     override fun onCreate() {
         super.onCreate()
@@ -72,7 +73,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
     private fun failureCallback(e: Throwable) {
         log.printError(e.toString())
         Thread.sleep(5000)
-        sendRequest()
+        Request_Flag = true
     }
 
 
@@ -127,11 +128,12 @@ class SynchronizingService : IntentService("Synchronizing Service") {
                 }
 
         }
-        sendRequest()
+        Request_Flag = true
+//        sendRequest()
     }
 
     private fun sendRequest() {
-        Thread.sleep(2000)
+//        Thread.sleep(2000)
         if ((response == null) or (path == null))
             getLongPollServer()
         else
@@ -148,6 +150,11 @@ class SynchronizingService : IntentService("Synchronizing Service") {
     }
 
     override fun onHandleIntent(intent: Intent?) {
-        sendRequest()
+        while (true) {
+            if (Request_Flag) {
+                Request_Flag = false
+                sendRequest()
+            }
+        }
     }
 }
