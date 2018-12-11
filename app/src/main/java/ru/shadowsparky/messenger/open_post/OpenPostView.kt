@@ -9,6 +9,7 @@ import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.WALL_DATA
 import javax.inject.Inject
 
+@Deprecated("Не используется и скоро будет удалено. Заменен на dialogs.AttachmentDialog}")
 class OpenPostView : AppCompatActivity(), OpenPost.View {
     @Inject protected lateinit var presenter: OpenPostPresenter
     private var data: VKAttachmentsWall? = null

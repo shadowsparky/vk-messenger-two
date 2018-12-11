@@ -9,6 +9,7 @@ import ru.shadowsparky.messenger.response_utils.pojos.VKAttachmentsWall
 import ru.shadowsparky.messenger.utils.App
 import javax.inject.Inject
 
+@Deprecated("Не используется и скоро будет удалено. Заменен на dialogs.AttachmentDialog}")
 class OpenPostPresenter : OpenPost.Presenter {
     private var view: OpenPost.View? = null
     private var context: Context? = null

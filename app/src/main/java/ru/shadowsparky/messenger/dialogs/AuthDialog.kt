@@ -1,3 +1,7 @@
+/*
+ * Copyright Samsonov Eugene (c) 2018
+ */
+
 package ru.shadowsparky.messenger.dialogs
 
 import android.app.Dialog
@@ -19,10 +23,8 @@ import ru.shadowsparky.messenger.utils.ToastUtils
 import javax.inject.Inject
 
 open class AuthDialog(context: Context, val callback: () -> Unit) : Dialog(context) {
-    @Inject
-    lateinit var log: Logger
-    @Inject
-    lateinit var preferences: SharedPreferencesUtils
+    @Inject lateinit var log: Logger
+    @Inject lateinit var preferences: SharedPreferencesUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

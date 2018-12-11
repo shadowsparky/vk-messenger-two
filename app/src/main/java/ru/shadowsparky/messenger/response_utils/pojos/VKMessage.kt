@@ -4,7 +4,6 @@
 
 package ru.shadowsparky.messenger.response_utils.pojos
 
-import ru.shadowsparky.messenger.response_utils.Response
 import java.io.Serializable
 
 data class VKMessage(
@@ -21,5 +20,7 @@ data class VKMessage(
     val text: String?,
     val random_id: Int?,
     val important: Boolean?,
-    val payload: String?
+    val payload: String?,
+    val reply_message: VKMessage?,
+    val fwd_messages: ArrayList<VKMessage>?
 ) : Serializable

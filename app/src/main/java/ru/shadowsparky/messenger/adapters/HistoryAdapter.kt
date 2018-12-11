@@ -23,6 +23,7 @@ import com.google.android.material.button.MaterialButton
 import com.hendraanggrian.pikasso.picasso
 import com.hendraanggrian.pikasso.transformations.circle
 import ru.shadowsparky.messenger.R
+import ru.shadowsparky.messenger.dialogs.AttachmentDialog
 import ru.shadowsparky.messenger.open_post.OpenPostView
 import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
@@ -168,11 +169,16 @@ class HistoryAdapter(
     private fun includeWall(info: VKAttachments, attachments: LinearLayout) {
         val button = MaterialButton(context, null, R.style.Widget_MaterialComponents_Button_OutlinedButton)
         button.text = "Открыть запись"
+//        button.width = 500
+//        button.textAlignment
+//        button.height = 200
         button.setOnClickListener {
             if (info.wall != null) {
-                val i = Intent(context, OpenPostView::class.java)
-                i.putExtra(WALL_DATA, info.wall)
-                context!!.startActivity(i)
+                val dialog = AttachmentDialog(context!!, info.wall)
+                dialog.show()
+//                val i = Intent(context, OpenPostView::class.java)
+//                i.putExtra(WALL_DATA, info.wall)
+//                context!!.startActivity(i)
             }
         }
         attachments.addView(button)

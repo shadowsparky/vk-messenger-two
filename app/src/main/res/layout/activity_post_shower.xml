@@ -7,23 +7,24 @@
     android:orientation="vertical"
     tools:context=".open_post.OpenPostView">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/post_toolbar"
-        android:layout_width="match_parent"
-        style="@style/AppTheme"
-        app:title="Просмотр содержимого"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:titleTextColor="@android:color/black"/>
+    <!--<androidx.appcompat.widget.Toolbar-->
+        <!--android:id="@+id/post_toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--style="@style/AppTheme"-->
+        <!--app:title="Просмотр содержимого"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--android:background="@color/colorPrimary"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:titleTextColor="@android:color/black"/>-->
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:padding="10dp"
             android:id="@+id/post_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
