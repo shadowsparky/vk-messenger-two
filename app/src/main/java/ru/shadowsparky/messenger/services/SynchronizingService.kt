@@ -37,7 +37,6 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
-    private var count = 0
     private var response: VKLongPollServer? = null
     private var path: List<String>? = null
     private var Request_Flag = true
