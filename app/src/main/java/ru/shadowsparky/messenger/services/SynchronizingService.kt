@@ -27,7 +27,6 @@ import ru.shadowsparky.messenger.utils.Logger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-// FIXME Переполнение стека.
 class SynchronizingService : IntentService("Synchronizing Service") {
     @Inject protected lateinit var disposables: CompositeDisposableManager
     @Inject protected lateinit var log: Logger
