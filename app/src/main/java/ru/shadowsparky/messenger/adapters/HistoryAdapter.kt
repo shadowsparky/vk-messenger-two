@@ -47,6 +47,7 @@ class HistoryAdapter(
     private val profiles = HashMap<Int, VKProfile>()
     private val groups = HashMap<Int, VKGroup>()
     private var context: Context? = null
+    private val TAG = javaClass.name
 
     init {
         App.component.inject(this)
@@ -150,13 +151,38 @@ class HistoryAdapter(
         includeAttachment(attachments, info.photo, touch_photo_callback)
     }
 
-    private fun includeReplyMessage(info: VKMessage) {
-        if (info.reply_message != null) {
+    private fun includeReplyMessage(info: VKMessage, holder: HistoryAdapter.MainViewHolder) {
+        val current_item = info.reply_message
+        if (current_item != null) {
+            val tw = TextView(context)
+            tw.text = current_item.text
+            tw.height = 100
+            tw.width = 100
+            log.print("Reply message handled ${tw.text}", false, TAG)
+            holder.attachments.addView(tw)
+            includeAttachments(current_item, holder)
+        }
+    }
 
+    private fun includeForwardMessage(info: VKMessage, holder: HistoryAdapter.MainViewHolder) {
+        val current_items = info.fwd_messages
+        if (current_items != null) {
+            for (item in current_items) {
+                val tw = TextView(context)
+                tw.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                tw.text = item.text
+                tw.height = 100
+                tw.width = 100
+                log.print("Reply forward handled ${tw.text}", false, TAG)
+                holder.attachments.addView(tw)
+                includeAttachments(item, holder)
+            }
         }
     }
 
     private fun includeAttachments(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
+        includeReplyMessage(item, holder)
+        includeForwardMessage(item, holder)
         if (item.attachments != null) {
             holder.attachments.removeAllViews()
             for (attachment in item.attachments) {

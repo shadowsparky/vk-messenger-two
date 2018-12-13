@@ -173,7 +173,5 @@ open class MessagesAdapter(
         val message_data: TextView = itemView.findViewById(R.id.messageitem_user_message)
         val time: TextView = itemView.findViewById(R.id.messageitem_time)
         val card: CardView = itemView.findViewById(R.id.item_card)
-        val date_card: CardView = itemView.findViewById(R.id.messageitem_date_card)
-        val date_text: TextView = itemView.findViewById(R.id.messageitem_date_text)
     }
 }
