@@ -5,10 +5,7 @@
 package ru.shadowsparky.messenger.services
 
 import android.app.IntentService
-import android.content.BroadcastReceiver
-import android.content.ComponentCallbacks
 import android.content.Intent
-import android.content.IntentFilter
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
@@ -16,7 +13,6 @@ import retrofit2.Retrofit
 import ru.shadowsparky.messenger.response_utils.RequestBuilder
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.VKApi
-import ru.shadowsparky.messenger.response_utils.VKLongPollApi
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPoll
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPollServer
 import ru.shadowsparky.messenger.response_utils.responses.LongPollServerResponse
@@ -40,6 +36,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
     private var response: VKLongPollServer? = null
     private var path: List<String>? = null
     private var Request_Flag = true
+    private var request: Disposable? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -86,6 +83,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             failureCallback(RuntimeException("Request error: Server is null"))
         return null
     }
+
     private fun longPollServerHandler(data: Response) {
         if (data is LongPollServerResponse) {
             val data = data.response
@@ -95,13 +93,14 @@ class SynchronizingService : IntentService("Synchronizing Service") {
                     response = data
                     initLongPoll(path!![0])
                     getLongPoll(path!![1], response!!)
-                }
+                } else
+                    failureCallback(RuntimeException("Request error: Path is null"))
             } else
                 failureCallback(RuntimeException("Request error: Response is null"))
         } else
             failureCallback(RuntimeException("Request error: Unrecognized result. Result should be LongPollServerResponse"))
     }
-    private var request: Disposable? = null
+
     private fun getLongPoll(path: String, data: VKLongPollServer) {
         request = long_poll!!.create(VKApi::class.java)
             .getLongPoll(path, data.key, data.ts)
@@ -124,8 +123,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
                             broadcast!!.putExtra("test", true)
                             sendBroadcast(broadcast)
                         }
-                    }
-                    else
+                    } else
                         failureCallback(RuntimeException("Request Error: First element unrecognized"))
             } else
                 failureCallback(RuntimeException("Request Error: Updates size is 0"))

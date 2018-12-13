@@ -1,48 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:clickable="true"
-    android:focusable="true"
-    android:background="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/messageitem_date_card"
-        android:layout_width="match_parent"
-        app:cardCornerRadius="1dp"
-        android:visibility="gone"
-        android:layout_height="40dp">
-
-        <TextView
-            android:id="@+id/messageitem_date_text"
-            android:layout_width="wrap_content"
-            android:layout_margin="8dp"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_gravity="left|center"
-            android:layout_height="wrap_content"
-            android:text="10.10.1000"
-            android:maxLength="10"/>
-
-    </androidx.cardview.widget.CardView>
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/item_card"
-        app:cardCornerRadius="0dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <ImageView
-                android:layout_margin="3dp"
                 android:id="@+id/messageitem_photo"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_margin="3dp"
                 android:background="@android:color/transparent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/linearLayout"
@@ -67,28 +47,26 @@
                         android:id="@+id/messageitem_user_data"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Евгений Самсонов"
-                        android:maxLength="25"
+                        android:text="null"
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/messageitem_time"
                         android:layout_width="match_parent"
-                        android:gravity="right"
                         android:layout_height="wrap_content"
-                        android:text="10:00"
+                        android:gravity="right"
+                        android:text="10:00WWWWWWWWWWWWWWWWWWWWW"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </LinearLayout>
+
                 <TextView
-                    android:layout_marginTop="3dp"
                     android:id="@+id/messageitem_user_message"
-                    android:layout_height="20dp"
-                    android:text="Текст"
-                    android:layout_weight="1"
                     android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:text="WWWWWWWWWWWWWWWWWWWWWWW"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
