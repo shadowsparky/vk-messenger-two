@@ -98,6 +98,7 @@ class HistoryAdapter(
         picasso.load(profiles[item.from_id]?.photo_100)
                 .circle()
                 .into(holder.image)
+        holder.attachments.removeAllViews()
         includeAttachments(item, holder)
     }
 
@@ -156,8 +157,6 @@ class HistoryAdapter(
         if (current_item != null) {
             val tw = TextView(context)
             tw.text = current_item.text
-            tw.height = 100
-            tw.width = 100
             log.print("Reply message handled ${tw.text}", false, TAG)
             holder.attachments.addView(tw)
             includeAttachments(current_item, holder)
@@ -169,10 +168,7 @@ class HistoryAdapter(
         if (current_items != null) {
             for (item in current_items) {
                 val tw = TextView(context)
-                tw.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 tw.text = item.text
-                tw.height = 100
-                tw.width = 100
                 log.print("Reply forward handled ${tw.text}", false, TAG)
                 holder.attachments.addView(tw)
                 includeAttachments(item, holder)
@@ -184,7 +180,6 @@ class HistoryAdapter(
         includeReplyMessage(item, holder)
         includeForwardMessage(item, holder)
         if (item.attachments != null) {
-            holder.attachments.removeAllViews()
             for (attachment in item.attachments) {
                 when(attachment.type) {
                     "photo" -> includePhoto(attachment, holder.attachments)
@@ -196,7 +191,6 @@ class HistoryAdapter(
     }
 
     private fun includeWall(info: VKAttachments, attachments: LinearLayout) {
-//        val newContext = ContextThemeWrapper(context, R.style.Widget_MaterialComponents_Button_OutlinedButton)
         val button = MaterialButton(context, null, R.style.Widget_MaterialComponents_Button_OutlinedButton)
         button.text = "Открыть запись"
         button.width = 500

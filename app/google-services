@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "805067557592",
+    "firebase_url": "https://vkmessenger-d346a.firebaseio.com",
+    "project_id": "vkmessenger-d346a",
+    "storage_bucket": "vkmessenger-d346a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805067557592:android:7d5fb526f3c37d26",
+        "android_client_info": {
+          "package_name": "ru.shadowsparky.messenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "805067557592-56fj9ngkrbdrn1o6knv86u9ae4ggs08r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.shadowsparky.messenger",
+            "certificate_hash": "3ecae11ec92d54d7917cb4297088784b4ba6c8bf"
+          }
+        },
+        {
+          "client_id": "805067557592-pi0nbg80f71naq2tvmrgvagi776uus6l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP16dVCiKp32qm5Pk5sfbX2Jm1e4Ow2sc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "805067557592-pi0nbg80f71naq2tvmrgvagi776uus6l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
