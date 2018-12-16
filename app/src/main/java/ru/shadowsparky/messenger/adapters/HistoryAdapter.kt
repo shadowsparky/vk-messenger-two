@@ -4,6 +4,7 @@
 
 package ru.shadowsparky.messenger.adapters
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
@@ -14,12 +15,16 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.hendraanggrian.pikasso.picasso
 import com.hendraanggrian.pikasso.transformations.circle
 import ru.shadowsparky.messenger.R
+import ru.shadowsparky.messenger.custom_views.ExperimentFragment
+import ru.shadowsparky.messenger.custom_views.ExperimentView
 import ru.shadowsparky.messenger.dialogs.AttachmentDialog
 import ru.shadowsparky.messenger.open_post.OpenPostView
 import ru.shadowsparky.messenger.response_utils.pojos.*
@@ -99,7 +104,7 @@ class HistoryAdapter(
                 .circle()
                 .into(holder.image)
         holder.attachments.removeAllViews()
-        includeAttachments(item, holder)
+        includeAttachments(item, holder.attachments)
     }
 
     private fun addProfiles(newData: HistoryResponse) {
@@ -152,39 +157,59 @@ class HistoryAdapter(
         includeAttachment(attachments, info.photo, touch_photo_callback)
     }
 
-    private fun includeReplyMessage(info: VKMessage, holder: HistoryAdapter.MainViewHolder) {
+    private fun includeReplyMessage(info: VKMessage, attachments: LinearLayout) {
         val current_item = info.reply_message
         if (current_item != null) {
-            val tw = TextView(context)
-            tw.text = current_item.text
-            log.print("Reply message handled ${tw.text}", false, TAG)
-            holder.attachments.addView(tw)
-            includeAttachments(current_item, holder)
+            injector(attachments, info)
+//            val tw = TextView(context)
+//            tw.text = current_item.text
+//            log.print("Reply message handled ${tw.text}", false, TAG)
+//            holder.attachments.addView(tw)
+//            includeAttachments(current_item, holder)
         }
     }
 
-    private fun includeForwardMessage(info: VKMessage, holder: HistoryAdapter.MainViewHolder) {
+    private fun injector(attachments: LinearLayout, info: VKMessage) {
+        val ex = ExperimentView(context!!, attachments)
+        ex.setHeader("Министерство Собачьих Дел")
+        if (info.reply_message != null) {
+            ex.setText(info.reply_message.text!!)
+            includeAttachments(info.reply_message, ex.attachments)
+        } else if (info.fwd_messages != null) {
+            for (item in info.fwd_messages) {
+                ex.setText(item.text!!)
+                includeAttachments(item, ex.attachments)
+            }
+        }
+//        includeAttachments(info.reply_message!!, holder)
+//        ex.testText()
+//        holder.attachments.addView(ex)
+    }
+
+    private fun includeForwardMessage(info: VKMessage, attachments: LinearLayout) {
         val current_items = info.fwd_messages
         if (current_items != null) {
             for (item in current_items) {
-                val tw = TextView(context)
-                tw.text = item.text
-                log.print("Reply forward handled ${tw.text}", false, TAG)
-                holder.attachments.addView(tw)
-                includeAttachments(item, holder)
+                injector(attachments, info)
+//                val tw = TextView(context)
+//                tw.text = item.text
+//                log.print("Reply forward handled ${tw.text}", false, TAG)
+//                holder.attachments.addView(tw)
+//                includeAttachments(item, holder)
+
             }
         }
     }
 
-    private fun includeAttachments(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
-        includeReplyMessage(item, holder)
-        includeForwardMessage(item, holder)
+    private fun includeAttachments(item: VKMessage, attachments: LinearLayout) {
+        includeReplyMessage(item, attachments)
+        includeForwardMessage(item, attachments)
         if (item.attachments != null) {
             for (attachment in item.attachments) {
                 when(attachment.type) {
-                    "photo" -> includePhoto(attachment, holder.attachments)
-                    "sticker" -> includeSticker(attachment, holder.attachments)
-                    "wall" -> includeWall(attachment, holder.attachments)
+                    "photo" -> includePhoto(attachment, attachments)
+                    "sticker" -> includeSticker(attachment, attachments)
+                    "wall" -> includeWall(attachment, attachments)
                 }
             }
         }
