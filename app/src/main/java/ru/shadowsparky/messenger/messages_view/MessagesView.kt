@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View.GONE
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -110,6 +111,13 @@ class MessagesView : AppCompatActivity(), Messages.View {
         log.print("MessagesView activity paused", false, TAG)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun initToolbar() {
         message_history_user_data.text = userData
         when (onlineStatus) {
@@ -117,6 +125,8 @@ class MessagesView : AppCompatActivity(), Messages.View {
             STATUS_HIDE -> message_history_user_online.visibility = GONE
             STATUS_ONLINE -> message_history_user_online.text = "В сети"
         }
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp)
     }
 
     override fun onDestroy() {
