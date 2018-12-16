@@ -91,7 +91,7 @@ class HistoryAdapter(
         }
         val item = data.response.items!![position]
         configureCard(holder.card, item, holder)
-        holder.text.text = item.text
+//        holder.text.text = item.text
         dateUtils.fromUnixToDateAndTimeCalendar(item.date!!)
         val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
         val messageDate = dateUtils.fromUnixToStrictDate(item.date)
@@ -103,6 +103,7 @@ class HistoryAdapter(
         picasso.load(profiles[item.from_id]?.photo_100)
                 .circle()
                 .into(holder.image)
+        holder.text.text = item.text
         holder.attachments.removeAllViews()
         includeAttachments(item, holder.attachments)
     }
@@ -160,43 +161,24 @@ class HistoryAdapter(
     private fun includeReplyMessage(info: VKMessage, attachments: LinearLayout) {
         val current_item = info.reply_message
         if (current_item != null) {
-            injector(attachments, info)
-//            val tw = TextView(context)
-//            tw.text = current_item.text
-//            log.print("Reply message handled ${tw.text}", false, TAG)
-//            holder.attachments.addView(tw)
-//            includeAttachments(current_item, holder)
+            val layout = injector(attachments, current_item)
+            includeAttachments(current_item, layout)
         }
     }
 
-    private fun injector(attachments: LinearLayout, info: VKMessage) {
+    private fun injector(attachments: LinearLayout, info: VKMessage) : LinearLayout {
         val ex = ExperimentView(context!!, attachments)
         ex.setHeader("Министерство Собачьих Дел")
-        if (info.reply_message != null) {
-            ex.setText(info.reply_message.text!!)
-            includeAttachments(info.reply_message, ex.attachments)
-        } else if (info.fwd_messages != null) {
-            for (item in info.fwd_messages) {
-                ex.setText(item.text!!)
-                includeAttachments(item, ex.attachments)
-            }
-        }
-//        includeAttachments(info.reply_message!!, holder)
-//        ex.testText()
-//        holder.attachments.addView(ex)
+        ex.setText(info.text!!)
+        return ex.attachments
     }
 
     private fun includeForwardMessage(info: VKMessage, attachments: LinearLayout) {
         val current_items = info.fwd_messages
         if (current_items != null) {
             for (item in current_items) {
-                injector(attachments, info)
-//                val tw = TextView(context)
-//                tw.text = item.text
-//                log.print("Reply forward handled ${tw.text}", false, TAG)
-//                holder.attachments.addView(tw)
-//                includeAttachments(item, holder)
-
+                val layout = injector(attachments, item)
+                includeAttachments(item, layout)
             }
         }
     }
