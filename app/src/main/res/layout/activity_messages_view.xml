@@ -63,8 +63,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
+        android:layout_marginBottom="428dp"
         app:layout_constraintBottom_toBottomOf="@+id/message_history_list"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
@@ -79,10 +81,12 @@
 
             <EditText
                 android:id="@+id/add_message"
+                style="@style/Base.Widget.MaterialComponents.TextInputEditText"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="11"
+                android:maxLines="5"
                 android:hint="@string/message"
                 android:inputType="textMultiLine"
                 android:textColor="@android:color/black" />

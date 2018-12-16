@@ -13,7 +13,6 @@ import com.github.chrisbanes.photoview.PhotoView
 import com.hendraanggrian.pikasso.picasso
 import kotlinx.android.synthetic.main.activity_post_shower.*
 import ru.shadowsparky.messenger.R
-import ru.shadowsparky.messenger.open_post.OpenPost
 import ru.shadowsparky.messenger.response_utils.pojos.VKAttachmentsWall
 
 class AttachmentDialog : Dialog {
