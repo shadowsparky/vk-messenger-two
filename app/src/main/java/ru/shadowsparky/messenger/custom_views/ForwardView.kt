@@ -13,8 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import ru.shadowsparky.messenger.R
 
-@Deprecated("For Fun")
-class ExperimentView(context: Context, parent: LinearLayout) : LinearLayout(context) {
+class ForwardView(context: Context, parent: LinearLayout) : LinearLayout(context) {
     private val view: View
     val image: ImageView
     val attachments: LinearLayout

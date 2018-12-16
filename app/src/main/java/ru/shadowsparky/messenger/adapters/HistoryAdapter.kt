@@ -4,35 +4,25 @@
 
 package ru.shadowsparky.messenger.adapters
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.graphics.Typeface
 import android.view.*
 import android.view.View.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.hendraanggrian.pikasso.picasso
 import com.hendraanggrian.pikasso.transformations.circle
 import ru.shadowsparky.messenger.R
-import ru.shadowsparky.messenger.custom_views.ExperimentFragment
-import ru.shadowsparky.messenger.custom_views.ExperimentView
+import ru.shadowsparky.messenger.custom_views.ForwardView
 import ru.shadowsparky.messenger.dialogs.AttachmentDialog
-import ru.shadowsparky.messenger.open_post.OpenPostView
 import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
-import ru.shadowsparky.messenger.utils.Constansts.Companion.WALL_DATA
 import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
 import java.lang.RuntimeException
@@ -167,8 +157,21 @@ class HistoryAdapter(
     }
 
     private fun injector(attachments: LinearLayout, info: VKMessage) : LinearLayout {
-        val ex = ExperimentView(context!!, attachments)
-        ex.setHeader("Министерство Собачьих Дел")
+        val ex = ForwardView(context!!, attachments)
+//        log.print("message id: ${info.id}")
+        when {
+            profiles[info.from_id] != null -> {
+                val data = profiles[info.from_id]
+                ex.setHeader("${data!!.first_name} ${data.last_name}")
+                picasso.load(data.photo_100).circle().into(ex.image)
+            }
+            groups[info.from_id] != null -> {
+            }
+            else -> {
+
+            }
+        }
+//        ex.setHeader(profiles.)
         ex.setText(info.text!!)
         return ex.attachments
     }
