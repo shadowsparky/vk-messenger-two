@@ -11,5 +11,6 @@ data class VKHistory(
     val count: Int?,
     val items: ArrayList<VKMessage>?,
     val conversations: ArrayList<VKConversation>?,
-    val profiles: ArrayList<VKProfile>?
+    val profiles: ArrayList<VKProfile>?,
+    val groups: ArrayList<VKGroup>?
 ) : Serializable

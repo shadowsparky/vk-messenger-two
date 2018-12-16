@@ -29,6 +29,7 @@ import java.lang.RuntimeException
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
+import kotlin.math.abs
 
 
 class HistoryAdapter(
@@ -90,19 +91,27 @@ class HistoryAdapter(
         } else {
             holder.time.text = dateUtils.fromUnixToTimeString(item.date)
         }
-        picasso.load(profiles[item.from_id]?.photo_100)
-                .circle()
-                .into(holder.image)
+        var url = ""
+        if (profiles[item.from_id] != null) {
+            url = profiles[item.from_id]!!.photo_100
+        } else if (groups[abs(item.from_id!!)] != null) {
+            url = groups[abs(item.from_id)]!!.photo_100
+        }
+        picasso.load(url)
+            .circle()
+            .into(holder.image)
         holder.text.text = item.text
         holder.attachments.removeAllViews()
         includeAttachments(item, holder.attachments)
     }
 
     private fun addProfiles(newData: HistoryResponse) {
-        for (item in newData.response.profiles!!)
-            profiles[item.id] = item
-//        for (item in newData.response.)
-//            groups[item.id] = item
+        if (newData.response.profiles != null)
+            for (item in newData.response.profiles)
+                profiles[item.id] = item
+        if (newData.response.groups != null)
+            for (item in newData.response.groups)
+                groups[item.id] = item
     }
 
     private fun getHashmapCard(list: ArrayList<VKPhotoSize>) : HashMap<String, String> {
@@ -158,20 +167,18 @@ class HistoryAdapter(
 
     private fun injector(attachments: LinearLayout, info: VKMessage) : LinearLayout {
         val ex = ForwardView(context!!, attachments)
-//        log.print("message id: ${info.id}")
         when {
             profiles[info.from_id] != null -> {
                 val data = profiles[info.from_id]
                 ex.setHeader("${data!!.first_name} ${data.last_name}")
                 picasso.load(data.photo_100).circle().into(ex.image)
             }
-            groups[info.from_id] != null -> {
-            }
-            else -> {
-
+            groups[abs(info.from_id!!)] != null -> {
+                val data = groups[abs(info.from_id!!)]
+                ex.setHeader("${data!!.name}")
+                picasso.load(data.photo_100).circle().into(ex.image)
             }
         }
-//        ex.setHeader(profiles.)
         ex.setText(info.text!!)
         return ex.attachments
     }
