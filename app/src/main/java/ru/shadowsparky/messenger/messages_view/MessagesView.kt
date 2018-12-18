@@ -11,6 +11,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View.GONE
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -53,7 +54,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
     }
 
     override fun clearMessageText() {
-        add_message.setText("")
+//        add_message.setText("")
     }
 
     override fun disposeAdapter() {
@@ -91,12 +92,12 @@ class MessagesView : AppCompatActivity(), Messages.View {
             receiver = ResponseReceiver(presenter, log)
             presenter.onGetMessageHistoryRequest()
             push_message.setOnClickListener {
-                presenter.onSendMessage(add_message.text.toString())
+//                presenter.onSendMessage(add_message.text.toString())
             }
         }
         initToolbar()
         val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
-        validator.verifyText(add_message, verifyCallback)
+//        validator.verifyText(add_message, verifyCallback)
     }
 
     override fun onResume() {
