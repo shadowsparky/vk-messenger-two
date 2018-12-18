@@ -53,6 +53,7 @@ class RequestBuilder {
     }
 
     private fun cacher(response: retrofit2.Response<*>) {
+        log.print("CACHER", false, TAG)
         if ((db is DBViewTableWrapper) and (offset == 0)) {
             val db_view = (db as DBViewTableWrapper)
             val peer_id = db_view.getPeerID(response.body()!! as HistoryResponse)
@@ -87,7 +88,10 @@ class RequestBuilder {
         request = retrofit
             .create(VKApi::class.java)
             .sendMessage(peerId!!, message!!, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
-            .doOnSuccess { /*check(it.body()!!.error)*/ }
+            .map {
+                errorHandler(it)
+                return@map it
+            }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
@@ -100,7 +104,10 @@ class RequestBuilder {
         request = retrofit
             .create(VKApi::class.java)
             .getHistory(offset!!, 20, peerId!!, preferencesUtils.read(SharedPreferencesUtils.TOKEN))
-            .doOnSuccess { cacher(it); /*check(it.body()!!.error) */}
+            .map {
+                errorHandlerWithCacher(it)
+                return@map it
+            }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
@@ -113,11 +120,26 @@ class RequestBuilder {
         request = retrofit
             .create(VKApi::class.java)
             .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
-            .doOnSuccess { cacher(it); }
+            .map {
+                errorHandlerWithCacher(it)
+                return@map it
+            }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
         return this
+    }
+
+    fun errorHandlerWithCacher(it: Any) {
+        errorHandler(it)
+        cacher(it as retrofit2.Response<*>)
+    }
+
+    fun errorHandler(it: Any) {
+        val error = parseError((it as retrofit2.Response<*>).body())
+        if (error != null) {
+            throw VKException(error)
+        }
     }
 
     fun subscribeToPushRequest() : RequestBuilder {
@@ -151,6 +173,7 @@ class RequestBuilder {
 
     private fun parseError(response: Any?) : VKError? {
         if (response != null){
+            log.printError("${Gson().toJson(response)}", false, TAG)
             val error = Gson().fromJson(Gson().toJson(response), ErrorResponse::class.java)
             log.printError("$error and {${error.error}}", false, TAG)
             return error.error
@@ -161,14 +184,9 @@ class RequestBuilder {
     private fun configureCallbacks() {
         result = request!!.subscribeBy (
             onSuccess = {
-                it as retrofit2.Response<*>
-                val error = parseError(it.body())
-                if (error == null) {
-                    log.print("Request successfully executed. url: ${it.raw().request().url()}", true, TAG)
-//                    successCallback!!(it.body()!! as Response)
-                } else
-                    log.print("Request unsuccessfully executed. url: ${it.raw().request().url()}", true, TAG)
-                    failureCallback!!(VKException(error))
+            it as retrofit2.Response<*>
+                log.print("Request successfully executed. url: ${it.raw().request().url()}", true, TAG)
+                successCallback!!(it.body()!! as Response)
             } ,
             onError = {
                 log.print("Request was unsuccessfully executed. $it", true, TAG)

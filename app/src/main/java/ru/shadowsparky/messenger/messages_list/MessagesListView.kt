@@ -53,7 +53,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     override fun onResume() {
         super.onResume()
         disposeAdapter()
-        presenter.onScrollFinished()
+//        presenter.onScrollFinished()
         log.print("MessagesListView activity loaded", true, TAG)
         registerReceiver(receiver, IntentFilter(BROADCAST_RECEIVER_CODE))
     }

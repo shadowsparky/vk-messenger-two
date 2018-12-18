@@ -33,15 +33,18 @@ class MessagesListPresenter : MessagesList.Presenter {
     override fun onPushSubscribing() = model.subscribeToPush(::onSuccessResponse, ::onFailureResponse)
 
     override fun onFailureResponse(error: Throwable) {
-//        val callback: (response: Response) -> Unit = {
-//            view!!.setAdapter(it as MessagesResponse, ::onScrollFinished, ::onItemClicked)
-//            loadingError = true
-//        }
-//        if (!loadingError) {
-//            model.getCachedDialogs(callback) // Загрузка закешированных данных с устройства
-//            view!!.disposeAdapter()
-//        }
-//        view!!.setLoading(false)
+        val callback: (response: Response) -> Unit = {
+            val mResponse = it as MessagesResponse
+            if ((mResponse.error == null) and (mResponse.response != null)) {
+                view!!.setAdapter(it, ::onScrollFinished, ::onItemClicked)
+                loadingError = true
+            }
+        }
+        if (!loadingError) {
+            model.getCachedDialogs(callback) // Загрузка закешированных данных с устройства
+            view!!.disposeAdapter()
+        }
+        view!!.setLoading(false)
         errorUtils.onFailureResponse(error)
     }
 

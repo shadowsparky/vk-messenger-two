@@ -9,6 +9,6 @@ import ru.shadowsparky.messenger.response_utils.pojos.VKHistory
 import java.io.Serializable
 
 data class HistoryResponse(
-    val response: VKHistory//,
-//    val error: ErrorResponse?
+    val response: VKHistory,
+    val error: Any?
 ) : Response, Serializable
