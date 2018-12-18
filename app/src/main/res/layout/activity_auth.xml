@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".auth.AuthView">
 
+    <ProgressBar
+        android:id="@+id/auth_progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_marginBottom="8dp"
+        android:indeterminate="true"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/AuthButton"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"

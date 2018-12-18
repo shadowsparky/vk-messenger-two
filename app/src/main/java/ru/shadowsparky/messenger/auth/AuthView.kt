@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import ru.shadowsparky.messenger.R
 import kotlinx.android.synthetic.main.activity_auth.*
 import ru.shadowsparky.messenger.messages_list.MessagesListView
@@ -35,6 +36,10 @@ class AuthView : AppCompatActivity(), Auth.View {
     }
 
     override fun setLoading(result: Boolean) {
+        if (result)
+            auth_progress.visibility = View.VISIBLE
+        else
+            auth_progress.visibility = View.GONE
     }
 
     override fun navigateToMessagesList() {

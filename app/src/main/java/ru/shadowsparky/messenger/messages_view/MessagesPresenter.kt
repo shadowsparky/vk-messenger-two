@@ -48,15 +48,20 @@ class MessagesPresenter : Messages.Presenter {
     }
 
     override fun onGetMessageHistoryRequest() {
+        view!!.setLoading(true)
         view!!.disposeAdapter()
         model.getMessageHistory(peerId!!, ::onSuccessResponse, ::onFailureResponse)
     }
 
-    override fun onScrollFinished(position: Int) =
-            model.getMessageHistory(peerId!!,::onSuccessResponse, ::onFailureResponse, position)
+    override fun onScrollFinished(position: Int) {
+        view!!.setLoading(true)
+        model.getMessageHistory(peerId!!,::onSuccessResponse, ::onFailureResponse, position)
+    }
 
-    override fun onSendMessage(message: String) =
-            model.sendMessage(peerId!!, message, ::onSuccessResponse, ::onFailureResponse)
+    override fun onSendMessage(message: String) {
+        view!!.setLoading(true)
+        model.sendMessage(peerId!!, message, ::onSuccessResponse, ::onFailureResponse)
+    }
 
     override fun onFailureResponse(error: Throwable) {
         val callback: (response: Response) -> Unit = {
@@ -64,6 +69,7 @@ class MessagesPresenter : Messages.Presenter {
             view!!.setAdapter(it as HistoryResponse, ::onScrollFinished, ::onPhotoTouched)
         }
         if (!loadingError) {
+            view!!.setLoading(true)
             model.getCachedHistory(callback, peerId!!.toLong())
             view!!.disposeAdapter()
         }
@@ -77,13 +83,7 @@ class MessagesPresenter : Messages.Presenter {
     override fun onSuccessResponse(response: Response) {
         when (response) {
             is HistoryResponse -> view!!.setAdapter(response, ::onScrollFinished, ::onPhotoTouched)
-            is SendMessageResponse -> {
-//                view!!.run {
-//                    disposeAdapter()
-                view!!.clearMessageText()
-//                }
-//                onGetMessageHistoryRequest()
-            }
+            is SendMessageResponse -> { view!!.clearMessageText() }
             else -> onFailureResponse(ClassCastException())
         }
         loadingError = false

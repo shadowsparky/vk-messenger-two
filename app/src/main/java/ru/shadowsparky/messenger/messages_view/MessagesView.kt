@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -49,6 +50,13 @@ class MessagesView : AppCompatActivity(), Messages.View {
         App.component.inject(this)
     }
 
+    override fun setLoading(result: Boolean) {
+        if (result)
+            view_loading.visibility = View.VISIBLE
+        else
+            view_loading.visibility = View.GONE
+    }
+
     override fun clearMessageText() {
         add_message.setText("")
     }
@@ -70,6 +78,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
         } else {
             adapter!!.addData(response)
         }
+        setLoading(false)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -118,7 +118,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
             if (data.body()!!.updates.size > 0) {
                 for (element in data.body()!!.updates)
                     if (element[0] is Double) {
-                        if ((element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0)) {
+                        if ((element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0) or (element[0] == 6.0) or (element[0] == 7.0)) {
                             initBroadcast()
                             broadcast!!.putExtra("test", true)
                             sendBroadcast(broadcast)
