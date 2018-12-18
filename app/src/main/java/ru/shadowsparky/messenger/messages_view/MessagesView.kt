@@ -11,17 +11,13 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View.GONE
-import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
-import ru.shadowsparky.messenger.messages_list.MessagesList
-import ru.shadowsparky.messenger.messages_list.MessagesListView
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.services.SynchronizingService
 import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
@@ -54,7 +50,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
     }
 
     override fun clearMessageText() {
-//        add_message.setText("")
+        add_message.setText("")
     }
 
     override fun disposeAdapter() {
@@ -92,12 +88,12 @@ class MessagesView : AppCompatActivity(), Messages.View {
             receiver = ResponseReceiver(presenter, log)
             presenter.onGetMessageHistoryRequest()
             push_message.setOnClickListener {
-//                presenter.onSendMessage(add_message.text.toString())
+                presenter.onSendMessage(add_message.text.toString())
             }
         }
         initToolbar()
         val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
-//        validator.verifyText(add_message, verifyCallback)
+        validator.verifyText(add_message, verifyCallback)
     }
 
     override fun onResume() {

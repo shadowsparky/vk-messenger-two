@@ -79,7 +79,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <ru.shadowsparky.messenger.custom_views.ImagedEditText.
+            <EditText
                 android:id="@+id/add_message"
                 style="@style/Base.Widget.MaterialComponents.TextInputEditText"
                 android:layout_width="0dp"

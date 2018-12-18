@@ -5,6 +5,10 @@
 package ru.shadowsparky.messenger.response_utils
 
 import android.content.Context
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import ru.shadowsparky.messenger.response_utils.pojos.VKError
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts
 import ru.shadowsparky.messenger.utils.Constansts.Companion.CLASS_CAST_EXCEPTION_CODE
@@ -30,7 +34,7 @@ class FailureResponseHandler {
         when (reason) {
             is UnknownHostException -> showError("При соединении с сервером произошла ошибка. Проверьте ваше интернет соединение")
             is ClassCastException -> showError("При получении результата от сервера произошла критическая ошибка")
-            is VKException -> showError("При соединении с сервером произошла ошибка. Причина: null")
+            is VKException -> showError("При соединении с сервером произошла ошибка. Причина: ${reason.error!!.error_msg}")
             else -> showError("Произошла неизвестная ошибка")
         }
     }

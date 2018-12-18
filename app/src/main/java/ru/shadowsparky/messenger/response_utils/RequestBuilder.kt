@@ -10,8 +10,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import ru.shadowsparky.messenger.messages_list.MessagesList
+import ru.shadowsparky.messenger.response_utils.pojos.VKError
 import ru.shadowsparky.messenger.response_utils.responses.ErrorResponse
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
@@ -24,6 +26,7 @@ import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
 import ru.shadowsparky.messenger.utils.SQLite.DatabaseManager
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 class RequestBuilder {
@@ -110,7 +113,7 @@ class RequestBuilder {
         request = retrofit
             .create(VKApi::class.java)
             .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
-            .doOnSuccess { cacher(it); check(it.body()!!.error) }
+            .doOnSuccess { cacher(it); }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
@@ -146,30 +149,26 @@ class RequestBuilder {
     }
 
 
-    private fun check(response: ErrorResponse?) {
-//        log.print("checking body: ${Gson().toJson(response)}")
+    private fun parseError(response: Any?) : VKError? {
         if (response != null){
-            log.print("checking body: ${Gson().toJson(response)}", true, TAG)
-            throw VKException(response.error)
-        } else {
-            return
+            val error = Gson().fromJson(Gson().toJson(response), ErrorResponse::class.java)
+            log.printError("$error and {${error.error}}", false, TAG)
+            return error.error
         }
+        return null
     }
 
     private fun configureCallbacks() {
         result = request!!.subscribeBy (
             onSuccess = {
                 it as retrofit2.Response<*>
-//                log.print("checking body: ${Gson().toJson(it)}")
-//                if (it.body() is Response) {
-                successCallback!!(it.body()!! as Response)
-                log.print("Request successfully executed. url: ${it.raw().request().url()}", true, TAG)
-//                } else {
-//                    log.print("DEBUG? ERROR")
-//                }
-//                log.print("body: ${Gson().toJson(it.body())}")
-//                log.print("ebody ${it.errorBody()} code ${it.code()}")
-                // FIXME проверка error body и кодов при ошибках
+                val error = parseError(it.body())
+                if (error == null) {
+                    log.print("Request successfully executed. url: ${it.raw().request().url()}", true, TAG)
+//                    successCallback!!(it.body()!! as Response)
+                } else
+                    log.print("Request unsuccessfully executed. url: ${it.raw().request().url()}", true, TAG)
+                    failureCallback!!(VKException(error))
             } ,
             onError = {
                 log.print("Request was unsuccessfully executed. $it", true, TAG)

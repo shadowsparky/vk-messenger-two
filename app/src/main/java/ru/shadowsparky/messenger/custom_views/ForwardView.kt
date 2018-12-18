@@ -20,7 +20,6 @@ class ForwardView(context: Context, parent: LinearLayout) : LinearLayout(context
     val header: TextView
     val text: TextView
 
-
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         view = inflater.inflate(R.layout.fwd_layout, parent, false)

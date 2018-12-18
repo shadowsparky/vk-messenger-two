@@ -10,7 +10,7 @@ import java.io.Serializable
 
 data class MessagesResponse(
     val response: VKMessages?,
-    val error: ErrorResponse?
+    val error: Any?
 ) : Response, Serializable
 
 
