@@ -152,7 +152,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
         while (true) {
             if (Request_Flag) {
                 Request_Flag = false
-//                sendRequest()
+                sendRequest()
             }
         }
     }
