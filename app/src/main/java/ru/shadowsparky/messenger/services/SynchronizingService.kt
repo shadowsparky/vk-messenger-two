@@ -132,7 +132,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
                         failureCallback(RuntimeException("Request Error: First element unrecognized"))
                 }
                 if (ids != "")
-                    test(ids)
+                    getByID(ids)
             } else
                 failureCallback(RuntimeException("Request Error: Updates size is 0"))
         } else
@@ -140,7 +140,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
         Request_Flag = true
     }
 
-    private fun test(ids: String) {
+    private fun getByID(ids: String) {
         val request = RequestBuilder()
             .setMessageIds(ids)
             .setCallbacks({
