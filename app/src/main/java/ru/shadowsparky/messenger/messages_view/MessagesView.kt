@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
+import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
@@ -32,6 +33,7 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
 import javax.inject.Inject
+import kotlin.math.abs
 
 class MessagesView : AppCompatActivity(), Messages.View {
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
@@ -94,7 +96,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
                     .attachView(this)
-            receiver = ResponseReceiver(presenter, log)
+            receiver = ResponseReceiver(presenter, log, userId)
             presenter.onGetMessageHistoryRequest()
             push_message.setOnClickListener {
                 presenter.onSendMessage(add_message.text.toString())
@@ -141,13 +143,32 @@ class MessagesView : AppCompatActivity(), Messages.View {
         log.print("MessagesView activity destroyed", false, TAG)
     }
 
-    class ResponseReceiver(val presenter: Messages.Presenter, val log: Logger) : BroadcastReceiver() {
+    class ResponseReceiver(val presenter: Messages.Presenter, val log: Logger, val userId: Int) : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent!!.action == Constansts.BROADCAST_RECEIVER_CODE) {
                 val result = intent.getBooleanExtra("test", false)
+                val mResponse = intent.getSerializableExtra(Constansts.RESPONSE) as VKMessages
                 if (result) {
-                    presenter.onGetMessageHistoryRequest()
-                    log.print("MessageHistoryRequest Long Poll Handled")
+                    var updateFlag = false
+
+                    if (mResponse.profiles != null) {
+                        for (item in mResponse.profiles) {
+                            if (item.id == userId) {
+                                updateFlag = true
+                            }
+                        }
+                    }
+                    if (mResponse.groups != null) {
+                        for (item in mResponse.groups) {
+                            if (abs(item.id) == abs(userId)) {
+                                updateFlag = true
+                            }
+                        }
+                    }
+                    if (updateFlag) {
+                        log.print("MessageHistoryRequest Long Poll Handled")
+                        presenter.onGetMessageHistoryRequest()
+                    }
                 }
             }
         }

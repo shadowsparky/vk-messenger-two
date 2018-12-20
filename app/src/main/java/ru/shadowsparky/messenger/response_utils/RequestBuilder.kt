@@ -34,6 +34,7 @@ class RequestBuilder {
     private var result: Disposable? = null
     private var offset: Int? = null
     private var peerId: Int? = null
+    private var messageIds: String? = null
     private var message: String? = null
     private var successCallback: ((Response) -> Unit)? = null
     private var failureCallback: ((Throwable) -> Unit)? = null
@@ -45,6 +46,11 @@ class RequestBuilder {
 
     init {
         App.component.inject(this)
+    }
+
+    fun setMessageIds(messageIds: String) : RequestBuilder {
+        this.messageIds = messageIds
+        return this
     }
 
     fun setOffset(offset: Int) : RequestBuilder {
@@ -151,9 +157,19 @@ class RequestBuilder {
                 preferencesUtils.read(FIREBASE_TOKEN),
                 preferencesUtils.read(DEVICE_ID)
             )
-            .doOnSuccess { /*check(it.body()!!.error)*/ }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
+        configureCallbacks()
+        return this
+    }
+
+    fun getById() : RequestBuilder {
+        log.print("Get by id request...", true, TAG)
+        request = retrofit
+                .create(VKApi::class.java)
+                .getById(preferencesUtils.read(TOKEN), messageIds!!)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
         return this
     }
@@ -163,9 +179,6 @@ class RequestBuilder {
         request = retrofit
                 .create(VKApi::class.java)
                 .getLongPollServer(preferencesUtils.read(TOKEN))
-//                .doOnSuccess { /*check(it.body()!!.error)*/ }
-//                .subscribeOn(Schedulers.computation())
-//                .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
         return this
     }

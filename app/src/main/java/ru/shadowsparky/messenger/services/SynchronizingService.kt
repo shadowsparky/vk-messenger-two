@@ -16,9 +16,11 @@ import ru.shadowsparky.messenger.response_utils.VKApi
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPoll
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPollServer
 import ru.shadowsparky.messenger.response_utils.responses.LongPollServerResponse
+import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.utils.Constansts.Companion.BROADCAST_RECEIVER_CODE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.RESPONSE
 import ru.shadowsparky.messenger.utils.Logger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -116,20 +118,50 @@ class SynchronizingService : IntentService("Synchronizing Service") {
         response!!.ts = data.body()!!.ts.toLong()
         if (data.body()!!.updates != null) {
             if (data.body()!!.updates.size > 0) {
-                for (element in data.body()!!.updates)
+                var ids = ""
+                for (i in 0 until data.body()!!.updates.size) {
+                    val element = data.body()!!.updates[i]
                     if (element[0] is Double) {
                         if ((element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0) or (element[0] == 6.0) or (element[0] == 7.0)) {
-                            initBroadcast()
-                            broadcast!!.putExtra("test", true)
-                            sendBroadcast(broadcast)
+                            ids += if (i != data.body()!!.updates.size - 1)
+                                "${element[1]}, "
+                            else
+                                element[1].toString()
                         }
                     } else
                         failureCallback(RuntimeException("Request Error: First element unrecognized"))
+                }
+                if (ids != "")
+                    test(ids)
             } else
                 failureCallback(RuntimeException("Request Error: Updates size is 0"))
         } else
             failureCallback(RuntimeException("Request Error: Updates is null"))
         Request_Flag = true
+    }
+
+    private fun test(ids: String) {
+        val request = RequestBuilder()
+            .setMessageIds(ids)
+            .setCallbacks({
+                log.print("ids $ids", false, TAG)
+                if (it is MessagesResponse) {
+                    if (it.response != null) {
+                        initBroadcast()
+                        log.print("$it", false, TAG)
+                        broadcast!!.putExtra("test", true)
+                        broadcast!!.putExtra(RESPONSE, it.response!!)
+                        sendBroadcast(broadcast)
+                    } else {
+                        failureCallback(RuntimeException("Get By ID Response is null"))
+                    }
+                } else {
+                    failureCallback(RuntimeException("UNRECOGNIZED RESPONSE: $it"))
+                }
+            }, { /*ignore*/ })
+            .getById()
+            .build()
+        disposables.addRequest(request.getDisposable())
     }
 
     private fun sendRequest() {

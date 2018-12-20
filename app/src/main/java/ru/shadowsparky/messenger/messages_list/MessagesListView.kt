@@ -18,6 +18,7 @@ import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthView
 import ru.shadowsparky.messenger.messages_view.MessagesView
+import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.services.SynchronizingService
 import ru.shadowsparky.messenger.utils.*
@@ -25,6 +26,7 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.BROADCAST_RECEIVER_C
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
+import ru.shadowsparky.messenger.utils.Constansts.Companion.RESPONSE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID

@@ -37,7 +37,7 @@ interface VKApi {
     ) : Single<Response<HistoryResponse>>
 
     @GET("method/messages.send")
-    fun sendMessage(
+    fun sendMessage (
         @Query("peer_id") peer_id: Int,
         @Query("message") message: String,
         @Query("access_token") token: String,
@@ -45,7 +45,7 @@ interface VKApi {
     ) : Single<Response<SendMessageResponse>>
 
     @GET("method/account.registerDevice")
-    fun subscribeToPush(
+    fun subscribeToPush (
         @Query("access_token") access_token: String,
         @Query("token") token: String,
         @Query("device_id") device_id: String,
@@ -55,7 +55,7 @@ interface VKApi {
     ) : Single<Response<VKPushResponse>>
 
     @GET("method/messages.getLongPollServer")
-    fun getLongPollServer(
+    fun getLongPollServer (
         @Query("access_token") access_token: String,
         @Query("need_pts") need_pts: Boolean = true,
         @Query("lp_version") lp_version: Int = LONG_POLL_VERSION,
@@ -63,7 +63,7 @@ interface VKApi {
     ) : Single<Response<LongPollServerResponse>>
 
     @GET("/{method}")
-    fun getLongPoll(
+    fun getLongPoll (
         @Path("method") method: String,
         @Query("key") key: String,
         @Query("ts") ts: Long,
@@ -72,4 +72,12 @@ interface VKApi {
         @Query("version") version: Long = 3,
         @Query("act") a_check: String = "a_check"
     ) : Single<Response<VKLongPoll>>
+
+    @GET("method/messages.getById")
+    fun getById (
+        @Query("access_token") access_token: String,
+        @Query("message_ids") message_ids: String,
+        @Query("extended") extended : Boolean = true,
+        @Query("v") version: Double = VK_API_VERSION
+    ) : Single<Response<MessagesResponse>>
 }

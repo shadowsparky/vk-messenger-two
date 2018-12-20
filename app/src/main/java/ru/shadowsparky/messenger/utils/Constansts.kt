@@ -30,5 +30,6 @@ open class Constansts {
         val WALL_DATA = "wall data"
         val BROADCAST_RECEIVER_CODE = "brc"
         val LONG_POLL_VERSION = 3
+        val RESPONSE = "response"
     }
 }
