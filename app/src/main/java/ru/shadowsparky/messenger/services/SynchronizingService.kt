@@ -68,7 +68,7 @@ class SynchronizingService : IntentService("Synchronizing Service") {
 
 
     private fun failureCallback(e: Throwable) {
-        log.printError(e.toString())
+        log.printError(e.toString(), false, TAG)
         Thread.sleep(5000)
         Request_Flag = true
     }
