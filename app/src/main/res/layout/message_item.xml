@@ -65,7 +65,8 @@
                 <TextView
                     android:id="@+id/messageitem_user_message"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:maxLines="4"
+                    android:layout_height="wrap_content"
                     android:text="WWWWWWWWWWWWWWWWWWWWWWW"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </LinearLayout>

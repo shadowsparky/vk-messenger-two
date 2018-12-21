@@ -134,7 +134,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
             STATUS_ONLINE -> message_history_user_online.text = "В сети"
         }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back_gray_24dp)
     }
 
     override fun onDestroy() {

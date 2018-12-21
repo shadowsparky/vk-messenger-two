@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         app:title=""
-        android:background="@color/colorPrimary"
+        android:background="@android:color/white"
         android:theme="@style/AppTheme"
         android:layout_height="?attr/actionBarSize">
 
@@ -37,6 +37,7 @@
             android:scrollbars="vertical"
             android:layout_width="match_parent"
             android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
             android:layout_height="match_parent">
         </androidx.recyclerview.widget.RecyclerView>
 
