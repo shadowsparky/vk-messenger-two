@@ -23,6 +23,7 @@
             android:layout_gravity="center"
             android:id="@+id/toolbar_title" />
 
+
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

@@ -15,17 +15,17 @@ class ImagedEditText(context: Context) : EditText(context) {
         EditorInfoCompat.setContentMimeTypes(editorInfo, arrayOf("image/png"))
 
         val callback =
-                InputConnectionCompat.OnCommitContentListener { inputContentInfo, flags, opts ->
-                    val lacksPermission = (flags and
-                            InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && lacksPermission) {
-                        try {
-                            inputContentInfo.requestPermission()
-                        } catch (e: Exception) {
-                            return@OnCommitContentListener false
-                        }
+            InputConnectionCompat.OnCommitContentListener { inputContentInfo, flags, opts ->
+                val lacksPermission = (flags and
+                    InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && lacksPermission) {
+                    try {
+                        inputContentInfo.requestPermission()
+                    } catch (e: Exception) {
+                        return@OnCommitContentListener false
                     }
-                    true
+                }
+                true
                 }
         return InputConnectionCompat.createWrapper(ic, editorInfo, callback)
     }

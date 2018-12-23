@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.hendraanggrian.pikasso:pikasso-palette-0.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/pikasso-palette-0.2.aar/efe90c2927871755f2b29d0295a4e419/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/pikasso-palette-0.2.aar/efe90c2927871755f2b29d0295a4e419/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.hendraanggrian.pikasso/pikasso-palette/0.2/88ad85d9f7ba35aab943663c04299796a765ef7b/pikasso-palette-0.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
