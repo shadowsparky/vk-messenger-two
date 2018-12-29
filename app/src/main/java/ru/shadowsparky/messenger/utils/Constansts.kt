@@ -31,5 +31,10 @@ open class Constansts {
         val BROADCAST_RECEIVER_CODE = "brc"
         val LONG_POLL_VERSION = 3
         val RESPONSE = "response"
+        val PHOTO = "photo"
+        val STICKER = "sticker"
+        val WALL = "wall"
+        val RECORD_OPEN = "Открыть запись"
+        val PHOTO_NOT_FOUND = "https://vk.com/images/camera_100.png?ava=1"
     }
 }

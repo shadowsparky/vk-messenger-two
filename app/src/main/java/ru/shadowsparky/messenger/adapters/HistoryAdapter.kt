@@ -6,6 +6,8 @@ package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
 import android.view.*
+import android.view.Gravity.LEFT
+import android.view.Gravity.RIGHT
 import android.view.View.*
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
@@ -23,6 +25,10 @@ import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
+import ru.shadowsparky.messenger.utils.Constansts.Companion.PHOTO
+import ru.shadowsparky.messenger.utils.Constansts.Companion.RECORD_OPEN
+import ru.shadowsparky.messenger.utils.Constansts.Companion.STICKER
+import ru.shadowsparky.messenger.utils.Constansts.Companion.WALL
 import ru.shadowsparky.messenger.utils.DateUtils
 import ru.shadowsparky.messenger.utils.Logger
 import java.lang.RuntimeException
@@ -199,9 +205,9 @@ class HistoryAdapter(
         if (item.attachments != null) {
             for (attachment in item.attachments) {
                 when(attachment.type) {
-                    "photo" -> includePhoto(attachment, attachments)
-                    "sticker" -> includeSticker(attachment, attachments)
-                    "wall" -> includeWall(attachment, attachments)
+                    PHOTO -> includePhoto(attachment, attachments)
+                    STICKER -> includeSticker(attachment, attachments)
+                    WALL -> includeWall(attachment, attachments)
                 }
             }
         }
@@ -209,7 +215,7 @@ class HistoryAdapter(
 
     private fun includeWall(info: VKAttachments, attachments: LinearLayout) {
         val button = MaterialButton(context, null, R.style.Widget_MaterialComponents_Button_OutlinedButton)
-        button.text = "Открыть запись"
+        button.text = RECORD_OPEN
         button.width = 500
         button.height = 200
         button.gravity = Gravity.CENTER
@@ -232,11 +238,11 @@ class HistoryAdapter(
         params.setMargins(8,8,8,8)
         if (item.out == 0) {
             holder.image.visibility = VISIBLE
-            params.gravity = Gravity.LEFT
+            params.gravity = LEFT
             params.rightMargin = 60
         } else {
             holder.image.visibility = GONE
-            params.gravity = Gravity.RIGHT
+            params.gravity = RIGHT
             params.leftMargin = 60
         }
         card.layoutParams = params

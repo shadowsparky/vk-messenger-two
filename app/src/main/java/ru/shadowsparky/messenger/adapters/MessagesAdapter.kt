@@ -23,6 +23,7 @@ import ru.shadowsparky.messenger.response_utils.pojos.VKProfile
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
+import ru.shadowsparky.messenger.utils.Constansts.Companion.PHOTO_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.VK_PEER_CHAT
 import ru.shadowsparky.messenger.utils.Constansts.Companion.VK_PEER_GROUP
@@ -118,7 +119,7 @@ open class MessagesAdapter(
         var photo = ""
         user_data.text = conversation .chat_settings.title
         photo = if (conversation.chat_settings.photo == null)
-            "https://vk.com/images/camera_100.png?ava=1"
+            PHOTO_NOT_FOUND
         else
             conversation.chat_settings.photo.photo_100
         card.setOnClickListener { _ ->
@@ -136,7 +137,7 @@ open class MessagesAdapter(
         var photo = ""
         user_data.text = item.name
         photo = if (item.photo_100 == null)
-            "https://vk.com/images/camera_100.png?ava=1"
+            PHOTO_NOT_FOUND
         else
             item.photo_100
         card.setOnClickListener { _ ->
