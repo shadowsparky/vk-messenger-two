@@ -69,7 +69,7 @@ class HistoryAdapter(
         data.response.profiles!!.addAll(response.response.profiles!!)
         reverse()
         addProfiles(response)
-        log.print("ADD DATA: ${data.response.items.size} ${response.response.items.size}")
+        log.print("ADD DATA: ${data.response.items.size} ${response.response.items.size}", false, TAG)
         notifyItemRangeInserted(0, response.response.items.size)
     }
 
@@ -78,7 +78,7 @@ class HistoryAdapter(
     override fun onBindViewHolder(holder: HistoryAdapter.MainViewHolder, position: Int) {
         if ((position == 0) and (itemCount < data.response.count!!)) {
             scroll_callback(itemCount)
-            log.print("Message history loading request... position: $itemCount")
+            log.print("Message history loading request... position: $itemCount", false, TAG)
         }
         val item = data.response.items!![position]
         configureCard(holder.card, item, holder)
