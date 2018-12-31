@@ -68,7 +68,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
     }
 
     override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit,
-                            photo_touch_callback: (ImageView, String) -> Unit) {
+        photo_touch_callback: (ImageView, String) -> Unit) {
         log.print("Current adapter is $adapter", false, TAG)
         if (adapter == null) {
             adapter = HistoryAdapter(response, scroll_callback, photo_touch_callback, userId)

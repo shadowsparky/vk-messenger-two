@@ -73,6 +73,7 @@ class MessagesPresenter : Messages.Presenter {
             model.getCachedHistory(callback, peerId!!.toLong())
             view!!.disposeAdapter()
         }
+        view!!.setLoading(false)
         errorUtils.onFailureResponse(error)
     }
 
