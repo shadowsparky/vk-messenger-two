@@ -143,14 +143,18 @@ class MessagesView : AppCompatActivity(), Messages.View {
         log.print("MessagesView activity destroyed", false, TAG)
     }
 
-    class ResponseReceiver(val presenter: Messages.Presenter, val log: Logger, val userId: Int) : BroadcastReceiver() {
+    class ResponseReceiver(
+            val presenter: Messages.Presenter,
+            val log: Logger,
+            val userId: Int
+    ) : BroadcastReceiver() {
+
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent!!.action == Constansts.BROADCAST_RECEIVER_CODE) {
                 val result = intent.getBooleanExtra("test", false)
                 val mResponse = intent.getSerializableExtra(Constansts.RESPONSE) as VKMessages
                 if (result) {
                     var updateFlag = false
-
                     if (mResponse.profiles != null) {
                         for (item in mResponse.profiles) {
                             if (item.id == userId) {

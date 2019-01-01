@@ -28,7 +28,7 @@ class MessagesModel : Messages.Model {
     }
 
     override fun getMessageHistory(peerId: Int, callback: (Response) -> Unit,
-                                   failureHandler: (Throwable) -> Unit, offset: Int) {
+       failureHandler: (Throwable) -> Unit, offset: Int) {
         val request = RequestBuilder()
                 .setPeerId(peerId)
                 .setOffset(offset)
@@ -38,10 +38,11 @@ class MessagesModel : Messages.Model {
         disposables.addRequest(request.getDisposable())
     }
 
-    override fun getCachedHistory(callback: (Response) -> Unit, user_id: Long) = db.getAllByIDWithCallback(callback, user_id)
+    override fun getCachedHistory(callback: (Response) -> Unit, user_id: Long) =
+        db.getAllByIDWithCallback(callback, user_id)
 
     override fun sendMessage(peerId: Int, message: String, callback: (Response) -> Unit,
-                             failureHandler: (Throwable) -> Unit) {
+        failureHandler: (Throwable) -> Unit) {
         val request = RequestBuilder()
                 .setPeerId(peerId)
                 .setMessage(message)
@@ -54,5 +55,4 @@ class MessagesModel : Messages.Model {
     override fun getPhoto(url: String, image: ImageView) = picasso.load(url).circle().into(image)
 
     override fun disposeRequests() = disposables.disposeAllRequests()
-
 }

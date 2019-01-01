@@ -8,6 +8,6 @@
 
     <item
         android:id="@+id/subscribe_to_push"
-        android:title="Подписаться на уведомления">
+        android:title="@string/debug_push">
     </item>
 </menu>

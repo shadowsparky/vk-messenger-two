@@ -41,7 +41,6 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     @Inject protected lateinit var db: DBListTableWrapper
     private val TAG = javaClass.name
     private var adapter: MessagesAdapter? = null
-//    private lateinit var service: Intent
     private lateinit var receiver: MessagesListView.ResponseReceiver
 
     override fun setLoading(result: Boolean) {
@@ -126,15 +125,15 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         refresher.setOnRefreshListener{ presenter.onScrollFinished() }
         if (preferencesUtils.read(DEVICE_ID) == "")
             preferencesUtils.write(DEVICE_ID, Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
-        log.print("FIREBASE TOKEN: ${preferencesUtils.read(FIREBASE_TOKEN)}")
-        log.print("DEVICE ID: ${preferencesUtils.read(DEVICE_ID)}")
+        log.print("FIREBASE TOKEN: ${preferencesUtils.read(FIREBASE_TOKEN)}", false, TAG)
+        log.print("DEVICE ID: ${preferencesUtils.read(DEVICE_ID)}", false, TAG)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         presenter.onActivityDestroying()
         stopService()
-        log.print("MessagesListView activity destroyed", true, TAG)
+        log.print("MessagesListView activity destroyed", false, TAG)
     }
 
     class ResponseReceiver(val presenter: MessagesList.Presenter, val log: Logger) : BroadcastReceiver() {

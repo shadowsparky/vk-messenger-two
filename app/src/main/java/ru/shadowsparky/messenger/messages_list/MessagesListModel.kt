@@ -20,7 +20,7 @@ class MessagesListModel : MessagesList.Model {
     }
 
     override fun subscribeToPush(callback: (Response) -> Unit,
-                                 failureHandler: (Throwable) -> Unit) {
+        failureHandler: (Throwable) -> Unit) {
         val request = RequestBuilder()
                 .setCallbacks(callback, failureHandler)
                 .subscribeToPushRequest()
@@ -29,7 +29,7 @@ class MessagesListModel : MessagesList.Model {
     }
 
     override fun getAllDialogs(callback: (Response) -> Unit,
-                               failureHandler: (Throwable) -> Unit, offset: Int) {
+       failureHandler: (Throwable) -> Unit, offset: Int) {
         val request = RequestBuilder()
                 .setOffset(offset)
                 .setCallbacks(callback, failureHandler)

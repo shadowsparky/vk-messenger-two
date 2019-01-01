@@ -7,7 +7,6 @@ package ru.shadowsparky.messenger.messages_view
 import android.content.Intent
 import android.widget.ImageView
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.open_photo.OpenPhotoView
 import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
