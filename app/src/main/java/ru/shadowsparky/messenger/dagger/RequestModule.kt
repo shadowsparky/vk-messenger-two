@@ -14,14 +14,14 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
+import ru.shadowsparky.messenger.response_utils.Requester
 import ru.shadowsparky.messenger.response_utils.pojos.VKError
 import ru.shadowsparky.messenger.response_utils.responses.ErrorResponse
 import javax.inject.Singleton
 
 @Module
 class RequestModule {
-    @Provides
-    fun provideOkHttpClient() : OkHttpClient {
+    @Provides fun provideOkHttpClient() : OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
@@ -37,6 +37,8 @@ class RequestModule {
                 }
                 .build()
     }
+
+    @Provides fun provideRequester() : Requester = Requester()
 
     @Provides
     @Singleton

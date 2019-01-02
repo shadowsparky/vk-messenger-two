@@ -26,6 +26,7 @@ class MessagesPresenter : Messages.Presenter {
 
     init {
         App.component.inject(this)
+        model.attachCallbacks(::onSuccessResponse, ::onFailureResponse)
     }
 
     override fun attachPeerID(peerId: Int) : MessagesPresenter {
@@ -49,17 +50,17 @@ class MessagesPresenter : Messages.Presenter {
     override fun onGetMessageHistoryRequest() {
         view!!.setLoading(true)
         view!!.disposeAdapter()
-        model.getMessageHistory(peerId!!, ::onSuccessResponse, ::onFailureResponse)
+        model.getMessageHistory(peerId!!)
     }
 
     override fun onScrollFinished(position: Int) {
         view!!.setLoading(true)
-        model.getMessageHistory(peerId!!,::onSuccessResponse, ::onFailureResponse, position)
+        model.getMessageHistory(peerId!!, position)
     }
 
     override fun onSendMessage(message: String) {
         view!!.setLoading(true)
-        model.sendMessage(peerId!!, message, ::onSuccessResponse, ::onFailureResponse)
+        model.sendMessage(peerId!!, message)
     }
 
     override fun onFailureResponse(error: Throwable) {

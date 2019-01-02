@@ -70,7 +70,7 @@ open class MessagesAdapter(
             holder.message_data.text = item.last_message.text!!
         }
         setDate(item, holder)
-        setReading(item, holder)
+        //FIXME setReading(item, holder)
     }
 
     private fun setText(item: VKItems, holder: MainViewHolder) {

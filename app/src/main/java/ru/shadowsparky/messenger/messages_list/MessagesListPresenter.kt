@@ -23,6 +23,7 @@ class MessagesListPresenter : MessagesList.Presenter {
 
     init {
         App.component.inject(this)
+        model.attachCallbacks(::onSuccessResponse, ::onFailureResponse)
     }
 
     override fun attachView(view: MessagesListView) {
@@ -30,7 +31,7 @@ class MessagesListPresenter : MessagesList.Presenter {
         errorUtils.attach(view)
     }
 
-    override fun onPushSubscribing() = model.subscribeToPush(::onSuccessResponse, ::onFailureResponse)
+    override fun onPushSubscribing() = model.subscribeToPush()
 
     override fun onFailureResponse(error: Throwable) {
         val callback: (response: Response) -> Unit = {
@@ -41,7 +42,7 @@ class MessagesListPresenter : MessagesList.Presenter {
             }
         }
         if (!loadingError) {
-            model.getCachedDialogs(callback) // Загрузка закешированных данных с устройства
+            model.getCachedDialogs(callback)
             view!!.disposeAdapter()
         }
         view!!.setLoading(false)
@@ -53,7 +54,7 @@ class MessagesListPresenter : MessagesList.Presenter {
     override fun onScrollFinished(currentOffset: Int) {
         if (currentOffset == 0)
             view!!.disposeAdapter()
-        model.getAllDialogs(::onSuccessResponse, ::onFailureResponse, currentOffset)
+        model.getAllDialogs(currentOffset)
         view!!.setLoading(true)
     }
 

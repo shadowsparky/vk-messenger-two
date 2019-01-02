@@ -29,11 +29,10 @@ interface MessagesList {
     }
 
     interface Model {
-        fun getAllDialogs(callback: (Response) -> Unit,
-                          failureHandler: (Throwable) -> Unit, offset: Int = 0)
-        fun subscribeToPush(callback: (Response) -> Unit,
-                            failureHandler: (Throwable) -> Unit)
-        fun getCachedDialogs(callback: (Response) -> Unit)
+        fun getAllDialogs(offset: Int = 0)
+        fun attachCallbacks(successCallback: (Response) -> Unit, failureCallback: (Throwable) -> Unit)
+        fun subscribeToPush()
+        fun getCachedDialogs(successCallback: (Response) -> Unit)
         fun disposeRequests()
     }
 }

@@ -26,6 +26,7 @@ import ru.shadowsparky.messenger.open_photo.OpenPhotoView
 import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.response_utils.RequestBuilder
+import ru.shadowsparky.messenger.response_utils.Requester
 import ru.shadowsparky.messenger.services.SynchronizingService
 import ru.shadowsparky.messenger.utils.SQLite.DBListTableWrapper
 import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
@@ -60,4 +61,5 @@ interface Component {
     fun inject(target: OpenPhotoModel)
     fun inject(target: OpenPhotoView)
     fun inject(target: SynchronizingService)
+    fun inject(target: Requester)
 }
