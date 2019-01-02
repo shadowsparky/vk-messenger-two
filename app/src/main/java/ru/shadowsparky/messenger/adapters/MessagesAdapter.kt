@@ -35,7 +35,7 @@ import kotlin.math.abs
 open class MessagesAdapter(
         val data: MessagesResponse,
         val callback: (Int) -> Unit,
-        val touch_callback: (Int, String, String, Int) -> Unit
+        val touch_callback: (Int, String, String, Int, Int) -> Unit
 ) : RecyclerView.Adapter<MessagesAdapter.MainViewHolder>() {
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var dateUtils: DateUtils
@@ -104,11 +104,13 @@ open class MessagesAdapter(
 
     private fun userDialog(item: VKProfile, user_data: TextView, card: CardView, image: ImageView) {
         user_data.text = "${item.first_name} ${item.last_name}"
+        log.print("time: ${item.last_seen.time}", false, TAG)
         card.setOnClickListener { _ ->
             touch_callback(
                 item.id,
                 user_data.text.toString(),
                 item.photo_100,
+                item.online,
                 item.last_seen.time
             )
         }
@@ -128,6 +130,7 @@ open class MessagesAdapter(
                 conversation.peer.id!!,
                 user_data.text.toString(),
                 photo,
+                STATUS_HIDE,
                 STATUS_HIDE
             )
         }
@@ -146,6 +149,7 @@ open class MessagesAdapter(
                 -item.id,
                 user_data.text.toString(),
                 photo,
+                STATUS_HIDE,
                 STATUS_HIDE
             )
         }

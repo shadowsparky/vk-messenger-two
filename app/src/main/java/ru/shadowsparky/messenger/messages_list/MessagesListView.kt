@@ -25,6 +25,7 @@ import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.BROADCAST_RECEIVER_CODE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
+import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.RESPONSE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
@@ -75,16 +76,17 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         log.print("MessagesListView activity on pause...", true, TAG)
     }
 
-    override fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int) {
+    override fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int, last_seen: Int) {
         val intent = Intent(this, MessagesView::class.java)
         intent.putExtra(USER_ID, id)
         intent.putExtra(USER_DATA, user_data)
         intent.putExtra(URL, url)
+        intent.putExtra(LAST_SEEN_FIELD, last_seen)
         intent.putExtra(ONLINE_STATUS, online_status)
         startActivity(intent)
     }
 
-    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: (Int, String, String, Int) -> Unit) {
+    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: (Int, String, String, online_status: Int, last_seen: Int) -> Unit) {
         if (adapter == null) {
             adapter = MessagesAdapter(response, callback, touch_callback)
             messages_list.setHasFixedSize(true)

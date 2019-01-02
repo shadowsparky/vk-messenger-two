@@ -58,7 +58,7 @@ class MessagesListPresenter : MessagesList.Presenter {
         view!!.setLoading(true)
     }
 
-    override fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int) = view!!.navigateToHistory(id, user_data, url, online_status)
+    override fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int, last_seen: Int) = view!!.navigateToHistory(id, user_data, url, online_status, last_seen)
 
     override fun onSuccessResponse(response: Response) {
         when(response) {

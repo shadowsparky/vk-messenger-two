@@ -16,14 +16,14 @@ interface MessagesList {
         fun startService()
         fun stopService()
         fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit,
-                       touch_callback: (Int, String, String, online_status: Int) -> Unit)
-        fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int)
+                       touch_callback: (Int, String, String, online_status: Int, last_seen: Int) -> Unit)
+        fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int, last_seen: Int)
     }
 
     interface Presenter : RequestHandler {
         fun onPushSubscribing()
         fun onScrollFinished(currentOffset: Int = 0)
-        fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int)
+        fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int, last_seen: Int)
         fun attachView(view: MessagesListView)
         fun onActivityDestroying()
     }

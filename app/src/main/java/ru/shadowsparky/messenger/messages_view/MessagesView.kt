@@ -22,6 +22,7 @@ import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
@@ -45,6 +46,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
     private var userData = USER_NOT_FOUND
     private var url = URL_NOT_FOUND
     private var onlineStatus = STATUS_HIDE
+    private var mLastSeen = STATUS_HIDE
     private var receiver: MessagesView.ResponseReceiver? = null
     private val TAG = javaClass.name
 
@@ -91,6 +93,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
         userData = intent.getStringExtra(USER_DATA)
         url = intent.getStringExtra(URL)
         onlineStatus = intent.getIntExtra(ONLINE_STATUS, STATUS_HIDE)
+        mLastSeen = intent.getIntExtra(LAST_SEEN_FIELD, STATUS_HIDE)
         log.print("$userId $userData $url $onlineStatus")
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
                 (url != URL_NOT_FOUND)) {
@@ -128,9 +131,22 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     private fun initToolbar() {
         message_history_user_data.text = userData
+        val dateUtils = DateUtils()
+        val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
+        val messageDate = dateUtils.fromUnixToStrictDate(mLastSeen.toLong())
+        var formattedDate = if (todayDate > messageDate) {
+            dateUtils.fromUnixToDateAndTime(mLastSeen.toLong())
+        } else {
+            dateUtils.fromUnixToTimeString(mLastSeen.toLong())
+        }
+        log.print(formattedDate, false, TAG)
         when (onlineStatus) {
             STATUS_HIDE -> message_history_user_online.visibility = GONE
-            else -> message_history_user_online.text = DateUtils().fromUnixToDateAndTime(onlineStatus.toLong())
+            STATUS_OFFLINE -> {
+                val status = "Был(а) в сети $formattedDate"
+                message_history_user_online.text = status
+            }
+            STATUS_ONLINE -> message_history_user_online.text = "В сети"
         }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back_gray_24dp)
