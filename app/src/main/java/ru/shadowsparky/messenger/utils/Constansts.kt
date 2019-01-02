@@ -34,6 +34,7 @@ open class Constansts {
         val PHOTO = "photo"
         val STICKER = "sticker"
         val WALL = "wall"
+        val LAST_SEEN_FIELD = "last_seen"
         val RECORD_OPEN = "Открыть запись"
         val PHOTO_NOT_FOUND = "https://vk.com/images/camera_100.png?ava=1"
     }

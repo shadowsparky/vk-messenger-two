@@ -10,8 +10,8 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPoll
-import ru.shadowsparky.messenger.response_utils.pojos.VKLongPollServer
 import ru.shadowsparky.messenger.response_utils.responses.*
+import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.LONG_POLL_VERSION
 import ru.shadowsparky.messenger.utils.Constansts.Companion.VK_API_VERSION
 
@@ -22,7 +22,7 @@ interface VKApi {
         @Query("count") count: Int,
         @Query("filter") filter: String,
         @Query("access_token") token: String,
-        @Query("fields") fields: String = "last_seen",
+        @Query("fields") fields: String = LAST_SEEN_FIELD + ", online, photo_100",
         @Query("v") version: Double = VK_API_VERSION,
         @Query("extended") extended: Boolean = true
     ) : Single<Response<MessagesResponse>>

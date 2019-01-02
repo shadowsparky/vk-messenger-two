@@ -71,7 +71,7 @@ open class MessagesAdapter(
             holder.message_data.text = item.last_message.text!!
         }
         setDate(item, holder)
-        //FIXME setReading(item, holder)
+//        setReading(item, holder)
     }
 
     private fun setText(item: VKItems, holder: MainViewHolder) {
@@ -104,13 +104,12 @@ open class MessagesAdapter(
 
     private fun userDialog(item: VKProfile, user_data: TextView, card: CardView, image: ImageView) {
         user_data.text = "${item.first_name} ${item.last_name}"
-        log.print("LAST_SEEN ${item.last_seen}", false, TAG)
         card.setOnClickListener { _ ->
             touch_callback(
                 item.id,
                 user_data.text.toString(),
                 item.photo_100,
-                item.online
+                item.last_seen.time
             )
         }
         picasso.load(item.photo_100).circle().into(image)
@@ -144,10 +143,10 @@ open class MessagesAdapter(
             item.photo_100
         card.setOnClickListener { _ ->
             touch_callback(
-                    -item.id,
-                    user_data.text.toString(),
-                    photo,
-                    STATUS_HIDE
+                -item.id,
+                user_data.text.toString(),
+                photo,
+                STATUS_HIDE
             )
         }
         picasso.load(photo).circle().into(image)

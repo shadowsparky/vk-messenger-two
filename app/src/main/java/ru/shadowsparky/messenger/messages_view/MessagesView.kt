@@ -129,9 +129,8 @@ class MessagesView : AppCompatActivity(), Messages.View {
     private fun initToolbar() {
         message_history_user_data.text = userData
         when (onlineStatus) {
-            STATUS_OFFLINE -> message_history_user_online.text = "Не в сети"
             STATUS_HIDE -> message_history_user_online.visibility = GONE
-            STATUS_ONLINE -> message_history_user_online.text = "В сети"
+            else -> message_history_user_online.text = DateUtils().fromUnixToDateAndTime(onlineStatus.toLong())
         }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back_gray_24dp)
