@@ -7,27 +7,48 @@ import javax.inject.Inject
 
 class Requester  {
     @Inject protected lateinit var disposables: CompositeDisposableManager
-    private var successCallback: ((Response) -> Unit)? = null
-    private var failureCallback: ((Throwable) -> Unit)? = null
+    private var mSuccessCallback: ((Response) -> Unit)? = null
+    private var mFailureCallback: ((Throwable) -> Unit)? = null
     private val TAG = javaClass.name
+
     init {
         App.component.inject(this)
     }
 
-    fun attachCallbacks(successCallback: ((Response) -> Unit), failureCallback: ((Throwable) -> Unit)) {
-        this.successCallback = successCallback
-        this.failureCallback = failureCallback
+    fun attachCallbacks(mSuccessCallback: ((Response) -> Unit), mFailureCallback: ((Throwable) -> Unit)) {
+        this.mSuccessCallback = mSuccessCallback
+        this.mFailureCallback = mFailureCallback
     }
 
     private fun checkCallbacks() {
-        if ((successCallback == null) or (failureCallback == null))
+        if ((mSuccessCallback == null) or (mFailureCallback == null))
             throw NullPointerException("Callbacks not initialized")
+    }
+
+    fun getByID(ids: String) {
+        checkCallbacks()
+        val request = RequestBuilder()
+                .setMessageIds(ids)
+                .setCallbacks(mSuccessCallback!!, mFailureCallback!!)
+                .getById()
+                .build()
+        disposables.addRequest(request.getDisposable())
+    }
+
+    fun getLongPollServer() {
+        checkCallbacks()
+        val request = RequestBuilder()
+                .setCallbacks(mSuccessCallback!!, mFailureCallback!!)
+                .getLongPollServerRequest()
+                .build()
+                .getDisposable()
+        disposables.addRequest(request!!)
     }
 
     fun subscrubeToPush() {
         checkCallbacks()
         val request = RequestBuilder()
-                .setCallbacks(successCallback!!, failureCallback!!)
+                .setCallbacks(mSuccessCallback!!, mFailureCallback!!)
                 .subscribeToPushRequest()
                 .build()
         disposables.addRequest(request.getDisposable())
@@ -37,7 +58,7 @@ class Requester  {
         checkCallbacks()
         val request = RequestBuilder()
                 .setOffset(offset)
-                .setCallbacks(successCallback!!, failureCallback!!)
+                .setCallbacks(mSuccessCallback!!, mFailureCallback!!)
                 .getDialogsRequest()
                 .build()
         disposables.addRequest(request.getDisposable())
@@ -48,7 +69,7 @@ class Requester  {
         val request = RequestBuilder()
                 .setPeerId(peerId)
                 .setOffset(offset)
-                .setCallbacks(successCallback!!, failureCallback!!)
+                .setCallbacks(mSuccessCallback!!, mFailureCallback!!)
                 .getHistoryRequest()
                 .build()
         disposables.addRequest(request.getDisposable())
@@ -59,12 +80,11 @@ class Requester  {
         val request = RequestBuilder()
                 .setPeerId(peerId)
                 .setMessage(message)
-                .setCallbacks(successCallback!!, failureCallback!!)
+                .setCallbacks(mSuccessCallback!!, mFailureCallback!!)
                 .sendMessageRequest()
                 .build()
         disposables.addRequest(request.getDisposable())
     }
 
     fun disposeRequests() = disposables.disposeAllRequests()
-
 }

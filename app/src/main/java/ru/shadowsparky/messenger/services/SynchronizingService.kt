@@ -11,10 +11,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import ru.shadowsparky.messenger.response_utils.RequestBuilder
-import ru.shadowsparky.messenger.response_utils.RequestHandler
-import ru.shadowsparky.messenger.response_utils.Response
-import ru.shadowsparky.messenger.response_utils.VKApi
+import ru.shadowsparky.messenger.response_utils.*
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPoll
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPollServer
 import ru.shadowsparky.messenger.response_utils.responses.LongPollServerResponse
@@ -31,6 +28,7 @@ import javax.inject.Inject
 
 class SynchronizingService : IntentService("Synchronizing Service"), RequestHandler {
     @Inject protected lateinit var disposables: CompositeDisposableManager
+    @Inject protected lateinit var requester: Requester
     @Inject protected lateinit var log: Logger
     private var broadcast: Intent? = null
     private val TAG = "SYNCHRONIZING_SERVICE"
@@ -47,6 +45,7 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
     override fun onCreate() {
         super.onCreate()
         App.component.inject(this)
+        requester.attachCallbacks(::onSuccessResponse, ::onFailureResponse)
     }
 
     private fun initBroadcast() {
@@ -67,6 +66,7 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
     override fun onDestroy() {
         super.onDestroy()
         disposables.disposeAllRequests()
+        requester.disposeRequests()
         log.print("$TAG dead. Rest in Peace", true, TAG)
     }
 
@@ -120,7 +120,7 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
         disposables.addRequest(request!!)
     }
 
-    private fun handleResult(updates: ArrayList<ArrayList<Any>>) {
+    private fun parseResult(updates: ArrayList<ArrayList<Any>>) {
         var ids = ""
         for (i in 0 until updates.size) {
             val element = updates[i]
@@ -135,7 +135,7 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
                 onFailureResponse(IllegalArgumentException("Request Error: First element unrecognized"))
         }
         if (ids != "")
-            getByID(ids)
+            requester.getByID(ids)
     }
 
     private fun longPollHandler(data: retrofit2.Response<VKLongPoll>) {
@@ -143,7 +143,7 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
         response!!.ts = data.body()!!.ts.toLong()
         if (data.body()!!.updates != null) {
             if (data.body()!!.updates.size > 0) {
-                handleResult(data.body()!!.updates)
+                parseResult(data.body()!!.updates)
             } else
                 onFailureResponse(RuntimeException("Request Error: Updates size is 0"))
         } else
@@ -163,29 +163,11 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
         }
     }
 
-    private fun getByID(ids: String) {
-        val request = RequestBuilder()
-            .setMessageIds(ids)
-            .setCallbacks(::onSuccessResponse, ::onFailureResponse)
-            .getById()
-            .build()
-        disposables.addRequest(request.getDisposable())
-    }
-
     private fun sendRequest() {
         if ((response == null) or (path == null))
-            getLongPollServer()
+            requester.getLongPollServer()
         else
             getLongPoll(path!![1], response!!)
-    }
-
-    private fun getLongPollServer() {
-        request = RequestBuilder()
-            .setCallbacks(::onSuccessResponse, ::onFailureResponse)
-            .getLongPollServerRequest()
-            .build()
-            .getDisposable()
-        disposables.addRequest(request!!)
     }
 
     override fun onHandleIntent(intent: Intent?) {
