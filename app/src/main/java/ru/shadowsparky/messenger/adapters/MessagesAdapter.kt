@@ -41,6 +41,7 @@ open class MessagesAdapter(
     @Inject protected lateinit var dateUtils: DateUtils
     private val profiles = HashMap<Int, VKProfile>()
     private val groups = HashMap<Int, VKGroup>()
+    private val TAG = javaClass.name
 
     init {
         App.component.inject(this)
@@ -103,6 +104,7 @@ open class MessagesAdapter(
 
     private fun userDialog(item: VKProfile, user_data: TextView, card: CardView, image: ImageView) {
         user_data.text = "${item.first_name} ${item.last_name}"
+        log.print("LAST_SEEN ${item.last_seen}", false, TAG)
         card.setOnClickListener { _ ->
             touch_callback(
                 item.id,

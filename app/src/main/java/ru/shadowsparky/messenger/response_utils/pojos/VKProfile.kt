@@ -15,5 +15,6 @@ data class VKProfile(
     val photo_50: String,
     val photo_100: String,
     val online: Int,
-    val online_mobile: Int
+    val online_mobile: Int,
+    val last_seen: VKLastSeen
 ) : Serializable

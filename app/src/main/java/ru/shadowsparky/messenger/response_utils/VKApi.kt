@@ -22,6 +22,7 @@ interface VKApi {
         @Query("count") count: Int,
         @Query("filter") filter: String,
         @Query("access_token") token: String,
+        @Query("fields") fields: String = "last_seen",
         @Query("v") version: Double = VK_API_VERSION,
         @Query("extended") extended: Boolean = true
     ) : Single<Response<MessagesResponse>>
