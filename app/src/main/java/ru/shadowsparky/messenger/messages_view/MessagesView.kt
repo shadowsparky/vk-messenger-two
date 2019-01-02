@@ -148,31 +148,35 @@ class MessagesView : AppCompatActivity(), Messages.View {
             val log: Logger,
             val userId: Int
     ) : BroadcastReceiver() {
+        private var mUpdateFlag = false
+
+        private fun receiveLongPoll(mResponse: VKMessages) {
+            mUpdateFlag = false
+            if (mResponse.profiles != null) {
+                for (item in mResponse.profiles) {
+                    if (item.id == userId) {
+                        mUpdateFlag = true
+                    }
+                }
+            }
+            if (mResponse.groups != null) {
+                for (item in mResponse.groups) {
+                    if (abs(item.id) == abs(userId)) {
+                        mUpdateFlag = true
+                    }
+                }
+            }
+            if (mUpdateFlag) {
+                log.print("MessageHistoryRequest Long Poll Handled")
+                presenter.onGetMessageHistoryRequest()
+            }
+        }
 
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent!!.action == Constansts.BROADCAST_RECEIVER_CODE) {
-                val result = intent.getBooleanExtra("test", false)
-                val mResponse = intent.getSerializableExtra(Constansts.RESPONSE) as VKMessages
-                if (result) {
-                    var updateFlag = false
-                    if (mResponse.profiles != null) {
-                        for (item in mResponse.profiles) {
-                            if (item.id == userId) {
-                                updateFlag = true
-                            }
-                        }
-                    }
-                    if (mResponse.groups != null) {
-                        for (item in mResponse.groups) {
-                            if (abs(item.id) == abs(userId)) {
-                                updateFlag = true
-                            }
-                        }
-                    }
-                    if (updateFlag) {
-                        log.print("MessageHistoryRequest Long Poll Handled")
-                        presenter.onGetMessageHistoryRequest()
-                    }
+                val mResponse = intent.getSerializableExtra(Constansts.RESPONSE)
+                when (mResponse) {
+                    is VKMessages -> receiveLongPoll(mResponse)
                 }
             }
         }
