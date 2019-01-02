@@ -32,7 +32,9 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.URL_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID_NOT_FOUND
+import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_LONG_POLL_STATUS_CHANGED
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
+import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -69,6 +71,10 @@ class MessagesView : AppCompatActivity(), Messages.View {
         adapter = null
     }
 
+    override fun setStatus(status: String) {
+        message_history_user_online.text = status
+    }
+
     override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit,
         photo_touch_callback: (ImageView, String) -> Unit) {
         log.print("Current adapter is $adapter", false, TAG)
@@ -99,7 +105,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
                     .attachView(this)
-            receiver = ResponseReceiver(presenter, log, userId)
+            receiver = ResponseReceiver(this, presenter, log, userId)
             presenter.onGetMessageHistoryRequest()
             push_message.setOnClickListener {
                 presenter.onSendMessage(add_message.text.toString())
@@ -144,9 +150,9 @@ class MessagesView : AppCompatActivity(), Messages.View {
             STATUS_HIDE -> message_history_user_online.visibility = GONE
             STATUS_OFFLINE -> {
                 val status = "Был(а) в сети $formattedDate"
-                message_history_user_online.text = status
+                setStatus(status)
             }
-            STATUS_ONLINE -> message_history_user_online.text = "В сети"
+            STATUS_ONLINE -> setStatus("В сети")
         }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back_gray_24dp)
@@ -159,6 +165,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
     }
 
     class ResponseReceiver(
+            val view: Messages.View,
             val presenter: Messages.Presenter,
             val log: Logger,
             val userId: Int
@@ -192,6 +199,26 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 val mResponse = intent.getSerializableExtra(Constansts.RESPONSE)
                 when (mResponse) {
                     is VKMessages -> receiveLongPoll(mResponse)
+                }
+                val onlineStatusChanged = intent.getIntExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_HIDE)
+                val userId = intent.getIntExtra(USER_ID, -1)
+                if (onlineStatusChanged == STATUS_ONLINE) {
+                    if (userId == this.userId) {
+                        view.setStatus("В сети")
+                    }
+                } else if (onlineStatusChanged == STATUS_OFFLINE) {
+                    if (userId == this.userId) {
+                        val dateUtils = DateUtils()
+                        val mLastSeen = intent.getIntExtra(LAST_SEEN_FIELD, -1)
+                        val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
+                        val messageDate = dateUtils.fromUnixToStrictDate(mLastSeen.toLong())
+                        var formattedDate = if (todayDate > messageDate) {
+                            dateUtils.fromUnixToDateAndTime(mLastSeen.toLong())
+                        } else {
+                            dateUtils.fromUnixToTimeString(mLastSeen.toLong())
+                        }
+                        view.setStatus("Был(а) в сети $formattedDate")
+                    }
                 }
             }
         }

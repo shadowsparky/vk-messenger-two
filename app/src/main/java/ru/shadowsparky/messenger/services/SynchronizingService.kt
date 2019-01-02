@@ -10,6 +10,7 @@ import android.os.Message
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import ru.shadowsparky.messenger.response_utils.*
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPoll
@@ -19,12 +20,18 @@ import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.utils.Constansts.Companion.BROADCAST_RECEIVER_CODE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.RESPONSE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_ONLINE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
+import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_LONG_POLL_STATUS_CHANGED
 import ru.shadowsparky.messenger.utils.Logger
 import java.lang.ClassCastException
 import java.lang.Error
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.math.abs
 
 class SynchronizingService : IntentService("Synchronizing Service"), RequestHandler {
     @Inject protected lateinit var disposables: CompositeDisposableManager
@@ -55,9 +62,22 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
 
     private fun initLongPoll(path: String) {
         if (long_poll == null) {
+            val loggingInterceptor = HttpLoggingInterceptor()
+            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            val okHttpClient = OkHttpClient.Builder()
+                    .addInterceptor(loggingInterceptor)
+                    .addInterceptor {
+                        val request = it.request()
+                        val response = it.proceed(request)
+                        response.body()
+                        return@addInterceptor response
+                    }
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build()
             long_poll = Retrofit.Builder().baseUrl("https://$path/")
                 .addCallAdapterFactory(retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory.create())
-                .client(client)
+                .client(okHttpClient)
                 .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
                 .build()
         }
@@ -125,11 +145,24 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
         for (i in 0 until updates.size) {
             val element = updates[i]
             if (element[0] is Double) {
-                if ((element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0) or (element[0] == 6.0) or (element[0] == 7.0)) {
-                    ids += if (i != updates.size - 1)
+                when {
+                    (element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0) or (element[0] == 6.0) or (element[0] == 7.0) -> ids += if (i != updates.size - 1)
                         "${element[1]}, "
                     else
                         element[1].toString()
+                    element[0] == 8.0 -> {
+                        initBroadcast()
+                        broadcast!!.putExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_ONLINE)
+                        broadcast!!.putExtra(USER_ID, abs((element[1] as Double).toInt()))
+                        sendBroadcast(broadcast)
+                    }
+                    element[0] == 9.0 -> {
+                        initBroadcast()
+                        broadcast!!.putExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_OFFLINE)
+                        broadcast!!.putExtra(USER_ID, abs((element[1] as Double).toInt()))
+                        broadcast!!.putExtra(LAST_SEEN_FIELD, (element[3] as Double).toInt())
+                        sendBroadcast(broadcast)
+                    }
                 }
             } else
                 onFailureResponse(IllegalArgumentException("Request Error: First element unrecognized"))
