@@ -104,14 +104,19 @@ open class MessagesAdapter(
 
     private fun userDialog(item: VKProfile, user_data: TextView, card: CardView, image: ImageView) {
         user_data.text = "${item.first_name} ${item.last_name}"
-        log.print("time: ${item.last_seen.time}", false, TAG)
-        card.setOnClickListener { _ ->
+        val time = if (item.last_seen != null) {
+            item.last_seen.time
+        } else {
+            STATUS_HIDE
+        }
+        log.print("time: $time", false, TAG)
+        card.setOnClickListener {
             touch_callback(
                 item.id,
                 user_data.text.toString(),
                 item.photo_100,
                 item.online,
-                item.last_seen.time
+                time
             )
         }
         picasso.load(item.photo_100).circle().into(image)
@@ -125,7 +130,7 @@ open class MessagesAdapter(
             PHOTO_NOT_FOUND
         else
             conversation.chat_settings.photo.photo_100
-        card.setOnClickListener { _ ->
+        card.setOnClickListener {
             touch_callback(
                 conversation.peer.id!!,
                 user_data.text.toString(),
