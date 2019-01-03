@@ -23,6 +23,7 @@ import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.services.SynchronizingService
 import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.BROADCAST_RECEIVER_CODE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.DEAD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
@@ -135,6 +136,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         super.onDestroy()
         presenter.onActivityDestroying()
         stopService()
+        log.print("$TAG $DEAD", false, TAG)
         log.print("MessagesListView activity destroyed", false, TAG)
     }
 

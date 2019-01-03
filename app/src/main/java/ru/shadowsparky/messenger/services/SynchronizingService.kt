@@ -20,6 +20,7 @@ import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.utils.Constansts.Companion.BROADCAST_RECEIVER_CODE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.DEAD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.RESPONSE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
@@ -87,7 +88,7 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
         super.onDestroy()
         disposables.disposeAllRequests()
         requester.disposeRequests()
-        log.print("$TAG dead. Rest in Peace", true, TAG)
+        log.print("$TAG $DEAD", false, TAG)
     }
 
     override fun onSuccessResponse(response: Response) {

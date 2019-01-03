@@ -38,5 +38,8 @@ open class Constansts {
         val RECORD_OPEN = "Открыть запись"
         val PHOTO_NOT_FOUND = "https://vk.com/images/camera_100.png?ava=1"
         val USER_LONG_POLL_STATUS_CHANGED = "long poll status changed"
+        val DEAD = " is dead. Rest in Peace"
+        val ONLINE = "В сети"
+        val OFFLINE = "Был(а) в сети"
     }
 }

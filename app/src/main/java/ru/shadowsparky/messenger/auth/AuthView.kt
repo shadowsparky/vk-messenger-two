@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_auth.*
 import ru.shadowsparky.messenger.messages_list.MessagesListView
 import ru.shadowsparky.messenger.dialogs.AuthDialog
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.Constansts
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.ToastUtils
 import javax.inject.Inject
@@ -22,6 +23,7 @@ class AuthView : AppCompatActivity(), Auth.View {
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var context: Context
     @Inject protected lateinit var presenter: Auth.Presenter
+    private val TAG = javaClass.name
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +35,11 @@ class AuthView : AppCompatActivity(), Auth.View {
             AuthDialog(this, callback).show()
         }
         presenter.onAuthentication()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        log.print("$TAG ${Constansts.DEAD}", false, TAG)
     }
 
     override fun setLoading(result: Boolean) {

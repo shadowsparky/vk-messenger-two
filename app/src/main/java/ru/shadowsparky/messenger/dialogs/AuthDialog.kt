@@ -15,11 +15,8 @@ import android.webkit.WebViewClient
 import ru.shadowsparky.messenger.R
 import kotlinx.android.synthetic.main.auth_dialog.*
 import ru.shadowsparky.messenger.auth.Auth
-import ru.shadowsparky.messenger.utils.App
-import ru.shadowsparky.messenger.utils.Logger
-import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
+import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
-import ru.shadowsparky.messenger.utils.ToastUtils
 import javax.inject.Inject
 
 open class AuthDialog(context: Context, val callback: () -> Unit) : Dialog(context) {

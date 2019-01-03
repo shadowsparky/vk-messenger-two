@@ -21,8 +21,11 @@ import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.*
+import ru.shadowsparky.messenger.utils.Constansts.Companion.DEAD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
+import ru.shadowsparky.messenger.utils.Constansts.Companion.OFFLINE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
@@ -149,10 +152,10 @@ class MessagesView : AppCompatActivity(), Messages.View {
         when (onlineStatus) {
             STATUS_HIDE -> message_history_user_online.visibility = GONE
             STATUS_OFFLINE -> {
-                val status = "Был(а) в сети $formattedDate"
+                val status = "$OFFLINE $formattedDate"
                 setStatus(status)
             }
-            STATUS_ONLINE -> setStatus("В сети")
+            STATUS_ONLINE -> setStatus("$ONLINE")
         }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back_gray_24dp)
@@ -161,7 +164,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
     override fun onDestroy() {
         super.onDestroy()
         presenter.onActivityDestroying()
-        log.print("MessagesView activity destroyed", false, TAG)
+        log.print("$TAG $DEAD", false, TAG)
     }
 
     class ResponseReceiver(
@@ -204,7 +207,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 val userId = intent.getIntExtra(USER_ID, -1)
                 if (onlineStatusChanged == STATUS_ONLINE) {
                     if (userId == this.userId) {
-                        view.setStatus("В сети")
+                        view.setStatus("$ONLINE")
                     }
                 } else if (onlineStatusChanged == STATUS_OFFLINE) {
                     if (userId == this.userId) {
@@ -217,7 +220,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
                         } else {
                             dateUtils.fromUnixToTimeString(mLastSeen.toLong())
                         }
-                        view.setStatus("Был(а) в сети $formattedDate")
+                        view.setStatus("$OFFLINE $formattedDate")
                     }
                 }
             }
