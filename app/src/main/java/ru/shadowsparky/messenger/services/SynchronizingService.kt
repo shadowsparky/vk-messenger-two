@@ -139,6 +139,8 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
             )
         disposables.addRequest(request!!)
     }
+    private val USER_ONLINE = 8.0
+    private val USER_OFFLINE = 9.0
 
     private fun parseResult(updates: ArrayList<ArrayList<Any>>) {
         var ids = ""
@@ -146,17 +148,19 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
             val element = updates[i]
             if (element[0] is Double) {
                 when {
-                    (element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0) or (element[0] == 6.0) or (element[0] == 7.0) -> ids += if (i != updates.size - 1)
+                    (element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0)
+                            or (element[0] == 6.0) or (element[0] == 7.0) ->
+                    ids += if (i != updates.size - 1)
                         "${element[1]}, "
                     else
                         element[1].toString()
-                    element[0] == 8.0 -> {
+                    element[0] == USER_ONLINE -> {
                         initBroadcast()
                         broadcast!!.putExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_ONLINE)
                         broadcast!!.putExtra(USER_ID, abs((element[1] as Double).toInt()))
                         sendBroadcast(broadcast)
                     }
-                    element[0] == 9.0 -> {
+                    element[0] == USER_OFFLINE -> {
                         initBroadcast()
                         broadcast!!.putExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_OFFLINE)
                         broadcast!!.putExtra(USER_ID, abs((element[1] as Double).toInt()))

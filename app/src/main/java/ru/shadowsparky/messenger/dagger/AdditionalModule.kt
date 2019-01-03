@@ -5,6 +5,7 @@
 package ru.shadowsparky.messenger.dagger
 
 import android.content.Context
+import android.media.ImageWriter
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
@@ -18,6 +19,10 @@ class AdditionalModule(val context: Context) {
     @Provides
     @Singleton
     fun provideLogger() : Logger = Logger()
+
+    @Provides
+    @Singleton
+    fun privideImager() : ImageWorker = ImageWorker()
 
     @Provides
     @Singleton

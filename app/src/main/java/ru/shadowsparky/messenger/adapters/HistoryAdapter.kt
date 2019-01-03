@@ -5,6 +5,7 @@
 package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
+import android.media.ImageWriter
 import android.view.*
 import android.view.Gravity.LEFT
 import android.view.Gravity.RIGHT
@@ -30,6 +31,7 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.RECORD_OPEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STICKER
 import ru.shadowsparky.messenger.utils.Constansts.Companion.WALL
 import ru.shadowsparky.messenger.utils.DateUtils
+import ru.shadowsparky.messenger.utils.ImageWorker
 import ru.shadowsparky.messenger.utils.Logger
 import java.lang.RuntimeException
 import java.util.*
@@ -46,6 +48,7 @@ class HistoryAdapter(
 ) : RecyclerView.Adapter<HistoryAdapter.MainViewHolder>() {
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var dateUtils: DateUtils
+    @Inject protected lateinit var imageWorker: ImageWorker
     private val profiles = HashMap<Int, VKProfile>()
     private val groups = HashMap<Int, VKGroup>()
     private var context: Context? = null
@@ -120,28 +123,13 @@ class HistoryAdapter(
                 groups[item.id] = item
     }
 
-    private fun getHashmapCard(list: ArrayList<VKPhotoSize>) : HashMap<String, String> {
-        val hashmap = HashMap<String, String>()
-        for (element in list)
-            hashmap[element.type] = element.url
-        return hashmap
-    }
-
-    private fun getOptimalImage(map: HashMap<String, String>) : String? = when {
-        map["w"] != null -> map["w"]!!
-        map["z"] != null -> map["z"]!!
-        map["y"] != null -> map["y"]!!
-        map["x"] != null -> map["x"]!!
-        map["m"] != null -> map["m"]!!
-        map["s"] != null -> map["s"]!!
-        else -> null
-    }
-
     private fun includeAttachment(attachments: LinearLayout, info: Any, callback: (ImageView, String) -> Unit = { _, _ -> }) {
         try {
             val layout = LinearLayout(context)
+            layout.minimumHeight = WRAP_CONTENT
+            layout.minimumWidth = WRAP_CONTENT
             var url = when (info) {
-                is VKAttachmentsPhoto -> getOptimalImage(getHashmapCard(info.sizes))
+                is VKAttachmentsPhoto -> imageWorker.getOptimalImage(imageWorker.getHashmapCard(info.sizes))
                 is VKAttachmentsSticker -> info.images[info.images.size - 1].url
                 else -> EMPTY_STRING
             }

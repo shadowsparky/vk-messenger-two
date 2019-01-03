@@ -11,6 +11,7 @@ import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthModel
 import ru.shadowsparky.messenger.auth.AuthPresenter
 import ru.shadowsparky.messenger.auth.AuthView
+import ru.shadowsparky.messenger.dialogs.AttachmentDialog
 import ru.shadowsparky.messenger.dialogs.AuthDialog
 import ru.shadowsparky.messenger.messages_list.MessagesListModel
 import ru.shadowsparky.messenger.messages_list.MessagesListPresenter
@@ -62,4 +63,5 @@ interface Component {
     fun inject(target: OpenPhotoView)
     fun inject(target: SynchronizingService)
     fun inject(target: Requester)
+    fun inject(target: AttachmentDialog)
 }
