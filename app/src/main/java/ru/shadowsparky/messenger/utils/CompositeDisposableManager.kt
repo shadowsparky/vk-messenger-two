@@ -9,6 +9,7 @@ import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 open class CompositeDisposableManager {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var disposables: CompositeDisposable
     @Inject protected lateinit var log: Logger
     init {

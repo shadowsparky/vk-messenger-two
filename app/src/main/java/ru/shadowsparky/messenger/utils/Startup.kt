@@ -10,6 +10,7 @@ import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
 import javax.inject.Inject
 
 class Startup: AppCompatActivity() {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var mPref: SharedPreferencesUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {

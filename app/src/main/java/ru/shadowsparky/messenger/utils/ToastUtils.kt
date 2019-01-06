@@ -8,7 +8,7 @@ import android.content.Context
 import android.widget.Toast
 import es.dmoral.toasty.Toasty
 
-open class ToastUtils() {
+class ToastUtils {
     fun error(context: Context, message: String) = Toasty.error(context, message, Toast.LENGTH_SHORT, true).show()
 
     fun warning(context: Context, message: String) = Toasty.warning(context, message, Toast.LENGTH_SHORT, true).show()

@@ -37,6 +37,7 @@ open class MessagesAdapter(
         val callback: (Int) -> Unit,
         val touch_callback: (Int, String, String, Int, Int) -> Unit
 ) : RecyclerView.Adapter<MessagesAdapter.MainViewHolder>() {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var dateUtils: DateUtils
     private val profiles = HashMap<Int, VKProfile>()

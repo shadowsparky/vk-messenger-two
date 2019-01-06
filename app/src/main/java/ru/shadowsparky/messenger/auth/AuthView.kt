@@ -20,6 +20,7 @@ import ru.shadowsparky.messenger.utils.ToastUtils
 import javax.inject.Inject
 
 class AuthView : AppCompatActivity(), Auth.View {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var context: Context
     @Inject protected lateinit var presenter: Auth.Presenter

@@ -26,6 +26,7 @@ import ru.shadowsparky.messenger.R
  * Date: 08/09/2015
  * Email: m3ario@gmail.com
  */
+@Deprecated("Нигде в проекте не используется и вряд ли когда нибудь будет")
 object ImagePicker {
 
     private val DEFAULT_MIN_WIDTH_QUALITY = 400        // min pixels

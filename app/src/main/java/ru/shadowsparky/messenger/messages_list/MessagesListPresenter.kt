@@ -14,6 +14,7 @@ import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
 import javax.inject.Inject
 
 class MessagesListPresenter : MessagesList.Presenter {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var model: MessagesList.Model
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var errorUtils: FailureResponseHandler

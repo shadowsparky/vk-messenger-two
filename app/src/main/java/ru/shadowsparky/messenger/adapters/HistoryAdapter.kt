@@ -46,6 +46,7 @@ class HistoryAdapter(
         val touch_photo_callback: (ImageView, String) -> Unit,
         val user_id: Int
 ) : RecyclerView.Adapter<HistoryAdapter.MainViewHolder>() {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var dateUtils: DateUtils
     @Inject protected lateinit var imageWorker: ImageWorker

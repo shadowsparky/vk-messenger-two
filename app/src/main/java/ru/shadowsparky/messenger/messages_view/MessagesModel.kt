@@ -15,6 +15,7 @@ import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import javax.inject.Inject
 
 class MessagesModel : Messages.Model {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var db: DBViewTableWrapper
     @Inject protected lateinit var requester: Requester

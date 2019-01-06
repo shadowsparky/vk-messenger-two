@@ -7,6 +7,7 @@ import java.lang.NullPointerException
 import javax.inject.Inject
 
 class Requester  {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var disposables: CompositeDisposableManager
     private var mSuccessCallback: ((Response) -> Unit)? = null
     private var mFailureCallback: ((Throwable) -> Unit)? = null

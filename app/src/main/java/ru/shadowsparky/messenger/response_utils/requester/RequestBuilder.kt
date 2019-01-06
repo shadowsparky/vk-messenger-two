@@ -28,6 +28,7 @@ import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
 import javax.inject.Inject
 
 class RequestBuilder {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     private var request: Single<*>? = null
     private var result: Disposable? = null
     private var offset: Int? = null

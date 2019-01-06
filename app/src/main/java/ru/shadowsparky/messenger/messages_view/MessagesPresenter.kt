@@ -18,6 +18,7 @@ import ru.shadowsparky.messenger.utils.Constansts
 import javax.inject.Inject
 
 class MessagesPresenter : Messages.Presenter {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var model: Messages.Model
     @Inject protected lateinit var errorUtils: FailureResponseHandler
     private var view: MessagesView? = null

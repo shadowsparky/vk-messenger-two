@@ -20,8 +20,9 @@ import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
 import javax.inject.Inject
 
 open class AuthDialog(context: Context, val callback: () -> Unit) : Dialog(context) {
-    @Inject lateinit var log: Logger
-    @Inject lateinit var preferences: SharedPreferencesUtils
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
+    @Inject protected lateinit var log: Logger
+    @Inject protected lateinit var preferences: SharedPreferencesUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -13,8 +13,8 @@ import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
 
-// TODO: Сделать так, чтобы при загрузке приложения загружалась копия из БД, а если результат запроса будет без ошибок, то он должен будет перезаписать копию бд
 class DBListTableWrapper : DatabaseManager {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var db: MessagesDB
     @Inject protected lateinit var log: Logger
     private val TAG = this.javaClass.name

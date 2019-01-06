@@ -23,6 +23,7 @@ import ru.shadowsparky.messenger.utils.ImageWorker
 import javax.inject.Inject
 
 class AttachmentDialog : Dialog {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     private var data: VKAttachmentsWall
 //    private var context: Context
     @Inject protected lateinit var imageWorker: ImageWorker

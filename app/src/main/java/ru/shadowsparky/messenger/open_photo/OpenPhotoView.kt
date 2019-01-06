@@ -13,6 +13,7 @@ import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
 
 class OpenPhotoView : AppCompatActivity(), OpenPhoto.View {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var presenter: OpenPhotoPresenter
     @Inject protected lateinit var log: Logger
     private val TAG = javaClass.name

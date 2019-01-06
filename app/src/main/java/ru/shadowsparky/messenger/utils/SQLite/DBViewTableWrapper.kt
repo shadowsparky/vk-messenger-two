@@ -13,6 +13,7 @@ import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
 
 class DBViewTableWrapper : DatabaseManager {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var db: MessagesDB
     @Inject protected lateinit var log: Logger
     private val TAG = this.javaClass.name

@@ -34,6 +34,7 @@ import javax.inject.Inject
 import kotlin.math.abs
 
 class SynchronizingService : IntentService("Synchronizing Service"), RequestHandler {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var disposables: CompositeDisposableManager
     @Inject protected lateinit var requester: Requester
     @Inject protected lateinit var log: Logger

@@ -19,6 +19,7 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 
 class FailureResponseHandler {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     private var context: Context? = null
     @Inject protected lateinit var toast: ToastUtils
     private var retrofit: Retrofit = Retrofit.Builder()

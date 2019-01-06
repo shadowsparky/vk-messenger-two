@@ -5,6 +5,7 @@ import ru.shadowsparky.messenger.utils.App
 import javax.inject.Inject
 
 class OpenPhotoPresenter : OpenPhoto.Presenter {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     private var view: OpenPhoto.View? = null
     @Inject protected lateinit var model: OpenPhotoModel
 

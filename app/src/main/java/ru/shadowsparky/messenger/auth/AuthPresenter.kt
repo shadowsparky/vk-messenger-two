@@ -11,6 +11,7 @@ import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
 import javax.inject.Inject
 
 class AuthPresenter : Auth.Presenter {
+    // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var preferences: SharedPreferencesUtils
     @Inject protected lateinit var model: Auth.Model
