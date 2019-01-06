@@ -1,10 +1,8 @@
 package ru.shadowsparky.messenger.response_utils
 
 import io.reactivex.Single
-import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.shadowsparky.messenger.response_utils.pojos.YandexTranslateArgs
 import ru.shadowsparky.messenger.response_utils.responses.YandexTranslateResult
 
 interface YandexApi {

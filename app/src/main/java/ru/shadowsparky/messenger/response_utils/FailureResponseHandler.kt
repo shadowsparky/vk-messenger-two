@@ -12,7 +12,6 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.shadowsparky.messenger.dagger.RequestModule
-import ru.shadowsparky.messenger.response_utils.pojos.YandexTranslateArgs
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.ToastUtils
 import java.net.UnknownHostException
