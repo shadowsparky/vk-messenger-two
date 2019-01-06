@@ -4,7 +4,8 @@
 
 package ru.shadowsparky.messenger.messages_view
 
-// FIXME ЗАВИСИМОСТИ АНДРОИДА В PRESENTER
+// FIXME ЗАВИСИМОСТИ АНДРОИДА В PRESENTER.
+// Не завидую я тому человеку, который будет делать юнит тест...
 import android.content.Intent
 import android.widget.ImageView
 import androidx.core.app.ActivityOptionsCompat
