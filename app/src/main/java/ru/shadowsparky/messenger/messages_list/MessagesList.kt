@@ -12,6 +12,7 @@ import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 interface MessagesList {
     interface View {
         fun setLoading(result: Boolean)
+        fun showContent(flag: Boolean)
         fun disposeAdapter()
         fun startService()
         fun stopService()

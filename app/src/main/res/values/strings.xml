@@ -7,4 +7,5 @@
     <string name="pick_image_intent_text">pick_image_intent_text</string>
     <string name="transition">default transition</string>
     <string name="debug_push">subscribe to push (debug)</string>
+    <string name="messages_not_found">Сообщения отсутствуют</string>
 </resources>

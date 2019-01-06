@@ -11,6 +11,8 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_list_view.*
@@ -57,8 +59,18 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         super.onResume()
         disposeAdapter()
         presenter.onScrollFinished()
-        log.print("MessagesListView activity loaded", true, TAG)
+        log.print("MessagesListView activity loaded", false, TAG)
         registerReceiver(receiver, IntentFilter(BROADCAST_RECEIVER_CODE))
+    }
+
+    override fun showContent(flag: Boolean) {
+        if (flag) {
+            messages_list.visibility = VISIBLE
+            messages_not_found.visibility = GONE
+        } else {
+            messages_list.visibility = GONE
+            messages_not_found.visibility = VISIBLE
+        }
     }
 
     override fun startService() {
@@ -74,7 +86,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     override fun onPause() {
         super.onPause()
         unregisterReceiver(receiver)
-        log.print("MessagesListView activity on pause...", true, TAG)
+        log.print("MessagesListView activity on pause...", false, TAG)
     }
 
     override fun navigateToHistory(id: Int, user_data: String, url: String, online_status: Int, last_seen: Int) {
@@ -90,9 +102,14 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: (Int, String, String, online_status: Int, last_seen: Int) -> Unit) {
         if (adapter == null) {
             adapter = MessagesAdapter(response, callback, touch_callback)
-            messages_list.setHasFixedSize(true)
-            messages_list.layoutManager = GridLayoutManager(this, 1)
-            messages_list.adapter = adapter
+            if (response.response!!.count > 0) {
+                showContent(true)
+                messages_list.setHasFixedSize(true)
+                messages_list.layoutManager = GridLayoutManager(this, 1)
+                messages_list.adapter = adapter
+            } else {
+                showContent(false)
+            }
         } else {
             adapter!!.addData(response)
         }
