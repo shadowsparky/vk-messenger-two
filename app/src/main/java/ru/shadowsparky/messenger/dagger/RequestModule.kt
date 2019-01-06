@@ -11,8 +11,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
-import ru.shadowsparky.messenger.response_utils.Requester
+import ru.shadowsparky.messenger.response_utils.requester.FailureResponseHandler
+import ru.shadowsparky.messenger.response_utils.requester.Requester
 import javax.inject.Singleton
 
 @Module

@@ -6,15 +6,16 @@ package ru.shadowsparky.messenger.services
 
 import android.app.IntentService
 import android.content.Intent
-import android.os.Message
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import ru.shadowsparky.messenger.response_utils.*
+import ru.shadowsparky.messenger.response_utils.api.VKApi
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPoll
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPollServer
+import ru.shadowsparky.messenger.response_utils.requester.Requester
 import ru.shadowsparky.messenger.response_utils.responses.LongPollServerResponse
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
@@ -28,8 +29,6 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_ONLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_LONG_POLL_STATUS_CHANGED
 import ru.shadowsparky.messenger.utils.Logger
-import java.lang.ClassCastException
-import java.lang.Error
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.abs

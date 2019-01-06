@@ -9,7 +9,7 @@ import android.widget.ImageView
 import androidx.core.app.ActivityOptionsCompat
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.open_photo.OpenPhotoView
-import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
+import ru.shadowsparky.messenger.response_utils.requester.FailureResponseHandler
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse

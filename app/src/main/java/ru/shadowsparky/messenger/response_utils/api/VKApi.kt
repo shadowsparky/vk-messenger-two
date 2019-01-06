@@ -2,7 +2,7 @@
  * Copyright Samsonov Eugene(c) 2018.
  */
 
-package ru.shadowsparky.messenger.response_utils
+package ru.shadowsparky.messenger.response_utils.api
 
 import io.reactivex.Single
 import retrofit2.Response

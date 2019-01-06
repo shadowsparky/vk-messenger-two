@@ -2,7 +2,7 @@
  * Copyright Samsonov Eugene(c) 2018.
  */
 
-package ru.shadowsparky.messenger.response_utils
+package ru.shadowsparky.messenger.response_utils.requester
 
 import android.content.Context
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -12,6 +12,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.shadowsparky.messenger.dagger.RequestModule
+import ru.shadowsparky.messenger.response_utils.api.YandexApi
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.ToastUtils
 import java.net.UnknownHostException

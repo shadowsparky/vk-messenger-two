@@ -7,7 +7,7 @@ package ru.shadowsparky.messenger.messages_view
 import android.widget.ImageView
 import com.hendraanggrian.pikasso.picasso
 import com.hendraanggrian.pikasso.transformations.circle
-import ru.shadowsparky.messenger.response_utils.Requester
+import ru.shadowsparky.messenger.response_utils.requester.Requester
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper

@@ -46,7 +46,8 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <TextView
-        android:visibility="gone"
+        android:visibility="gone
+"
         android:id="@+id/messages_not_found"
         android:text="@string/messages_not_found"
         android:layout_width="wrap_content"

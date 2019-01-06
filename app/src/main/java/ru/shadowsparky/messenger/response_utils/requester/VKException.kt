@@ -2,7 +2,7 @@
  * Copyright Samsonov Eugene(c) 2018.
  */
 
-package ru.shadowsparky.messenger.response_utils
+package ru.shadowsparky.messenger.response_utils.requester
 
 import ru.shadowsparky.messenger.response_utils.pojos.VKError
 import ru.shadowsparky.messenger.response_utils.responses.ErrorResponse

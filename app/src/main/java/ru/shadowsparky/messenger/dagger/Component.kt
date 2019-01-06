@@ -24,10 +24,10 @@ import ru.shadowsparky.messenger.notifications.FirebaseRefresher
 import ru.shadowsparky.messenger.open_photo.OpenPhotoModel
 import ru.shadowsparky.messenger.open_photo.OpenPhotoPresenter
 import ru.shadowsparky.messenger.open_photo.OpenPhotoView
-import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
+import ru.shadowsparky.messenger.response_utils.requester.FailureResponseHandler
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
-import ru.shadowsparky.messenger.response_utils.RequestBuilder
-import ru.shadowsparky.messenger.response_utils.Requester
+import ru.shadowsparky.messenger.response_utils.requester.RequestBuilder
+import ru.shadowsparky.messenger.response_utils.requester.Requester
 import ru.shadowsparky.messenger.services.SynchronizingService
 import ru.shadowsparky.messenger.utils.SQLite.DBListTableWrapper
 import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper

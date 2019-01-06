@@ -2,7 +2,7 @@
  * Copyright Samsonov Eugene(c) 2018.
  */
 
-package ru.shadowsparky.messenger.response_utils
+package ru.shadowsparky.messenger.response_utils.requester
 
 import com.google.gson.Gson
 import io.reactivex.Single
@@ -10,13 +10,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import retrofit2.HttpException
 import retrofit2.Retrofit
-import ru.shadowsparky.messenger.messages_list.MessagesList
+import ru.shadowsparky.messenger.response_utils.Response
+import ru.shadowsparky.messenger.response_utils.api.VKApi
 import ru.shadowsparky.messenger.response_utils.pojos.VKError
 import ru.shadowsparky.messenger.response_utils.responses.ErrorResponse
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
@@ -26,7 +25,6 @@ import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
 import ru.shadowsparky.messenger.utils.SQLite.DatabaseManager
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils.Companion.TOKEN
-import java.lang.RuntimeException
 import javax.inject.Inject
 
 class RequestBuilder {

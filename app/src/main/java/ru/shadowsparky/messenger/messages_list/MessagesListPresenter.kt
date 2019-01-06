@@ -4,7 +4,7 @@
 
 package ru.shadowsparky.messenger.messages_list
 
-import ru.shadowsparky.messenger.response_utils.FailureResponseHandler
+import ru.shadowsparky.messenger.response_utils.requester.FailureResponseHandler
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.response_utils.responses.VKPushResponse

@@ -1,5 +1,6 @@
-package ru.shadowsparky.messenger.response_utils
+package ru.shadowsparky.messenger.response_utils.requester
 
+import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import java.lang.NullPointerException
