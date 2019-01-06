@@ -4,9 +4,11 @@
 
 package ru.shadowsparky.messenger.messages_view
 
+// FIXME ЗАВИСИМОСТИ АНДРОИДА В PRESENTER
 import android.content.Intent
 import android.widget.ImageView
 import androidx.core.app.ActivityOptionsCompat
+
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.open_photo.OpenPhotoView
 import ru.shadowsparky.messenger.response_utils.requester.FailureResponseHandler
