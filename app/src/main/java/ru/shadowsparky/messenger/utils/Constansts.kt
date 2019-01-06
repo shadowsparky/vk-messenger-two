@@ -41,5 +41,7 @@ open class Constansts {
         val DEAD = " is dead. Rest in Peace"
         val ONLINE = "В сети"
         val OFFLINE = "Был(а) в сети"
+        const val YANDEX_API = "Yandex Api"
+        const val VK_API = "vk api"
     }
 }
