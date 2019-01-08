@@ -49,6 +49,8 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
     private var path: List<String>? = null
     private var Request_Flag = true
     private var request: Disposable? = null
+    private val USER_ONLINE = 8.0
+    private val USER_OFFLINE = 9.0
 
     override fun onCreate() {
         super.onCreate()
@@ -140,8 +142,6 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
             )
         disposables.addRequest(request!!)
     }
-    private val USER_ONLINE = 8.0
-    private val USER_OFFLINE = 9.0
 
     private fun parseResult(updates: ArrayList<ArrayList<Any>>) {
         var ids = ""
@@ -151,29 +151,36 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
                 when {
                     (element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0)
                             or (element[0] == 6.0) or (element[0] == 7.0) ->
-                    ids += if (i != updates.size - 1)
-                        "${element[1]}, "
-                    else
-                        element[1].toString()
-                    element[0] == USER_ONLINE -> {
-                        initBroadcast()
-                        broadcast!!.putExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_ONLINE)
-                        broadcast!!.putExtra(USER_ID, abs((element[1] as Double).toInt()))
-                        sendBroadcast(broadcast)
-                    }
-                    element[0] == USER_OFFLINE -> {
-                        initBroadcast()
-                        broadcast!!.putExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_OFFLINE)
-                        broadcast!!.putExtra(USER_ID, abs((element[1] as Double).toInt()))
-                        broadcast!!.putExtra(LAST_SEEN_FIELD, (element[3] as Double).toInt())
-                        sendBroadcast(broadcast)
-                    }
+                        ids = userMessagesChangedCallback(element, updates, i)
+                    element[0] == USER_ONLINE -> userOnlineCallback(element)
+                    element[0] == USER_OFFLINE -> userOfflineCallback(element)
                 }
             } else
                 onFailureResponse(IllegalArgumentException("Request Error: First element unrecognized"))
         }
         if (ids != "")
             requester.getByID(ids)
+    }
+
+    private fun userMessagesChangedCallback(element: ArrayList<Any>, updates: ArrayList<ArrayList<Any>>, i: Int) =
+            if (i != updates.size - 1)
+                "${element[1]}, "
+            else
+                element[1].toString()
+
+    private fun userOnlineCallback(element: ArrayList<Any>) {
+        initBroadcast()
+        broadcast!!.putExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_ONLINE)
+        broadcast!!.putExtra(USER_ID, abs((element[1] as Double).toInt()))
+        sendBroadcast(broadcast)
+    }
+
+    private fun userOfflineCallback(element: ArrayList<Any>) {
+        initBroadcast()
+        broadcast!!.putExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_OFFLINE)
+        broadcast!!.putExtra(USER_ID, abs((element[1] as Double).toInt()))
+        broadcast!!.putExtra(LAST_SEEN_FIELD, (element[3] as Double).toInt())
+        sendBroadcast(broadcast)
     }
 
     private fun longPollHandler(data: retrofit2.Response<VKLongPoll>) {
