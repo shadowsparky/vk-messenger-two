@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
+import ru.shadowsparky.messenger.response_utils.pojos.VKGetByIDMessages
 import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.*
@@ -178,7 +179,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
         private var mUpdateFlag = false
         private val TAG = javaClass.name
 
-        private fun receiveLongPoll(mResponse: VKMessages) {
+        private fun receiveLongPoll(mResponse: VKGetByIDMessages) {
             mUpdateFlag = false
             if (mResponse.profiles != null) {
                 for (item in mResponse.profiles) {
@@ -188,11 +189,12 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 }
             }
             if (mResponse.items != null) {
-                log.print(mResponse.items.toString(), false, TAG)
+                log.print(mResponse.items.toString())
                 for (item in mResponse.items) {
-                    if (item.conversation.peer.id == userId) {
-                        mUpdateFlag = true
-                    }
+                    if (item != null)
+                        if (item.peer_id == userId) {
+                            mUpdateFlag = true
+                        }
                 }
             }
             if (mResponse.groups != null) {
@@ -212,7 +214,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
             if (intent!!.action == Constansts.BROADCAST_RECEIVER_CODE) {
                 val mResponse = intent.getSerializableExtra(Constansts.RESPONSE)
                 when (mResponse) {
-                    is VKMessages -> receiveLongPoll(mResponse)
+                    is VKGetByIDMessages -> receiveLongPoll(mResponse)
                 }
                 val onlineStatusChanged = intent.getIntExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_HIDE)
                 val userId = intent.getIntExtra(USER_ID, -1)

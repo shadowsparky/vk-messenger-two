@@ -80,5 +80,5 @@ interface VKApi {
         @Query("message_ids") message_ids: String,
         @Query("extended") extended : Boolean = true,
         @Query("v") version: Double = VK_API_VERSION
-    ) : Single<Response<MessagesResponse>>
+    ) : Single<Response<GetByIDResponse>>
 }

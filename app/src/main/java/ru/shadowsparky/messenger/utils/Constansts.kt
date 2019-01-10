@@ -7,7 +7,7 @@ package ru.shadowsparky.messenger.utils
 open class Constansts {
     companion object {
         const val DEFAULT_TIMEOUT = 0x1E.toLong()
-        const val DEFAULT_SLEEP_TIME_ON_ERROR = 0x1388.toLong()
+        const val DEFAULT_SLEEP_TIME_ON_ERROR = 0x7D0.toLong()
         const val DEFAULT_SERVER_SPLITTER = '/'
         const val USER_ID = "id"
         const val EMPTY_STRING = ""

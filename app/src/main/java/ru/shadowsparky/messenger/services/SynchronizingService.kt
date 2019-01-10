@@ -16,6 +16,7 @@ import ru.shadowsparky.messenger.response_utils.api.VKApi
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPoll
 import ru.shadowsparky.messenger.response_utils.pojos.VKLongPollServer
 import ru.shadowsparky.messenger.response_utils.requester.Requester
+import ru.shadowsparky.messenger.response_utils.responses.GetByIDResponse
 import ru.shadowsparky.messenger.response_utils.responses.LongPollServerResponse
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.utils.App
@@ -96,7 +97,7 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
     override fun onSuccessResponse(response: Response) {
         when(response) {
             is LongPollServerResponse -> longPollServerHandler(response)
-            is MessagesResponse -> getByIDHandler(response)
+            is GetByIDResponse -> getByIDHandler(response)
         }
     }
 
@@ -196,7 +197,7 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
         Request_Flag = true
     }
 
-    fun getByIDHandler(it: MessagesResponse) {
+    fun getByIDHandler(it: GetByIDResponse) {
         if (it.response != null) {
             initBroadcast()
             log.print("$it", false, TAG)
@@ -224,3 +225,5 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
         }
     }
 }
+
+// чтобы было 228
