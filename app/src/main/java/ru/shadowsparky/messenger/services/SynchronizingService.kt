@@ -25,6 +25,7 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.DEAD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SERVER_SPLITTER
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SLEEP_TIME_ON_ERROR
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_TIMEOUT
+import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
 import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.RESPONSE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
@@ -143,7 +144,7 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
     }
 
     private fun parseResult(updates: ArrayList<ArrayList<Any>>) {
-        var ids = ""
+        var ids = EMPTY_STRING
         for (i in 0 until updates.size) {
             val element = updates[i]
             if (element[0] is Double) {
@@ -157,7 +158,7 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
             } else
                 onFailureResponse(IllegalArgumentException("Request Error: First element unrecognized"))
         }
-        if (ids != "")
+        if (ids != EMPTY_STRING)
             requester.getByID(ids)
     }
 

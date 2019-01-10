@@ -97,6 +97,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         intent.putExtra(URL, url)
         intent.putExtra(LAST_SEEN_FIELD, last_seen)
         intent.putExtra(ONLINE_STATUS, online_status)
+        log.print("USER_ID $id", false, TAG)
         startActivity(intent)
     }
 

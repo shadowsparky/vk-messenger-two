@@ -100,6 +100,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
         setContentView(R.layout.activity_messages_view)
         setSupportActionBar(toolbarview)
         userId = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
+        log.print("User ID $userId", false, TAG)
         userData = intent.getStringExtra(USER_DATA)
         url = intent.getStringExtra(URL)
         onlineStatus = intent.getIntExtra(ONLINE_STATUS, STATUS_HIDE)
@@ -175,12 +176,21 @@ class MessagesView : AppCompatActivity(), Messages.View {
             val userId: Int
     ) : BroadcastReceiver() {
         private var mUpdateFlag = false
+        private val TAG = javaClass.name
 
         private fun receiveLongPoll(mResponse: VKMessages) {
             mUpdateFlag = false
             if (mResponse.profiles != null) {
                 for (item in mResponse.profiles) {
                     if (item.id == userId) {
+                        mUpdateFlag = true
+                    }
+                }
+            }
+            if (mResponse.items != null) {
+                log.print(mResponse.items.toString(), false, TAG)
+                for (item in mResponse.items) {
+                    if (item.conversation.peer.id == userId) {
                         mUpdateFlag = true
                     }
                 }
