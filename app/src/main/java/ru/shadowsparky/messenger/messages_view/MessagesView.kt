@@ -14,10 +14,12 @@ import android.view.View
 import android.view.View.GONE
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
+import ru.shadowsparky.messenger.open_photo.OpenPhotoView
 import ru.shadowsparky.messenger.response_utils.pojos.VKGetByIDMessages
 import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
@@ -168,6 +170,14 @@ class MessagesView : AppCompatActivity(), Messages.View {
         super.onDestroy()
         presenter.onActivityDestroying()
         log.print("$TAG $DEAD", false, TAG)
+    }
+
+    override fun photoTouched(image: ImageView, url: String) {
+        val i = Intent(this, OpenPhotoView::class.java)
+        val options = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(this, image, this.getString(R.string.transition))
+        i.putExtra(Constansts.URL, url)
+        this.startActivity(i, options.toBundle())
     }
 
     class ResponseReceiver(

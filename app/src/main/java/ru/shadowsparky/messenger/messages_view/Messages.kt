@@ -17,6 +17,7 @@ interface Messages {
         fun setLoading(result: Boolean)
         fun setStatus(status: String)
         fun disposeAdapter()
+        fun photoTouched(image: ImageView, url: String)
         fun clearMessageText()
     }
 
@@ -24,7 +25,6 @@ interface Messages {
         fun attachPeerID(peerId: Int) : MessagesPresenter
         fun onGetMessageHistoryRequest()
         fun onScrollFinished(position: Int)
-        fun onPhotoTouched(image: ImageView, url: String)
         fun attachView(view: MessagesView)
         fun onGetPhoto(url: String, image: ImageView)
         fun onSendMessage(message: String)
