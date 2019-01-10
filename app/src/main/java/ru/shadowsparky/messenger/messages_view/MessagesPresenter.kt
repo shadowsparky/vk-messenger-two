@@ -4,10 +4,6 @@
 
 package ru.shadowsparky.messenger.messages_view
 
-// FIXME ЗАВИСИМОСТИ АНДРОИДА В PRESENTER.
-// Не завидую я тому человеку, который будет делать юнит тест...
-
-import android.widget.ImageView
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.requester.FailureResponseHandler
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
@@ -68,8 +64,6 @@ class MessagesPresenter : Messages.Presenter {
         view!!.setLoading(false)
         errorUtils.onFailureResponse(error)
     }
-
-    override fun onGetPhoto(url: String, image: ImageView) = model.getPhoto(url, image)
 
     override fun onActivityDestroying() = model.disposeRequests()
 

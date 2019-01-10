@@ -1,7 +1,5 @@
 package ru.shadowsparky.messenger.open_photo
 
-// FIXME Зависимости андроида в Presenter
-import android.widget.ImageView
 import ru.shadowsparky.messenger.utils.App
 import javax.inject.Inject
 
@@ -19,7 +17,7 @@ class OpenPhotoPresenter : OpenPhoto.Presenter {
     }
 
 
-    override fun onActivityOpen(url: String, image: ImageView) {
-        model.getImage(url, image)
+    override fun onActivityOpen(url: String) {
+        model.getImage(url, view!!.getImageView())
     }
 }

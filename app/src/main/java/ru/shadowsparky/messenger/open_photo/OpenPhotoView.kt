@@ -1,8 +1,8 @@
 package ru.shadowsparky.messenger.open_photo
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.github.chrisbanes.photoview.PhotoViewAttacher
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_open_photo_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.utils.App
@@ -17,7 +17,7 @@ class OpenPhotoView : AppCompatActivity(), OpenPhoto.View {
     @Inject protected lateinit var presenter: OpenPhotoPresenter
     @Inject protected lateinit var log: Logger
     private val TAG = javaClass.name
-    private var url: String = EMPTY_STRING
+    private var url = EMPTY_STRING
     init {
         App.component.inject(this)
     }
@@ -27,12 +27,14 @@ class OpenPhotoView : AppCompatActivity(), OpenPhoto.View {
         log.print("$TAG $DEAD", false, TAG)
     }
 
+    override fun getImageView(): ImageView = open_photo_image
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_open_photo_view)
         url = intent.getStringExtra(URL)
         presenter.attachView(this)
         if (url != EMPTY_STRING)
-            presenter.onActivityOpen(url, open_photo_image)
+            presenter.onActivityOpen(url)
     }
 }

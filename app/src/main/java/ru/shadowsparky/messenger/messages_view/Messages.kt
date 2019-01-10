@@ -5,10 +5,10 @@
 package ru.shadowsparky.messenger.messages_view
 
 import android.widget.ImageView
+import com.squareup.picasso.Target
 import ru.shadowsparky.messenger.response_utils.RequestHandler
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.utils.SQLite.MessagesViewTable
 
 interface Messages {
 
@@ -26,7 +26,6 @@ interface Messages {
         fun onGetMessageHistoryRequest()
         fun onScrollFinished(position: Int)
         fun attachView(view: MessagesView)
-        fun onGetPhoto(url: String, image: ImageView)
         fun onSendMessage(message: String)
         fun onActivityDestroying()
     }
@@ -34,7 +33,6 @@ interface Messages {
     interface Model {
         fun attachCallbacks(successCallback: (Response) -> Unit, failureCallback: (Throwable) -> Unit)
         fun getMessageHistory(peerId: Int, offset: Int = 0)
-        fun getPhoto(url: String, image: ImageView)
         fun getCachedHistory(callback: (Response) -> Unit, user_id: Long)
         fun sendMessage(peerId: Int, message: String)
         fun disposeRequests()
