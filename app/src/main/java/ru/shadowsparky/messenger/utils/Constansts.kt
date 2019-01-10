@@ -25,12 +25,7 @@ open class Constansts {
         const val STATUS_ONLINE = 1
         const val STATUS_HIDE = -1
         const val FIREBASE_TOKEN = "firebase_token"
-        const val CONNECTION_ERROR_CODE = -1
-        const val UNHANDLED_EXCEPTION_CODE = 99999
         const val DEVICE_ID = "device_id"
-        const val CLASS_CAST_EXCEPTION_CODE = -101
-        const val FIRST_ELEMENT = 0
-        const val WALL_DATA = "wall data"
         const val BROADCAST_RECEIVER_CODE = "brc"
         const val LONG_POLL_VERSION = 3
         const val RESPONSE = "response"
@@ -44,7 +39,5 @@ open class Constansts {
         const val DEAD = " is dead. Rest in Peace"
         const val ONLINE = "В сети"
         const val OFFLINE = "Был(а) в сети"
-        const val YANDEX_API = "Yandex Api"
-        const val VK_API = "vk api"
     }
 }

@@ -8,7 +8,6 @@ import io.reactivex.schedulers.Schedulers
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.App
-import ru.shadowsparky.messenger.utils.Constansts.Companion.FIRST_ELEMENT
 import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
 
