@@ -22,6 +22,9 @@ import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
 import ru.shadowsparky.messenger.utils.Constansts.Companion.BROADCAST_RECEIVER_CODE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEAD
+import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SERVER_SPLITTER
+import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SLEEP_TIME_ON_ERROR
+import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_TIMEOUT
 import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.RESPONSE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
@@ -39,12 +42,8 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
     @Inject protected lateinit var requester: Requester
     @Inject protected lateinit var log: Logger
     private var broadcast: Intent? = null
-    private val TAG = "SYNCHRONIZING_SERVICE"
+    private val TAG = javaClass.name
     private var long_poll: Retrofit? = null
-    private val client = OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .build()
     private var response: VKLongPollServer? = null
     private var path: List<String>? = null
     private var Request_Flag = true
@@ -75,8 +74,8 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
                         response.body()
                         return@addInterceptor response
                     }
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
+                    .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                    .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                     .build()
             long_poll = Retrofit.Builder().baseUrl("https://$path/")
                 .addCallAdapterFactory(retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory.create())
@@ -102,14 +101,14 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
 
     override fun onFailureResponse(error: Throwable) {
         log.printError(error.toString(), false, TAG)
-        Thread.sleep(5000)
+        Thread.sleep(DEFAULT_SLEEP_TIME_ON_ERROR)
         Request_Flag = true
     }
 
 
     private fun splitServerPath(data: VKLongPollServer) : List<String>? {
         if (data.server != null) {
-            val path = data.server.split('/')
+            val path = data.server.split(DEFAULT_SERVER_SPLITTER)
             if (path.size > 1) {
                 return path
             } else
