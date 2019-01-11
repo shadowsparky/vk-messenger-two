@@ -8,6 +8,7 @@ import android.widget.EditText
 import androidx.core.view.inputmethod.EditorInfoCompat
 import androidx.core.view.inputmethod.InputConnectionCompat
 
+@Deprecated("R.I.P")
 class ImagedEditText(context: Context) : EditText(context) {
 
     override fun onCreateInputConnection(editorInfo: EditorInfo): InputConnection {

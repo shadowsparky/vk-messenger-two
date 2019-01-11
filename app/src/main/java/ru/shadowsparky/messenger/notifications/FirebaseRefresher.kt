@@ -9,7 +9,7 @@ import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
 import javax.inject.Inject
 
-    class FirebaseRefresher : FirebaseMessagingService() {
+class FirebaseRefresher : FirebaseMessagingService() {
     @Inject lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject lateinit var log: Logger
 
