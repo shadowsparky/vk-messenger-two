@@ -6,6 +6,7 @@ package ru.shadowsparky.messenger.utils
 
 open class Constansts {
     companion object {
+        const val UNSPECTED_ERROR = "Произошла неизвестная ошибка"
         const val CAPTCHA_ERROR = 0xD
         const val DEFAULT_TIMEOUT = 0x1E.toLong()
         const val DEFAULT_SLEEP_TIME_ON_ERROR = 0x7D0.toLong()
