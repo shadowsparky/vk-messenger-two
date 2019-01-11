@@ -60,4 +60,5 @@ dependencies {
         exclude module: 'recyclerview-v7'
     }
     kapt "androidx.room:room-compiler:2.1.0-alpha03"
+
 }

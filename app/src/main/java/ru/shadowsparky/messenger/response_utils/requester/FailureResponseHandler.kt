@@ -44,13 +44,17 @@ class FailureResponseHandler {
             is UnknownHostException -> showError("При соединении с сервером произошла ошибка. Проверьте ваше интернет соединение")
             is ClassCastException -> showError("Сервер вернул неизвестный результат")
             is VKException -> {
-                api.translate(reason.error!!.error_msg)
-                    .subscribeOn(Schedulers.computation())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(
-                        onSuccess = { showError(it.text[0]) },
-                        onError = { showError("Произошла неизвестная ошибка ${it}") }
-                    )
+                if (reason.error!!.error_code == 13) {
+                    showError("Нельзя отправлять сообщения так часто. Попробуйте через минуту")
+                } else {
+                    api.translate(reason.error!!.error_msg)
+                            .subscribeOn(Schedulers.computation())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeBy(
+                                    onSuccess = { showError(it.text[0]) },
+                                    onError = { showError("Произошла неизвестная ошибка ${it}") }
+                            )
+                }
             }
             else -> showError("Произошла неизвестная ошибка")
         }
