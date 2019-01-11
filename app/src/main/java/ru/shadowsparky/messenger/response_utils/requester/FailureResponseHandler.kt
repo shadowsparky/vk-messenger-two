@@ -14,6 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import ru.shadowsparky.messenger.dagger.RequestModule
 import ru.shadowsparky.messenger.response_utils.api.YandexApi
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.Constansts.Companion.CAPTCHA_ERROR
 import ru.shadowsparky.messenger.utils.ToastUtils
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -43,20 +44,22 @@ class FailureResponseHandler {
         when (reason) {
             is UnknownHostException -> showError("При соединении с сервером произошла ошибка. Проверьте ваше интернет соединение")
             is ClassCastException -> showError("Сервер вернул неизвестный результат")
-            is VKException -> {
-                if (reason.error!!.error_code == 13) {
-                    showError("Нельзя отправлять сообщения так часто. Попробуйте через минуту")
-                } else {
-                    api.translate(reason.error!!.error_msg)
-                            .subscribeOn(Schedulers.computation())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeBy(
-                                    onSuccess = { showError(it.text[0]) },
-                                    onError = { showError("Произошла неизвестная ошибка ${it}") }
-                            )
-                }
-            }
+            is VKException -> vkExceptionHandler(reason)
             else -> showError("Произошла неизвестная ошибка")
+        }
+    }
+
+    fun vkExceptionHandler(reason: VKException) {
+        if (reason.error!!.error_code == CAPTCHA_ERROR) {
+            showError("Нельзя отправлять сообщения так часто. Попробуйте через минуту")
+        } else {
+            api.translate(reason.error!!.error_msg)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = { showError(it.text[0]) },
+                    onError = { showError("Произошла неизвестная ошибка ${it}") }
+                )
         }
     }
 }
