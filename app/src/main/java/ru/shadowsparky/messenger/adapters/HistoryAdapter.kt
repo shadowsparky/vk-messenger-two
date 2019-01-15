@@ -93,30 +93,41 @@ class HistoryAdapter(
         }
         val item = data.response.items!![position]
         val conversation = data.response.conversations!![0]
-        if (conversation.out_read < item.id!!) {
-            holder.text.setTypeface(holder.text.typeface, Typeface.BOLD)
-        }
+        configureReading(item, conversation, holder)
         configureCard(holder.card, item, holder)
-        dateUtils.fromUnixToDateAndTimeCalendar(item.date!!)
+        configureDate(item, holder)
+        val url = getUrl(profiles, groups, item)
+        if (url != EMPTY_STRING)
+            picasso.load(url)
+                .circle()
+                .into(holder.image)
+        holder.text.text = item.text
+        holder.attachments.removeAllViews()
+        includeAttachments(item, holder.attachments)
+    }
+
+    private fun getUrl(profiles: HashMap<Int, VKProfile>, groups: HashMap<Int, VKGroup>, item: VKMessage) : String {
+        return when {
+            profiles[item.from_id] != null -> profiles[item.from_id]!!.photo_100
+            groups[abs(item.from_id!!)] != null -> groups[abs(item.from_id)]!!.photo_100
+            else -> EMPTY_STRING
+        }
+    }
+
+    private fun configureDate(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
         val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
-        val messageDate = dateUtils.fromUnixToStrictDate(item.date)
+        val messageDate = dateUtils.fromUnixToStrictDate(item.date!!)
         if (todayDate > messageDate) {
             holder.time.text = dateUtils.fromUnixToDateAndTime(item.date)
         } else {
             holder.time.text = dateUtils.fromUnixToTimeString(item.date)
         }
-        var url = ""
-        if (profiles[item.from_id] != null) {
-            url = profiles[item.from_id]!!.photo_100
-        } else if (groups[abs(item.from_id!!)] != null) {
-            url = groups[abs(item.from_id)]!!.photo_100
+    }
+
+    private fun configureReading(item: VKMessage, conversation: VKConversation, holder: HistoryAdapter.MainViewHolder) {
+        if (conversation.out_read < item.id!!) {
+            holder.text.setTypeface(holder.text.typeface, Typeface.BOLD)
         }
-        picasso.load(url)
-            .circle()
-            .into(holder.image)
-        holder.text.text = item.text
-        holder.attachments.removeAllViews()
-        includeAttachments(item, holder.attachments)
     }
 
     private fun addProfiles(newData: HistoryResponse) {
