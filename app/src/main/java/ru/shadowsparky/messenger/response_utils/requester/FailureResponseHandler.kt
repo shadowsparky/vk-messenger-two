@@ -55,7 +55,7 @@ class FailureResponseHandler {
             showError(UNSPECTED_ERROR)
             return
         }
-        if (reason.error!!.error_code == CAPTCHA_ERROR) {
+        if (reason.error.error_code == CAPTCHA_ERROR) {
             showError("Нельзя отправлять сообщения так часто. Попробуйте через минуту")
         } else {
             api.translate(reason.error.error_msg)

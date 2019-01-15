@@ -5,6 +5,7 @@
 package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
+import android.graphics.Typeface
 import android.media.ImageWriter
 import android.view.*
 import android.view.Gravity.LEFT
@@ -91,8 +92,11 @@ class HistoryAdapter(
             log.print("Message history loading request... position: $itemCount", false, TAG)
         }
         val item = data.response.items!![position]
+        val conversation = data.response.conversations!![0]
+        if (conversation.out_read < item.id!!) {
+            holder.text.setTypeface(holder.text.typeface, Typeface.BOLD)
+        }
         configureCard(holder.card, item, holder)
-//        holder.text.text = item.text
         dateUtils.fromUnixToDateAndTimeCalendar(item.date!!)
         val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
         val messageDate = dateUtils.fromUnixToStrictDate(item.date)

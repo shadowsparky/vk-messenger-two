@@ -33,10 +33,12 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_ONLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_LONG_POLL_STATUS_CHANGED
+import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_READ_THE_MESSAGE
 import ru.shadowsparky.messenger.utils.Logger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 class SynchronizingService : IntentService("Synchronizing Service"), RequestHandler {
     // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
@@ -150,9 +152,10 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
             val element = updates[i]
             if (element[0] is Double) {
                 when {
-                    (element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0)
-                            or (element[0] == 6.0) or (element[0] == 7.0) ->
+                    (element[0] == 4.0) or (element[0] == 5.0) or (element[0] == 2.0) ->
                         ids = userMessagesChangedCallback(element, updates, i)
+//                    element[0] == 6.0 -> log.print("incoming message. peer id = ${element[1] as Int} local id = ${element[2]}", false, TAG)
+                    element[0] == 7.0 -> outgoingMessageHandle(element[1] as Double)//log.print("outgoing message. peer id = ${element[1] as Int} local id = ${element[2]}", false, TAG)
                     element[0] == USER_ONLINE -> userOnlineCallback(element)
                     element[0] == USER_OFFLINE -> userOfflineCallback(element)
                 }
@@ -161,6 +164,13 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
         }
         if (ids != EMPTY_STRING)
             requester.getByID(ids)
+    }
+
+    private fun outgoingMessageHandle(peer_id: Double) {
+        log.print("${peer_id.toInt()}", false, TAG)
+        initBroadcast()
+        broadcast!!.putExtra(RESPONSE, peer_id.toInt())
+        sendBroadcast(broadcast)
     }
 
     private fun userMessagesChangedCallback(element: ArrayList<Any>, updates: ArrayList<ArrayList<Any>>, i: Int) =

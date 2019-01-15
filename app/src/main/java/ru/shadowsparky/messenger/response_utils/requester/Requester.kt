@@ -3,12 +3,14 @@ package ru.shadowsparky.messenger.response_utils.requester
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.CompositeDisposableManager
+import ru.shadowsparky.messenger.utils.Logger
 import java.lang.NullPointerException
 import javax.inject.Inject
 
 class Requester  {
     // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var disposables: CompositeDisposableManager
+    @Inject protected lateinit var log: Logger
     private var mSuccessCallback: ((Response) -> Unit)? = null
     private var mFailureCallback: ((Throwable) -> Unit)? = null
     private val TAG = javaClass.name
@@ -29,6 +31,7 @@ class Requester  {
 
     fun getByID(ids: String) {
         checkCallbacks()
+        log.print("ids: $ids", false, TAG)
         val request = RequestBuilder()
                 .setMessageIds(ids)
                 .setCallbacks(mSuccessCallback!!, mFailureCallback!!)

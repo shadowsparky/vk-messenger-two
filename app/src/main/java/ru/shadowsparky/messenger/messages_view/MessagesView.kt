@@ -220,11 +220,19 @@ class MessagesView : AppCompatActivity(), Messages.View {
             }
         }
 
+        private fun receiveUserReadMessage(peer_id: Int) {
+            if (peer_id == this.userId) {
+                presenter.onGetMessageHistoryRequest()
+                log.print("Receive user read message")
+            }
+        }
+
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent!!.action == Constansts.BROADCAST_RECEIVER_CODE) {
                 val mResponse = intent.getSerializableExtra(Constansts.RESPONSE)
                 when (mResponse) {
                     is VKGetByIDMessages -> receiveLongPoll(mResponse)
+                    is Int -> receiveUserReadMessage(mResponse)
                 }
                 val onlineStatusChanged = intent.getIntExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_HIDE)
                 val userId = intent.getIntExtra(USER_ID, -1)
