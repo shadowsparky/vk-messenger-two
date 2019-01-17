@@ -4,8 +4,6 @@
 
 package ru.shadowsparky.messenger.messages_list
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -20,21 +18,22 @@ import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.MessagesAdapter
 import ru.shadowsparky.messenger.auth.AuthView
 import ru.shadowsparky.messenger.messages_view.MessagesView
-import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
 import ru.shadowsparky.messenger.services.SynchronizingService
-import ru.shadowsparky.messenger.utils.*
+import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.BROADCAST_RECEIVER_CODE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEAD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEVICE_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.FIREBASE_TOKEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
-import ru.shadowsparky.messenger.utils.Constansts.Companion.RESPONSE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.URL
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
+import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SQLite.DBListTableWrapper
+import ru.shadowsparky.messenger.utils.SharedPreferencesUtils
+import ru.shadowsparky.messenger.utils.TextColorUtils
 import javax.inject.Inject
 
 open class MessagesListView : AppCompatActivity(), MessagesList.View {
@@ -46,7 +45,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     @Inject protected lateinit var db: DBListTableWrapper
     private val TAG = javaClass.name
     private var adapter: MessagesAdapter? = null
-    private lateinit var receiver: MessagesListView.ResponseReceiver
+    private lateinit var receiver: ResponseReceiver
 
     override fun setLoading(result: Boolean) {
         refresher.isRefreshing = result
@@ -59,7 +58,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     override fun onResume() {
         super.onResume()
         disposeAdapter()
-        presenter.onScrollFinished()
+        presenter.onScroll()
         log.print("MessagesListView activity loaded", false, TAG)
         registerReceiver(receiver, IntentFilter(BROADCAST_RECEIVER_CODE))
     }
@@ -101,9 +100,9 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         startActivity(intent)
     }
 
-    override fun setAdapter(response: MessagesResponse, callback: (Int) -> Unit, touch_callback: (Int, String, String, online_status: Int, last_seen: Int) -> Unit) {
+    override fun setAdapter(response: MessagesResponse) {
         if (adapter == null) {
-            adapter = MessagesAdapter(response, callback, touch_callback)
+            adapter = MessagesAdapter(response, presenter)
             if (response.response!!.count > 0) {
                 showContent(true)
                 messages_list.setHasFixedSize(true)
@@ -143,8 +142,8 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         setSupportActionBar(toolbar)
         presenter.attachView(this)
         startService()
-        receiver = MessagesListView.ResponseReceiver(presenter, log)
-        refresher.setOnRefreshListener{ presenter.onScrollFinished() }
+        receiver = ResponseReceiver(presenter, log)
+        refresher.setOnRefreshListener{ presenter.onScroll() }
         if (preferencesUtils.read(DEVICE_ID) == "")
             preferencesUtils.write(DEVICE_ID, Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
         log.print("FIREBASE TOKEN: ${preferencesUtils.read(FIREBASE_TOKEN)}", false, TAG)
@@ -157,15 +156,5 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
         stopService()
         log.print("$TAG $DEAD", false, TAG)
         log.print("MessagesListView activity destroyed", false, TAG)
-    }
-
-    class ResponseReceiver(val presenter: MessagesList.Presenter, val log: Logger) : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent!!.action == BROADCAST_RECEIVER_CODE) {
-                val result = intent.getBooleanExtra("test", false)
-                if (result)
-                    presenter.onScrollFinished()
-            }
-        }
     }
 }

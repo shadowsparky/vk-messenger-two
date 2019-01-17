@@ -6,6 +6,7 @@ package ru.shadowsparky.messenger.messages_view
 
 import android.widget.ImageView
 import com.squareup.picasso.Target
+import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.response_utils.RequestHandler
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
@@ -13,7 +14,7 @@ import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 interface Messages {
 
     interface View {
-        fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit, photo_touch_callback: (ImageView, String) -> Unit)
+        fun setAdapter(response: HistoryResponse)
         fun setLoading(result: Boolean)
         fun setStatus(status: String)
         fun disposeAdapter()
@@ -21,7 +22,7 @@ interface Messages {
         fun clearMessageText()
     }
 
-    interface Presenter : RequestHandler {
+    interface Presenter : RequestHandler, HistoryAdapter.ActionListener {
         fun attachPeerID(peerId: Int) : MessagesPresenter
         fun onGetMessageHistoryRequest()
         fun onScrollFinished(position: Int)

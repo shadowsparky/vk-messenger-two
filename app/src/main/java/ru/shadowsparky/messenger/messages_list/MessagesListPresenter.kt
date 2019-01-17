@@ -32,13 +32,25 @@ class MessagesListPresenter : MessagesList.Presenter {
         errorUtils.attach(view)
     }
 
+    override fun onCardClicked(peer_id: Int, user_data: String, photo: String, user_status: Int, time: Int) {
+        view!!.navigateToHistory(peer_id, user_data, photo, user_status, time)
+    }
+
+    override fun onScroll(position: Int) {
+        if (position == 0)
+            view!!.disposeAdapter()
+        model.getAllDialogs(position)
+        view!!.setLoading(true)
+    }
+
+
     override fun onPushSubscribing() = model.subscribeToPush()
 
     override fun onFailureResponse(error: Throwable) {
         val callback: (response: Response) -> Unit = {
             val mResponse = it as MessagesResponse
             if ((mResponse.error == null) and (mResponse.response != null)) {
-                view!!.setAdapter(it, ::onScrollFinished, ::onItemClicked)
+                view!!.setAdapter(it)
                 loadingError = true
             }
         }
@@ -52,18 +64,9 @@ class MessagesListPresenter : MessagesList.Presenter {
 
     override fun onActivityDestroying() = model.disposeRequests()
 
-    override fun onScrollFinished(currentOffset: Int) {
-        if (currentOffset == 0)
-            view!!.disposeAdapter()
-        model.getAllDialogs(currentOffset)
-        view!!.setLoading(true)
-    }
-
-    override fun onItemClicked(id: Int, user_data: String, url: String, online_status: Int, last_seen: Int) = view!!.navigateToHistory(id, user_data, url, online_status, last_seen)
-
     override fun onSuccessResponse(response: Response) {
         when(response) {
-            is MessagesResponse -> view!!.setAdapter(response, ::onScrollFinished, ::onItemClicked)
+            is MessagesResponse -> view!!.setAdapter(response)
             is VKPushResponse -> log.print("Вы подписались на пуш уведомления")
             else -> onFailureResponse(ClassCastException())
         }

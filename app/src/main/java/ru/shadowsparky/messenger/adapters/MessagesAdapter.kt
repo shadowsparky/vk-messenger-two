@@ -33,9 +33,8 @@ import javax.inject.Inject
 import kotlin.math.abs
 
 class MessagesAdapter(
-        val data: MessagesResponse,
-        val callback: (Int) -> Unit,
-        val touch_callback: (Int, String, String, Int, Int) -> Unit
+    private val data: MessagesResponse,
+    private val mActionListener: ActionListener
 ) : RecyclerView.Adapter<MessagesAdapter.MainViewHolder>() {
     // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var log: Logger
@@ -59,7 +58,7 @@ class MessagesAdapter(
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val item = data.response!!.items[position]
         if ((position == itemCount - 1) and (position != data.response.count - 1))
-            callback(position + 1)
+            mActionListener.onScroll(position + 1)
         holder.user_data.text = EMPTY_STRING
         when {
             item.conversation.peer.type == VK_PEER_CHAT -> chatDialog(item, holder.user_data, holder.card, holder.image)
@@ -114,7 +113,7 @@ class MessagesAdapter(
         }
 //        log.print("time: $time", false, TAG)
         card.setOnClickListener {
-            touch_callback(
+            mActionListener.onCardClicked(
                 item.id,
                 user_data.text.toString(),
                 item.photo_100,
@@ -134,7 +133,7 @@ class MessagesAdapter(
         else
             conversation.chat_settings.photo.photo_100
         card.setOnClickListener {
-            touch_callback(
+            mActionListener.onCardClicked(
                 conversation.peer.id!!,
                 user_data.text.toString(),
                 photo,
@@ -149,7 +148,7 @@ class MessagesAdapter(
         user_data.text = item.name
         val photo = item.photo_100 ?: PHOTO_NOT_FOUND
         card.setOnClickListener {
-            touch_callback(
+            mActionListener.onCardClicked(
                 -item.id,
                 user_data.text.toString(),
                 photo,
@@ -176,6 +175,11 @@ class MessagesAdapter(
         if (newData.response.groups != null)
             for (item in newData.response.groups)
                 groups[item.id] = item
+    }
+
+    interface ActionListener {
+        fun onCardClicked(peer_id: Int, user_data: String, photo: String, user_status: Int, time: Int)
+        fun onScroll(position: Int = 0)
     }
 
     open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -4,6 +4,7 @@
 
 package ru.shadowsparky.messenger.messages_view
 
+import android.widget.ImageView
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.requester.FailureResponseHandler
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
@@ -24,6 +25,16 @@ class MessagesPresenter : Messages.Presenter {
         model.attachCallbacks(::onSuccessResponse, ::onFailureResponse)
     }
 
+    override fun onScroll(position: Int) {
+        view!!.setLoading(true)
+        model.getMessageHistory(peerId!!, position)
+    }
+
+    override fun onPhotoClicked(image: ImageView, url: String) {
+        view!!.photoTouched(image, url)
+    }
+
+
     override fun attachPeerID(peerId: Int) : MessagesPresenter {
         this.peerId = peerId
         return this
@@ -42,8 +53,7 @@ class MessagesPresenter : Messages.Presenter {
     }
 
     override fun onScrollFinished(position: Int) {
-        view!!.setLoading(true)
-        model.getMessageHistory(peerId!!, position)
+
     }
 
     override fun onSendMessage(message: String) {
@@ -54,7 +64,7 @@ class MessagesPresenter : Messages.Presenter {
     override fun onFailureResponse(error: Throwable) {
         val callback: (response: Response) -> Unit = {
             loadingError = true
-            view!!.setAdapter(it as HistoryResponse, ::onScrollFinished, view!!::photoTouched)
+            view!!.setAdapter(it as HistoryResponse)
         }
         if (!loadingError) {
             view!!.setLoading(true)
@@ -69,7 +79,7 @@ class MessagesPresenter : Messages.Presenter {
 
     override fun onSuccessResponse(response: Response) {
         when (response) {
-            is HistoryResponse -> view!!.setAdapter(response, ::onScrollFinished, view!!::photoTouched)
+            is HistoryResponse -> view!!.setAdapter(response)
             is SendMessageResponse -> { view!!.clearMessageText() }
             else -> onFailureResponse(ClassCastException())
         }

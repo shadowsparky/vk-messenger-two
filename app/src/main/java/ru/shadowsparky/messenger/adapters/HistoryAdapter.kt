@@ -43,10 +43,8 @@ import kotlin.math.abs
 
 
 class HistoryAdapter(
-        val data: HistoryResponse,
-        val scroll_callback: (Int) -> Unit,
-        val touch_photo_callback: (ImageView, String) -> Unit,
-        val user_id: Int
+        private val data: HistoryResponse,
+        private val mActionListener: HistoryAdapter.ActionListener
 ) : RecyclerView.Adapter<HistoryAdapter.MainViewHolder>() {
     // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var log: Logger
@@ -89,7 +87,7 @@ class HistoryAdapter(
 
     override fun onBindViewHolder(holder: HistoryAdapter.MainViewHolder, position: Int) {
         if ((position == 0) and (itemCount < data.response.count!!)) {
-            scroll_callback(itemCount)
+            mActionListener.onScroll(itemCount)
             log.print("Message history loading request... position: $itemCount", false, TAG)
         }
         val item = data.response.items!![position]
@@ -140,7 +138,7 @@ class HistoryAdapter(
                 groups[item.id] = item
     }
 
-    private fun includeAttachment(attachments: LinearLayout, info: Attachments, callback: (ImageView, String) -> Unit = { _, _ -> }) {
+    private fun includeAttachment(attachments: LinearLayout, info: Attachments) {
         try {
             var url = when (info) {
                 is VKAttachmentsPhoto -> imageWorker.getOptimalImage(imageWorker.getHashmapCard(info.sizes))
@@ -155,7 +153,7 @@ class HistoryAdapter(
                     .resize(500, 500)
                     .centerCrop()
                     .into(image)
-            image.setOnClickListener { callback(image, url!!) }
+            image.setOnClickListener { mActionListener.onPhotoClicked(image, url!!) }
             attachments.addView(image)
         } catch (e: Exception) {
             log.printError("Ignored exception in History Adapter $e", false)
@@ -163,7 +161,7 @@ class HistoryAdapter(
     }
 
     private fun includePhoto(info: VKAttachments, attachments: LinearLayout) {
-        includeAttachment(attachments, info.photo, touch_photo_callback)
+        includeAttachment(attachments, info.photo)
     }
 
     private fun includeReplyMessage(info: VKMessage, attachments: LinearLayout) {
@@ -251,7 +249,12 @@ class HistoryAdapter(
         card.layoutParams = params
     }
 
-    open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    interface ActionListener {
+        fun onScroll(position: Int)
+        fun onPhotoClicked(image: ImageView, url: String)
+    }
+
+    class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val text: TextView = itemView.findViewById(R.id.message_text)
         val card: CardView = itemView.findViewById(R.id.message_history_card)
         val time: TextView = itemView.findViewById(R.id.message_history_time)

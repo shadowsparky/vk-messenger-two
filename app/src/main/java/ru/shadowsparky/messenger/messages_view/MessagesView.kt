@@ -56,7 +56,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
     private var url = URL_NOT_FOUND
     private var onlineStatus = STATUS_HIDE
     private var mLastSeen = STATUS_HIDE
-    private var receiver: MessagesView.ResponseReceiver? = null
+    private var receiver: ResponseReceiver? = null
     private val TAG = javaClass.name
 
     init {
@@ -82,11 +82,10 @@ class MessagesView : AppCompatActivity(), Messages.View {
         message_history_user_online.text = status
     }
 
-    override fun setAdapter(response: HistoryResponse, scroll_callback: (Int) -> Unit,
-        photo_touch_callback: (ImageView, String) -> Unit) {
+    override fun setAdapter(response: HistoryResponse) {
         log.print("Current adapter is $adapter", false, TAG)
         if (adapter == null) {
-            adapter = HistoryAdapter(response, scroll_callback, photo_touch_callback, userId)
+            adapter = HistoryAdapter(response, presenter)
             adapter!!.reverse()
             message_history_list.setHasFixedSize(true)
             message_history_list.layoutManager = GridLayoutManager(this, DEFAULT_SPAN_VALUE)
@@ -178,83 +177,5 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 .makeSceneTransitionAnimation(this, image, this.getString(R.string.transition))
         i.putExtra(Constansts.URL, url)
         this.startActivity(i, options.toBundle())
-    }
-
-    class ResponseReceiver(
-            val view: Messages.View,
-            val presenter: Messages.Presenter,
-            val log: Logger,
-            val userId: Int
-    ) : BroadcastReceiver() {
-        private var mUpdateFlag = false
-        private val TAG = javaClass.name
-
-        private fun receiveLongPoll(mResponse: VKGetByIDMessages) {
-            mUpdateFlag = false
-            if (mResponse.profiles != null) {
-                for (item in mResponse.profiles) {
-                    if (item.id == userId) {
-                        mUpdateFlag = true
-                    }
-                }
-            }
-            if (mResponse.items != null) {
-                log.print(mResponse.items.toString())
-                for (item in mResponse.items) {
-                    if (item != null)
-                        if (item.peer_id == userId) {
-                            mUpdateFlag = true
-                        }
-                }
-            }
-            if (mResponse.groups != null) {
-                for (item in mResponse.groups) {
-                    if (abs(item.id) == abs(userId)) {
-                        mUpdateFlag = true
-                    }
-                }
-            }
-            if (mUpdateFlag) {
-                log.print("MessageHistoryRequest Long Poll Handled")
-                presenter.onGetMessageHistoryRequest()
-            }
-        }
-
-        private fun receiveUserReadMessage(peer_id: Int) {
-            if (peer_id == this.userId) {
-                presenter.onGetMessageHistoryRequest()
-                log.print("Receive user read message")
-            }
-        }
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent!!.action == Constansts.BROADCAST_RECEIVER_CODE) {
-                val mResponse = intent.getSerializableExtra(Constansts.RESPONSE)
-                when (mResponse) {
-                    is VKGetByIDMessages -> receiveLongPoll(mResponse)
-                    is Int -> receiveUserReadMessage(mResponse)
-                }
-                val onlineStatusChanged = intent.getIntExtra(USER_LONG_POLL_STATUS_CHANGED, STATUS_HIDE)
-                val userId = intent.getIntExtra(USER_ID, -1)
-                if (onlineStatusChanged == STATUS_ONLINE) {
-                    if (userId == this.userId) {
-                        view.setStatus("$ONLINE")
-                    }
-                } else if (onlineStatusChanged == STATUS_OFFLINE) {
-                    if (userId == this.userId) {
-                        val dateUtils = DateUtils()
-                        val mLastSeen = intent.getIntExtra(LAST_SEEN_FIELD, -1)
-                        val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
-                        val messageDate = dateUtils.fromUnixToStrictDate(mLastSeen.toLong())
-                        var formattedDate = if (todayDate > messageDate) {
-                            dateUtils.fromUnixToDateAndTime(mLastSeen.toLong())
-                        } else {
-                            dateUtils.fromUnixToTimeString(mLastSeen.toLong())
-                        }
-                        view.setStatus("$OFFLINE $formattedDate")
-                    }
-                }
-            }
-        }
     }
 }
