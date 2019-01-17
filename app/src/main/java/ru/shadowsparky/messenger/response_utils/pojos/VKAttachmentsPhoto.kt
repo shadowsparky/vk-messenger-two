@@ -4,6 +4,7 @@
 
 package ru.shadowsparky.messenger.response_utils.pojos
 
+import ru.shadowsparky.messenger.response_utils.Attachments
 import ru.shadowsparky.messenger.response_utils.Response
 import java.io.Serializable
 
@@ -13,4 +14,4 @@ data class VKAttachmentsPhoto (
     val owner_id: Int,
     val src_big: Int,
     val sizes: ArrayList<VKPhotoSize>
-)  : Serializable
+)  : Serializable, Attachments

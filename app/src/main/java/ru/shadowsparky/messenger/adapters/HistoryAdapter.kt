@@ -23,6 +23,7 @@ import com.hendraanggrian.pikasso.transformations.circle
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.custom_views.ForwardView
 import ru.shadowsparky.messenger.dialogs.AttachmentDialog
+import ru.shadowsparky.messenger.response_utils.Attachments
 import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.App
@@ -139,11 +140,8 @@ class HistoryAdapter(
                 groups[item.id] = item
     }
 
-    private fun includeAttachment(attachments: LinearLayout, info: Any, callback: (ImageView, String) -> Unit = { _, _ -> }) {
+    private fun includeAttachment(attachments: LinearLayout, info: Attachments, callback: (ImageView, String) -> Unit = { _, _ -> }) {
         try {
-            val layout = LinearLayout(context)
-            layout.minimumHeight = WRAP_CONTENT
-            layout.minimumWidth = WRAP_CONTENT
             var url = when (info) {
                 is VKAttachmentsPhoto -> imageWorker.getOptimalImage(imageWorker.getHashmapCard(info.sizes))
                 is VKAttachmentsSticker -> info.images[info.images.size - 1].url
@@ -151,13 +149,14 @@ class HistoryAdapter(
             }
             if (url == EMPTY_STRING)
                 throw RuntimeException()
-            layout.orientation = LinearLayout.VERTICAL
             val image = ImageView(context)
             image.transitionName = context!!.getString(R.string.transition)
-            picasso.load(url).into(image)
+            picasso.load(url)
+                    .resize(500, 500)
+                    .centerCrop()
+                    .into(image)
             image.setOnClickListener { callback(image, url!!) }
-            layout.addView(image)
-            attachments.addView(layout)
+            attachments.addView(image)
         } catch (e: Exception) {
             log.printError("Ignored exception in History Adapter $e", false)
         }

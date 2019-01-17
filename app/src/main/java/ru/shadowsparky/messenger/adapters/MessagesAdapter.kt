@@ -32,7 +32,7 @@ import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
 import kotlin.math.abs
 
-open class MessagesAdapter(
+class MessagesAdapter(
         val data: MessagesResponse,
         val callback: (Int) -> Unit,
         val touch_callback: (Int, String, String, Int, Int) -> Unit
@@ -72,7 +72,19 @@ open class MessagesAdapter(
             holder.message_data.text = item.last_message.text!!
         }
         setDate(item, holder)
-        setReading(item, holder)
+        setReading(item, holder, position)
+    }
+
+    private fun setReading(item: VKItems, holder: MainViewHolder, position: Int) {
+        if (item.conversation.in_read != item.conversation.out_read) {
+            holder.user_data.setTypeface(holder.user_data.typeface, Typeface.BOLD)
+            holder.message_data.setTypeface(holder.message_data.typeface, Typeface.BOLD)
+            log.print("BOLD: $position", false, TAG)
+        } else {
+            holder.user_data.setTypeface(holder.user_data.typeface, Typeface.NORMAL)
+            holder.message_data.setTypeface(holder.message_data.typeface, Typeface.NORMAL)
+            log.print("normal: $position", false, TAG)
+        }
     }
 
     private fun setText(item: VKItems, holder: MainViewHolder) {
@@ -93,16 +105,6 @@ open class MessagesAdapter(
         }
     }
 
-    private fun setReading(item: VKItems, holder: MainViewHolder) {
-        if (item.conversation.in_read != item.conversation.out_read) {
-            holder.user_data.setTypeface(holder.user_data.typeface, Typeface.BOLD)
-            holder.message_data.setTypeface(holder.message_data.typeface, Typeface.BOLD)
-        } else {
-            holder.user_data.setTypeface(holder.user_data.typeface, Typeface.NORMAL)
-            holder.message_data.setTypeface(holder.message_data.typeface, Typeface.NORMAL)
-        }
-    }
-
     private fun userDialog(item: VKProfile, user_data: TextView, card: CardView, image: ImageView) {
         user_data.text = "${item.first_name} ${item.last_name}"
         val time = if (item.last_seen != null) {
@@ -110,7 +112,7 @@ open class MessagesAdapter(
         } else {
             STATUS_HIDE
         }
-        log.print("time: $time", false, TAG)
+        //log.print("time: $time", false, TAG)
         card.setOnClickListener {
             touch_callback(
                 item.id,
@@ -144,13 +146,9 @@ open class MessagesAdapter(
     }
 
     private fun groupDialog(item: VKGroup, user_data: TextView, card: CardView, image: ImageView) {
-        var photo = ""
         user_data.text = item.name
-        photo = if (item.photo_100 == null)
-            PHOTO_NOT_FOUND
-        else
-            item.photo_100
-        card.setOnClickListener { _ ->
+        val photo = item.photo_100 ?: PHOTO_NOT_FOUND
+        card.setOnClickListener {
             touch_callback(
                 -item.id,
                 user_data.text.toString(),
@@ -163,11 +161,12 @@ open class MessagesAdapter(
     }
 
     fun addData(newData: MessagesResponse) {
-        val TMP_MAX = itemCount
+//        val TMP_MAX = itemCount
         data.response!!.profiles.addAll(newData.response!!.profiles)
         data.response.items.addAll(newData.response.items)
         addProfiles(newData)
-        notifyItemRangeInserted(TMP_MAX, TMP_MAX + newData.response.items.size)
+//        notifyDataSetChanged()
+//        notifyItemRangeInserted(TMP_MAX, TMP_MAX + newData.response.items.size)
     }
 
     private fun addProfiles(newData: MessagesResponse) {
