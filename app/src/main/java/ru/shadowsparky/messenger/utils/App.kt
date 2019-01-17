@@ -21,7 +21,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         daggerSetting()
-        picassoSetting()
+//        picassoSetting()
     }
 
     private fun daggerSetting() {

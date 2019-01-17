@@ -17,4 +17,10 @@ class TextColorUtils(val context: Context) {
         spanText.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.black)), 0, text.length, 0)
         return spanText
     }
+
+    fun getWhiteText(text: String) : SpannableString {
+        val spanText = SpannableString(text)
+        spanText.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.white)), 0, text.length, 0)
+        return spanText
+    }
 }

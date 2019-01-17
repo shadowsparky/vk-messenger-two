@@ -15,8 +15,10 @@ import com.github.chrisbanes.photoview.PhotoView
 import com.hendraanggrian.pikasso.picasso
 import kotlinx.android.synthetic.main.activity_post_shower.*
 import ru.shadowsparky.messenger.R
+import ru.shadowsparky.messenger.custom_views.ForwardView
 import ru.shadowsparky.messenger.open_photo.OpenPhotoView
 import ru.shadowsparky.messenger.response_utils.pojos.VKAttachmentsWall
+import ru.shadowsparky.messenger.response_utils.pojos.VKGroup
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts
 import ru.shadowsparky.messenger.utils.ImageWorker
@@ -24,12 +26,11 @@ import javax.inject.Inject
 
 class AttachmentDialog : Dialog {
     // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
-    private var data: VKAttachmentsWall
+    private val data: VKAttachmentsWall
 //    private var context: Context
     @Inject protected lateinit var imageWorker: ImageWorker
 
     constructor (context: Context, data: VKAttachmentsWall) : super(context) {
-//        this.context = context
         this.data = data
     }
 

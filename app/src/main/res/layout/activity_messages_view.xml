@@ -4,19 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_background"
     tools:context=".messages_view.MessagesView">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarview"
         android:layout_width="match_parent"
-        style="@style/AppTheme"
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleTextColor="@android:color/white">
+        app:title="    ">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -100,8 +97,7 @@
                 android:layout_weight="11"
                 android:maxLines="5"
                 android:hint="@string/message"
-                android:inputType="textMultiLine"
-                android:textColor="@android:color/black" />
+                android:inputType="textMultiLine" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/push_message"

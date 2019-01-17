@@ -58,7 +58,7 @@ class MessagesAdapter(
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val item = data.response!!.items[position]
-        if ((position == itemCount - 1) and (position != data.response!!.count - 1))
+        if ((position == itemCount - 1) and (position != data.response.count - 1))
             callback(position + 1)
         holder.user_data.text = EMPTY_STRING
         when {
@@ -112,7 +112,7 @@ class MessagesAdapter(
         } else {
             STATUS_HIDE
         }
-        //log.print("time: $time", false, TAG)
+//        log.print("time: $time", false, TAG)
         card.setOnClickListener {
             touch_callback(
                 item.id,
@@ -162,10 +162,10 @@ class MessagesAdapter(
 
     fun addData(newData: MessagesResponse) {
 //        val TMP_MAX = itemCount
+//        notifyDataSetChanged()
         data.response!!.profiles.addAll(newData.response!!.profiles)
         data.response.items.addAll(newData.response.items)
         addProfiles(newData)
-//        notifyDataSetChanged()
 //        notifyItemRangeInserted(TMP_MAX, TMP_MAX + newData.response.items.size)
     }
 

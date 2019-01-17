@@ -120,7 +120,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.messages_list_menu, menu)
         val item = menu.findItem(R.id.exit_from_account)
-        item.title = colorize.getBlackText(item.title.toString())
+        item.title = colorize.getWhiteText(item.title.toString())
         item.setOnMenuItemClickListener {
             preferencesUtils.removeAll()
             startActivity(Intent(this, AuthView::class.java))
@@ -128,7 +128,7 @@ open class MessagesListView : AppCompatActivity(), MessagesList.View {
             return@setOnMenuItemClickListener true
         }
         val sub = menu.findItem(R.id.subscribe_to_push)
-        sub.title = colorize.getBlackText(sub.title.toString())
+        sub.title = colorize.getWhiteText(sub.title.toString())
         sub.setOnMenuItemClickListener {
             presenter.onPushSubscribing()
             return@setOnMenuItemClickListener true
