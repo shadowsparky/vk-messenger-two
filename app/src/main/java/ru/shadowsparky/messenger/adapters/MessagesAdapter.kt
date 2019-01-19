@@ -57,8 +57,9 @@ class MessagesAdapter(
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val item = data.response!!.items[position]
-        if ((position == itemCount - 1) and (position != data.response.count - 1))
+        if ((position == itemCount - 1) and (position != data.response.count - 1)) {
             mActionListener.onScroll(position + 1)
+        }
         holder.user_data.text = EMPTY_STRING
         when {
             item.conversation.peer.type == VK_PEER_CHAT -> chatDialog(item, holder.user_data, holder.card, holder.image)
@@ -71,7 +72,7 @@ class MessagesAdapter(
             holder.message_data.text = item.last_message.text!!
         }
         setDate(item, holder)
-        setReading(item, holder, position)
+//        setReading(item, holder, position)
     }
 
     private fun setReading(item: VKItems, holder: MainViewHolder, position: Int) {
@@ -161,10 +162,10 @@ class MessagesAdapter(
 
     fun addData(newData: MessagesResponse) {
 //        val TMP_MAX = itemCount
-//        notifyDataSetChanged()
         data.response!!.profiles.addAll(newData.response!!.profiles)
         data.response.items.addAll(newData.response.items)
         addProfiles(newData)
+        notifyDataSetChanged()
 //        notifyItemRangeInserted(TMP_MAX, TMP_MAX + newData.response.items.size)
     }
 
@@ -182,7 +183,7 @@ class MessagesAdapter(
         fun onScroll(position: Int = 0)
     }
 
-    open class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val image: ImageView = itemView.findViewById(R.id.messageitem_photo)
         val user_data: TextView = itemView.findViewById(R.id.messageitem_user_data)
         val message_data: TextView = itemView.findViewById(R.id.messageitem_user_message)

@@ -79,7 +79,8 @@ class HistoryAdapter(
         data.response.profiles!!.addAll(response.response.profiles!!)
         reverse()
         addProfiles(response)
-        log.print("ADD DATA: ${data.response.items.size} ${response.response.items.size}", false, TAG)
+//        log.print("ADD DATA: ${data.response.items.size} ${response.response.items.size}", false, TAG)
+//        notifyDataSetChanged()
         notifyItemRangeInserted(0, response.response.items.size)
     }
 
@@ -92,7 +93,7 @@ class HistoryAdapter(
         }
         val item = data.response.items!![position]
         val conversation = data.response.conversations!![0]
-        configureReading(item, conversation, holder)
+//        configureReading(item, conversation, holder)
         configureCard(holder.card, item, holder)
         configureDate(item, holder)
         val url = getUrl(profiles, groups, item)
@@ -140,7 +141,7 @@ class HistoryAdapter(
 
     private fun includeAttachment(attachments: LinearLayout, info: Attachments) {
         try {
-            var url = when (info) {
+            val url = when (info) {
                 is VKAttachmentsPhoto -> imageWorker.getOptimalImage(imageWorker.getHashmapCard(info.sizes))
                 is VKAttachmentsSticker -> info.images[info.images.size - 1].url
                 else -> EMPTY_STRING
