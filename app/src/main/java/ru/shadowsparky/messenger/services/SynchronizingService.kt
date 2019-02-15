@@ -235,5 +235,3 @@ class SynchronizingService : IntentService("Synchronizing Service"), RequestHand
         }
     }
 }
-
-// чтобы было 228

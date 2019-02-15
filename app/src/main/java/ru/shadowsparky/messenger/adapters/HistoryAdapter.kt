@@ -6,7 +6,6 @@ package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
 import android.graphics.Typeface
-import android.media.ImageWriter
 import android.view.*
 import android.view.Gravity.LEFT
 import android.view.Gravity.RIGHT
@@ -26,19 +25,14 @@ import ru.shadowsparky.messenger.dialogs.AttachmentDialog
 import ru.shadowsparky.messenger.response_utils.Attachments
 import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
 import ru.shadowsparky.messenger.utils.Constansts.Companion.PHOTO
 import ru.shadowsparky.messenger.utils.Constansts.Companion.RECORD_OPEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STICKER
 import ru.shadowsparky.messenger.utils.Constansts.Companion.WALL
-import ru.shadowsparky.messenger.utils.DateUtils
-import ru.shadowsparky.messenger.utils.ImageWorker
-import ru.shadowsparky.messenger.utils.Logger
-import java.lang.RuntimeException
-import java.util.*
+import java.lang.reflect.Type
 import javax.inject.Inject
-import kotlin.collections.HashMap
 import kotlin.math.abs
 
 
@@ -93,7 +87,7 @@ class HistoryAdapter(
         }
         val item = data.response.items!![position]
         val conversation = data.response.conversations!![0]
-//        configureReading(item, conversation, holder)
+        configureReading(item, conversation, holder)
         configureCard(holder.card, item, holder)
         configureDate(item, holder)
         val url = getUrl(profiles, groups, item)
@@ -105,6 +99,8 @@ class HistoryAdapter(
         holder.attachments.removeAllViews()
         includeAttachments(item, holder.attachments)
     }
+
+    fun getItemById(id: Int) : VKMessage? = data.response.items?.get(id)
 
     private fun getUrl(profiles: HashMap<Int, VKProfile>, groups: HashMap<Int, VKGroup>, item: VKMessage) : String {
         return when {
@@ -126,7 +122,9 @@ class HistoryAdapter(
 
     private fun configureReading(item: VKMessage, conversation: VKConversation, holder: HistoryAdapter.MainViewHolder) {
         if (conversation.out_read < item.id!!) {
-            holder.text.setTypeface(holder.text.typeface, Typeface.BOLD)
+            holder.text.setTypeface(null, Typeface.BOLD)
+        } else {
+            holder.text.setTypeface(null, Typeface.NORMAL)
         }
     }
 
@@ -255,11 +253,21 @@ class HistoryAdapter(
         fun onPhotoClicked(image: ImageView, url: String)
     }
 
-    class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), OnCreateContextMenuListener {
         val text: TextView = itemView.findViewById(R.id.message_text)
         val card: CardView = itemView.findViewById(R.id.message_history_card)
         val time: TextView = itemView.findViewById(R.id.message_history_time)
         val attachments: LinearLayout = itemView.findViewById(R.id.message_history_attachments)
         val image: ImageView = itemView.findViewById(R.id.message_history_user_card)
+
+        init {
+            card.setOnCreateContextMenuListener(this)
+        }
+
+        override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+            menu?.setHeaderTitle("Выберите действие")
+            menu?.add(this.adapterPosition, 0, 0, "Удалить сообщение")
+            menu?.add(this.adapterPosition, 1, 0, "Редактировать сообщение")
+        }
     }
 }

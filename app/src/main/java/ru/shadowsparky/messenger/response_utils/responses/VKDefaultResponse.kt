@@ -7,7 +7,7 @@ package ru.shadowsparky.messenger.response_utils.responses
 import ru.shadowsparky.messenger.response_utils.Response
 import java.io.Serializable
 
-data class VKPushResponse(
-    val response: Int//,
-//    val error: ErrorResponse?
+data class VKDefaultResponse(
+    val response: Int?,
+    val error: Any?
 ) : Response, Serializable

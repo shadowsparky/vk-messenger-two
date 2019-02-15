@@ -7,7 +7,7 @@ package ru.shadowsparky.messenger.messages_list
 import ru.shadowsparky.messenger.response_utils.requester.FailureResponseHandler
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.MessagesResponse
-import ru.shadowsparky.messenger.response_utils.responses.VKPushResponse
+import ru.shadowsparky.messenger.response_utils.responses.VKDefaultResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Logger
 import ru.shadowsparky.messenger.utils.SQLite.DBViewTableWrapper
@@ -67,7 +67,7 @@ class MessagesListPresenter : MessagesList.Presenter {
     override fun onSuccessResponse(response: Response) {
         when(response) {
             is MessagesResponse -> view!!.setAdapter(response)
-            is VKPushResponse -> log.print("Вы подписались на пуш уведомления")
+            is VKDefaultResponse -> log.print("Вы подписались на пуш уведомления")
             else -> onFailureResponse(ClassCastException())
         }
         view!!.setLoading(false)

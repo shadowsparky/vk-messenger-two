@@ -30,6 +30,8 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.OFFLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
+import ru.shadowsparky.messenger.utils.Constansts.Companion.SELECT_DELETE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.SELECT_EDIT
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_ONLINE
@@ -101,6 +103,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages_view)
         setSupportActionBar(toolbarview)
+        registerForContextMenu(message_history_list)
         userId = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
         log.print("User ID $userId", false, TAG)
         userData = intent.getStringExtra(USER_DATA)
@@ -163,6 +166,20 @@ class MessagesView : AppCompatActivity(), Messages.View {
         }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back_gray_24dp)
+    }
+
+    override fun onContextItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            SELECT_DELETE -> {
+                val item = adapter?.getItemById(item.groupId)
+                log.print(item!!.text!!, false, TAG)
+            }
+            SELECT_EDIT -> {
+                val item = adapter?.getItemById(item.groupId)
+            }
+
+        }
+        return super.onContextItemSelected(item)
     }
 
     override fun onDestroy() {

@@ -72,17 +72,21 @@ class MessagesAdapter(
             holder.message_data.text = item.last_message.text!!
         }
         setDate(item, holder)
-//        setReading(item, holder, position)
+        setReading(item, holder, position)
     }
 
     private fun setReading(item: VKItems, holder: MainViewHolder, position: Int) {
         if (item.conversation.in_read != item.conversation.out_read) {
-            holder.user_data.setTypeface(holder.user_data.typeface, Typeface.BOLD)
-            holder.message_data.setTypeface(holder.message_data.typeface, Typeface.BOLD)
+            holder.user_data.setTypeface(null, Typeface.BOLD)
+            log.print(item.last_message.peer_id.toString()+holder.user_data.text, false, TAG);
+            holder.message_data.setTypeface(null, Typeface.BOLD)
             log.print("BOLD: $position", false, TAG)
         } else {
-            holder.user_data.setTypeface(holder.user_data.typeface, Typeface.NORMAL)
-            holder.message_data.setTypeface(holder.message_data.typeface, Typeface.NORMAL)
+
+            holder.user_data.setTypeface(null, Typeface.NORMAL)
+            log.print(item.last_message.peer_id.toString()+holder.user_data.text, false, TAG)
+//            item.last_message.from_id;
+            holder.message_data.setTypeface(null, Typeface.NORMAL)
             log.print("normal: $position", false, TAG)
         }
     }
@@ -112,7 +116,6 @@ class MessagesAdapter(
         } else {
             STATUS_HIDE
         }
-//        log.print("time: $time", false, TAG)
         card.setOnClickListener {
             mActionListener.onCardClicked(
                 item.id,

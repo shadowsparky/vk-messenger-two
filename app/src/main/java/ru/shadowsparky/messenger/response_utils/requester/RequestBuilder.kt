@@ -4,6 +4,7 @@
 
 package ru.shadowsparky.messenger.response_utils.requester
 
+import android.app.DownloadManager
 import com.google.gson.Gson
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -33,6 +34,7 @@ class RequestBuilder {
     private var result: Disposable? = null
     private var offset: Int? = null
     private var peerId: Int? = null
+    private var message_id: Int? = null
     private var messageIds: String? = null
     private var message: String? = null
     private var successCallback: ((Response) -> Unit)? = null
@@ -45,6 +47,11 @@ class RequestBuilder {
 
     init {
         App.component.inject(this)
+    }
+
+    fun setMessageId(message_id: Int) : RequestBuilder {
+        this.message_id = message_id
+        return this
     }
 
     fun setMessageIds(messageIds: String) : RequestBuilder {
@@ -125,10 +132,10 @@ class RequestBuilder {
         request = retrofit
             .create(VKApi::class.java)
             .getDialogs(offset!!, 20, "all", preferencesUtils.read(TOKEN))
-            .map {
-                errorHandlerWithCacher(it)
-                return@map it
-            }
+                .map {
+                    errorHandlerWithCacher(it)
+                    return@map it
+                }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()
@@ -167,6 +174,21 @@ class RequestBuilder {
         request = retrofit
                 .create(VKApi::class.java)
                 .getById(preferencesUtils.read(TOKEN), messageIds!!)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+        configureCallbacks()
+        return this
+    }
+
+    fun editMessageRequest() : RequestBuilder {
+        log.print("Edit message request...", true, TAG)
+        request = retrofit
+                .create(VKApi::class.java)
+                .messagesEdit(peerId!!, message!!, message_id!!, preferencesUtils.read(TOKEN))
+                .map {
+                    errorHandler(it)
+                    return@map it
+                }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
         configureCallbacks()

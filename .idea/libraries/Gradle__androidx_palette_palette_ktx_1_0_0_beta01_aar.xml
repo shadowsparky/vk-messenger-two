@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.palette:palette-ktx:1.0.0-beta01@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/palette-ktx-1.0.0-beta01.aar/603bbccf7ff626c38170bca7c4a49b7a/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/palette-ktx-1.0.0-beta01.aar/603bbccf7ff626c38170bca7c4a49b7a/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.palette/palette-ktx/1.0.0-beta01/91ebf444597c55d6bbfd11da0074eed37155b1cd/palette-ktx-1.0.0-beta01-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -22,7 +22,7 @@ interface VKApi {
         @Query("count") count: Int,
         @Query("filter") filter: String,
         @Query("access_token") token: String,
-        @Query("fields") fields: String = LAST_SEEN_FIELD + ", online, photo_100",
+        @Query("fields") fields: String = "$LAST_SEEN_FIELD, online, photo_100",
         @Query("v") version: Double = VK_API_VERSION,
         @Query("extended") extended: Boolean = true
     ) : Single<Response<MessagesResponse>>
@@ -53,7 +53,7 @@ interface VKApi {
         @Query("provider") provider: String = "fcm",
         @Query("v") version: Double = VK_API_VERSION,
         @Query("settings") settings: String = "{\"msg\":\"on\", \"chat\":\"on\"}"
-    ) : Single<Response<VKPushResponse>>
+    ) : Single<Response<VKDefaultResponse>>
 
     @GET("method/messages.getLongPollServer")
     fun getLongPollServer (
@@ -73,6 +73,15 @@ interface VKApi {
         @Query("version") version: Long = 3,
         @Query("act") a_check: String = "a_check"
     ) : Single<Response<VKLongPoll>>
+
+    @GET("method/messages.edit")
+    fun messagesEdit(
+        @Query("peer_id") peer_id: Int,
+        @Query("message") message: String,
+        @Query("message_id") message_id: Int,
+        @Query("access_token") access_token: String,
+        @Query("v") version: Double = VK_API_VERSION
+    ) : Single<Response<VKDefaultResponse>>
 
     @GET("method/messages.getById")
     fun getById (

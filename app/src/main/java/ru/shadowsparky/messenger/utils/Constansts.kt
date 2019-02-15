@@ -42,5 +42,7 @@ open class Constansts {
         const val DEAD = " is dead. Rest in Peace"
         const val ONLINE = "В сети"
         const val OFFLINE = "Был(а) в сети"
+        const val SELECT_DELETE = 0x0
+        const val SELECT_EDIT = 0x1
     }
 }
