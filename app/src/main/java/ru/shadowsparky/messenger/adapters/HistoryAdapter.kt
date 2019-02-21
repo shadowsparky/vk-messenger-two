@@ -6,10 +6,14 @@ package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
 import android.graphics.Typeface
-import android.view.*
+import android.util.SparseBooleanArray
+import android.view.Gravity
 import android.view.Gravity.LEFT
 import android.view.Gravity.RIGHT
+import android.view.LayoutInflater
+import android.view.View
 import android.view.View.*
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -25,17 +29,19 @@ import ru.shadowsparky.messenger.dialogs.AttachmentDialog
 import ru.shadowsparky.messenger.response_utils.Attachments
 import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.utils.*
+import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
 import ru.shadowsparky.messenger.utils.Constansts.Companion.PHOTO
 import ru.shadowsparky.messenger.utils.Constansts.Companion.RECORD_OPEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STICKER
 import ru.shadowsparky.messenger.utils.Constansts.Companion.WALL
-import java.lang.reflect.Type
+import ru.shadowsparky.messenger.utils.DateUtils
+import ru.shadowsparky.messenger.utils.ImageWorker
+import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
 import kotlin.math.abs
 
-
+@Suppress("ProtectedInFinal")
 class HistoryAdapter(
         private val data: HistoryResponse,
         private val mActionListener: HistoryAdapter.ActionListener
@@ -47,10 +53,37 @@ class HistoryAdapter(
     private val profiles = HashMap<Int, VKProfile>()
     private val groups = HashMap<Int, VKGroup>()
     private var context: Context? = null
+    private var selectedItems: SparseBooleanArray = SparseBooleanArray()
     private val TAG = javaClass.name
 
     init {
         App.component.inject(this)
+    }
+
+    fun toggleSelection(pos: Int) {
+        if (selectedItems.get(pos, false)) {
+            selectedItems.delete(pos)
+        } else {
+            selectedItems.put(pos, true)
+        }
+        notifyItemChanged(pos)
+    }
+
+    fun clearSelections() {
+        selectedItems.clear()
+        notifyDataSetChanged()
+    }
+
+    fun getSelectedItemCount(): Int {
+        return selectedItems.size()
+    }
+
+    fun getSelectedItems(): List<Int> {
+        val items = ArrayList<Int>(selectedItems!!.size())
+        for (i in 0 until selectedItems!!.size()) {
+            items.add(selectedItems!!.keyAt(i))
+        }
+        return items
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryAdapter.MainViewHolder {
@@ -253,21 +286,21 @@ class HistoryAdapter(
         fun onPhotoClicked(image: ImageView, url: String)
     }
 
-    class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), OnCreateContextMenuListener {
+    class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val text: TextView = itemView.findViewById(R.id.message_text)
         val card: CardView = itemView.findViewById(R.id.message_history_card)
         val time: TextView = itemView.findViewById(R.id.message_history_time)
         val attachments: LinearLayout = itemView.findViewById(R.id.message_history_attachments)
         val image: ImageView = itemView.findViewById(R.id.message_history_user_card)
 
-        init {
-            card.setOnCreateContextMenuListener(this)
-        }
-
-        override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-            menu?.setHeaderTitle("Выберите действие")
-            menu?.add(this.adapterPosition, 0, 0, "Удалить сообщение")
-            menu?.add(this.adapterPosition, 1, 0, "Редактировать сообщение")
-        }
+//        init {
+//            card.setOnCreateContextMenuListener(this)
+//        }
+//
+//        override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+//            menu?.setHeaderTitle("Выберите действие")
+//            menu?.add(this.adapterPosition, 0, 0, "Удалить сообщение")
+//            menu?.add(this.adapterPosition, 1, 0, "Редактировать сообщение")
+//        }
     }
 }

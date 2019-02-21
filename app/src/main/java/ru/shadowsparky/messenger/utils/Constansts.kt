@@ -44,5 +44,6 @@ open class Constansts {
         const val OFFLINE = "Был(а) в сети"
         const val SELECT_DELETE = 0x0
         const val SELECT_EDIT = 0x1
+        const val UNIX_DAY = 86400
     }
 }

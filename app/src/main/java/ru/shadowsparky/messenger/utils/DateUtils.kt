@@ -14,6 +14,8 @@ class DateUtils {
         return formatter.format(fromUnixToDate(unix))
     }
 
+    fun getCurrentTimestamp() : Long = System.currentTimeMillis() / 1000
+
     fun fromUnixToDateString(unix: Long) : String {
         val formatter = SimpleDateFormat("yyyy.MM.dd")
         return formatter.format(fromUnixToDate(unix))
