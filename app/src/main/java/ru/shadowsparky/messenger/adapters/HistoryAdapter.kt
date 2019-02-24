@@ -5,11 +5,15 @@
 package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
-import android.view.*
+import android.view.Gravity
 import android.view.Gravity.LEFT
 import android.view.Gravity.RIGHT
+import android.view.LayoutInflater
+import android.view.View
 import android.view.View.*
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -25,17 +29,19 @@ import ru.shadowsparky.messenger.dialogs.AttachmentDialog
 import ru.shadowsparky.messenger.response_utils.Attachments
 import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.utils.*
+import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
 import ru.shadowsparky.messenger.utils.Constansts.Companion.PHOTO
 import ru.shadowsparky.messenger.utils.Constansts.Companion.RECORD_OPEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STICKER
 import ru.shadowsparky.messenger.utils.Constansts.Companion.WALL
-import java.lang.reflect.Type
+import ru.shadowsparky.messenger.utils.DateUtils
+import ru.shadowsparky.messenger.utils.ImageWorker
+import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
 import kotlin.math.abs
 
-
+@Suppress("ProtectedInFinal")
 class HistoryAdapter(
         private val data: HistoryResponse,
         private val mActionListener: HistoryAdapter.ActionListener
@@ -44,6 +50,7 @@ class HistoryAdapter(
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var dateUtils: DateUtils
     @Inject protected lateinit var imageWorker: ImageWorker
+    @Inject lateinit var selectedItems: HashMap<Int, VKMessage> protected set
     private val profiles = HashMap<Int, VKProfile>()
     private val groups = HashMap<Int, VKGroup>()
     private var context: Context? = null
@@ -73,8 +80,6 @@ class HistoryAdapter(
         data.response.profiles!!.addAll(response.response.profiles!!)
         reverse()
         addProfiles(response)
-//        log.print("ADD DATA: ${data.response.items.size} ${response.response.items.size}", false, TAG)
-//        notifyDataSetChanged()
         notifyItemRangeInserted(0, response.response.items.size)
     }
 
@@ -90,6 +95,10 @@ class HistoryAdapter(
         configureReading(item, conversation, holder)
         configureCard(holder.card, item, holder)
         configureDate(item, holder)
+        holder.layout.setOnLongClickListener {
+            configureSelecting(item, position, holder.layout)
+            return@setOnLongClickListener true
+        }
         val url = getUrl(profiles, groups, item)
         if (url != EMPTY_STRING)
             picasso.load(url)
@@ -98,6 +107,18 @@ class HistoryAdapter(
         holder.text.text = item.text
         holder.attachments.removeAllViews()
         includeAttachments(item, holder.attachments)
+    }
+
+    private fun configureSelecting(item: VKMessage, key: Int, layout: LinearLayout) {
+        item.isSelected = !item.isSelected
+        if (item.isSelected) {
+            selectedItems[key] = item
+            layout.setBackgroundColor(Color.parseColor("#292929"))
+        } else {
+            selectedItems.remove(key)
+            layout.setBackgroundColor(Color.parseColor("#383838"))
+        }
+        mActionListener.onItemSelected(selectedItems)
     }
 
     fun getItemById(id: Int) : VKMessage? = data.response.items?.get(id)
@@ -251,9 +272,11 @@ class HistoryAdapter(
     interface ActionListener {
         fun onScroll(position: Int)
         fun onPhotoClicked(image: ImageView, url: String)
+        fun onItemSelected(map: HashMap<Int, VKMessage>)
     }
 
     class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val layout: LinearLayout = itemView.findViewById(R.id.message_history_layout)
         val text: TextView = itemView.findViewById(R.id.message_text)
         val card: CardView = itemView.findViewById(R.id.message_history_card)
         val time: TextView = itemView.findViewById(R.id.message_history_time)

@@ -9,6 +9,7 @@ import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.response_utils.RequestHandler
 import ru.shadowsparky.messenger.response_utils.Response
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
+import ru.shadowsparky.messenger.utils.Constansts
 
 interface Messages {
 
@@ -19,6 +20,7 @@ interface Messages {
         fun disposeAdapter()
         fun photoTouched(image: ImageView, url: String)
         fun clearMessageText()
+        fun setSelectionActionMenu(title: String)
     }
 
     interface Presenter : RequestHandler, HistoryAdapter.ActionListener {

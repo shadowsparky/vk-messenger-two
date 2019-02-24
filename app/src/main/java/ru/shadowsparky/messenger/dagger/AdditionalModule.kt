@@ -6,9 +6,11 @@ package ru.shadowsparky.messenger.dagger
 
 import android.content.Context
 import android.media.ImageWriter
+import android.util.SparseBooleanArray
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
+import ru.shadowsparky.messenger.response_utils.pojos.VKMessage
 import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.SQLite.MessagesDB
 import javax.inject.Singleton
@@ -43,4 +45,10 @@ class AdditionalModule(val context: Context) {
     @Provides
     @Singleton
     fun provideTextColor() : TextColorUtils = TextColorUtils(context)
+
+    @Provides
+    fun provideSparseBooleanArray() : SparseBooleanArray = SparseBooleanArray()
+
+    @Provides
+    fun provideVKMessageHashMap() : HashMap<Int, VKMessage> = HashMap()
 }

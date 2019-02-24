@@ -4,24 +4,22 @@
 
 package ru.shadowsparky.messenger.messages_view
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.open_photo.OpenPhotoView
-import ru.shadowsparky.messenger.response_utils.pojos.VKGetByIDMessages
-import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEAD
@@ -30,8 +28,6 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.OFFLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
-import ru.shadowsparky.messenger.utils.Constansts.Companion.SELECT_DELETE
-import ru.shadowsparky.messenger.utils.Constansts.Companion.SELECT_EDIT
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_ONLINE
@@ -40,13 +36,11 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.URL_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID_NOT_FOUND
-import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_LONG_POLL_STATUS_CHANGED
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
-import java.util.*
 import javax.inject.Inject
-import kotlin.math.abs
 
-class MessagesView : AppCompatActivity(), Messages.View {
+
+class MessagesView : AppCompatActivity(), Messages.View, ActionMode.Callback {
     // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var log: Logger
@@ -60,9 +54,33 @@ class MessagesView : AppCompatActivity(), Messages.View {
     private var mLastSeen = STATUS_HIDE
     private var receiver: ResponseReceiver? = null
     private val TAG = javaClass.name
+    private var mActionMode: ActionMode? = null
 
     init {
         App.component.inject(this)
+    }
+
+    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+        when(item!!.itemId) {
+            R.id.delete_message -> { log.print("Delete", false, TAG) }
+            R.id.edit_message -> { log.print("EDIT", false, TAG) }
+        }
+        return true
+    }
+
+    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        val inflater = mode!!.menuInflater
+        inflater.inflate(R.menu.messages_view_selected_menu, menu)
+        return true
+    }
+
+    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        return false
+    }
+
+    override fun onDestroyActionMode(mode: ActionMode?) {
+        mActionMode = null
+//        supportActionBar!!.show()
     }
 
     override fun setLoading(result: Boolean) {
@@ -84,6 +102,13 @@ class MessagesView : AppCompatActivity(), Messages.View {
         message_history_user_online.text = status
     }
 
+    override fun setSelectionActionMenu(title: String) {
+        if (mActionMode != null)
+            return
+        mActionMode = this.startSupportActionMode(this)
+//        supportActionBar!!.hide()
+    }
+
     override fun setAdapter(response: HistoryResponse) {
         log.print("Current adapter is $adapter", false, TAG)
         if (adapter == null) {
@@ -99,11 +124,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
         setLoading(false)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_messages_view)
-        setSupportActionBar(toolbarview)
-        registerForContextMenu(message_history_list)
+    fun initVars() {
         userId = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
         log.print("User ID $userId", false, TAG)
         userData = intent.getStringExtra(USER_DATA)
@@ -111,6 +132,9 @@ class MessagesView : AppCompatActivity(), Messages.View {
         onlineStatus = intent.getIntExtra(ONLINE_STATUS, STATUS_HIDE)
         mLastSeen = intent.getIntExtra(LAST_SEEN_FIELD, STATUS_HIDE)
         log.print("$userId $userData $url $onlineStatus")
+    }
+
+    fun initComponents() {
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
                 (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
@@ -121,6 +145,15 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 presenter.onSendMessage(add_message.text.toString())
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_messages_view)
+//        registerForContextMenu(message_history_list)
+        initVars()
+        initComponents()
+        setSupportActionBar(toolbarview)
         initToolbar()
         val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
         validator.verifyText(add_message, verifyCallback)

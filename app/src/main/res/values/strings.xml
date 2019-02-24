@@ -8,4 +8,5 @@
     <string name="transition">default transition</string>
     <string name="debug_push">subscribe to push (debug)</string>
     <string name="messages_not_found">Сообщения отсутствуют</string>
+    <string name="selected_messages">Выделено сообщений:</string>
 </resources>

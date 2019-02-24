@@ -6,10 +6,13 @@ package ru.shadowsparky.messenger.messages_view
 
 import android.widget.ImageView // FIXME Зависимость андроида в Presenter.
 import ru.shadowsparky.messenger.response_utils.Response
+import ru.shadowsparky.messenger.response_utils.pojos.VKMessage
 import ru.shadowsparky.messenger.response_utils.requester.FailureResponseHandler
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
 import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_TOOLBAR
+import ru.shadowsparky.messenger.utils.Constansts.Companion.SELECTED_TOOLBAR
 import ru.shadowsparky.messenger.utils.Logger
 import javax.inject.Inject
 
@@ -26,6 +29,15 @@ class MessagesPresenter : Messages.Presenter {
     init {
         App.component.inject(this)
         model.attachCallbacks(::onSuccessResponse, ::onFailureResponse)
+    }
+
+    override fun onItemSelected(map: HashMap<Int, VKMessage>) {
+        if (map.size > 0) {
+            view!!.setSelectionActionMenu("")
+//            view!!.setToolbar(DEFAULT_TOOLBAR)
+        } else {
+//            view!!.setToolbar(SELECTED_TOOLBAR)
+        }
     }
 
     override fun onScroll(position: Int) {
