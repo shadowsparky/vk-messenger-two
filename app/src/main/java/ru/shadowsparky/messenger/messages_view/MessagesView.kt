@@ -4,6 +4,8 @@
 
 package ru.shadowsparky.messenger.messages_view
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -13,19 +15,23 @@ import android.view.View.GONE
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.open_photo.OpenPhotoView
+import ru.shadowsparky.messenger.response_utils.pojos.VKGetByIDMessages
+import ru.shadowsparky.messenger.response_utils.pojos.VKMessages
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEAD
+import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.OFFLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE_STATUS
+import ru.shadowsparky.messenger.utils.Constansts.Companion.SELECT_DELETE
+import ru.shadowsparky.messenger.utils.Constansts.Companion.SELECT_EDIT
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_HIDE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_OFFLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STATUS_ONLINE
@@ -34,8 +40,11 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.URL_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_DATA
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID_NOT_FOUND
+import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_LONG_POLL_STATUS_CHANGED
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
+import java.util.*
 import javax.inject.Inject
+import kotlin.math.abs
 
 class MessagesView : AppCompatActivity(), Messages.View {
     // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
@@ -43,8 +52,6 @@ class MessagesView : AppCompatActivity(), Messages.View {
     @Inject protected lateinit var log: Logger
     @Inject protected lateinit var validator: Validator
     @Inject protected lateinit var presenter: Messages.Presenter
-    @Inject protected lateinit var dateUtils: DateUtils
-    @Inject protected lateinit var toast: ToastUtils
     private var adapter: HistoryAdapter? = null
     private var userId = USER_ID_NOT_FOUND
     private var userData = USER_NOT_FOUND
@@ -83,15 +90,20 @@ class MessagesView : AppCompatActivity(), Messages.View {
             adapter = HistoryAdapter(response, presenter)
             adapter!!.reverse()
             message_history_list.setHasFixedSize(true)
-            message_history_list.layoutManager = LinearLayoutManager(this)
+            message_history_list.layoutManager = GridLayoutManager(this, DEFAULT_SPAN_VALUE)
             message_history_list.adapter = adapter
+            message_history_list.scrollToPosition(adapter!!.itemCount - 1)
         } else {
             adapter!!.addData(response)
         }
         setLoading(false)
     }
 
-    private fun initVars() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_messages_view)
+        setSupportActionBar(toolbarview)
+        registerForContextMenu(message_history_list)
         userId = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
         log.print("User ID $userId", false, TAG)
         userData = intent.getStringExtra(USER_DATA)
@@ -99,9 +111,6 @@ class MessagesView : AppCompatActivity(), Messages.View {
         onlineStatus = intent.getIntExtra(ONLINE_STATUS, STATUS_HIDE)
         mLastSeen = intent.getIntExtra(LAST_SEEN_FIELD, STATUS_HIDE)
         log.print("$userId $userData $url $onlineStatus")
-    }
-
-    private fun initControls() {
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
                 (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
@@ -112,14 +121,6 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 presenter.onSendMessage(add_message.text.toString())
             }
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_messages_view)
-        setSupportActionBar(toolbarview)
-        initVars()
-        initControls()
         initToolbar()
         val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
         validator.verifyText(add_message, verifyCallback)
@@ -146,75 +147,26 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     private fun initToolbar() {
         message_history_user_data.text = userData
+        val dateUtils = DateUtils()
         val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
         val messageDate = dateUtils.fromUnixToStrictDate(mLastSeen.toLong())
-        val formattedDate = if (todayDate > messageDate)
+        var formattedDate = if (todayDate > messageDate) {
             dateUtils.fromUnixToDateAndTime(mLastSeen.toLong())
-        else
+        } else {
             dateUtils.fromUnixToTimeString(mLastSeen.toLong())
+        }
+        log.print(formattedDate, false, TAG)
         when (onlineStatus) {
             STATUS_HIDE -> message_history_user_online.visibility = GONE
             STATUS_OFFLINE -> {
                 val status = "$OFFLINE $formattedDate"
                 setStatus(status)
             }
-            STATUS_ONLINE -> setStatus(ONLINE)
+            STATUS_ONLINE -> setStatus("$ONLINE")
         }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back_gray_24dp)
     }
-//
-//    fun onActionItemClicked(
-//            actionMode: ActionMode,
-//            menuItem: MenuItem): Boolean {
-//        when (menuItem.itemId) {
-//            R.id.menu_delete -> {
-//                val selectedItemPositions = adapter.getSelectedItems()
-//                for (i in selectedItemPositions.indices.reversed()) {
-//                    adapter.removeData(selectedItemPositions[i])
-//                }
-//                actionMode.finish()
-//                return true
-//            }
-//            else -> return false
-//        }
-//    }
-//
-//    fun onDestroyActionMode(actionMode: ActionMode) {
-//        this.actionMode = null
-//        adapter.clearSelections()
-//    }
-
-//    override fun onContextItemSelected(item: MenuItem?): Boolean {
-//        when (item?.itemId) {
-//            SELECT_DELETE -> {
-//                val item = adapter?.getItemById(item.groupId)
-//                if (item!!.out!! == 1) {
-//                    if (item.date!! + UNIX_DAY > dateUtils.getCurrentTimestamp()) {
-//                        log.print("OKEY", false, TAG)
-//                    } else {
-//                        toast.error(this, "Вы не можете удалить это сообщение. Слишком поздно")
-//                    }
-//                } else {
-//                    toast.error(this, "Вы не можете удалить это сообщение")
-//                }
-//            }
-//            SELECT_EDIT -> {
-//                val item = adapter?.getItemById(item.groupId)
-//                if (item!!.out!! == 1) {
-//                    if (item.date!! + UNIX_DAY > dateUtils.getCurrentTimestamp()) {
-//                        log.print("OKEY", false, TAG)
-//                    } else {
-//                        toast.error(this, "Вы не можете отредактировать это сообщение. Слишком поздно")
-//                    }
-//                } else {
-//                    toast.error(this, "Вы не можете отредактировать это сообщение")
-//                }
-//            }
-//
-//        }
-//        return super.onContextItemSelected(item)
-//    }
 
     override fun onDestroy() {
         super.onDestroy()

@@ -5,24 +5,16 @@
 package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
-import android.util.SparseBooleanArray
-import android.view.Gravity
+import android.view.*
 import android.view.Gravity.LEFT
 import android.view.Gravity.RIGHT
-import android.view.LayoutInflater
-import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.recyclerview.selection.ItemDetailsLookup
-import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.hendraanggrian.pikasso.picasso
@@ -33,19 +25,17 @@ import ru.shadowsparky.messenger.dialogs.AttachmentDialog
 import ru.shadowsparky.messenger.response_utils.Attachments
 import ru.shadowsparky.messenger.response_utils.pojos.*
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
-import ru.shadowsparky.messenger.utils.App
+import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.EMPTY_STRING
 import ru.shadowsparky.messenger.utils.Constansts.Companion.PHOTO
 import ru.shadowsparky.messenger.utils.Constansts.Companion.RECORD_OPEN
 import ru.shadowsparky.messenger.utils.Constansts.Companion.STICKER
 import ru.shadowsparky.messenger.utils.Constansts.Companion.WALL
-import ru.shadowsparky.messenger.utils.DateUtils
-import ru.shadowsparky.messenger.utils.ImageWorker
-import ru.shadowsparky.messenger.utils.Logger
+import java.lang.reflect.Type
 import javax.inject.Inject
 import kotlin.math.abs
 
-@Suppress("ProtectedInFinal")
+
 class HistoryAdapter(
         private val data: HistoryResponse,
         private val mActionListener: HistoryAdapter.ActionListener
@@ -61,7 +51,6 @@ class HistoryAdapter(
 
     init {
         App.component.inject(this)
-        setHasStableIds(true)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryAdapter.MainViewHolder {
@@ -84,6 +73,8 @@ class HistoryAdapter(
         data.response.profiles!!.addAll(response.response.profiles!!)
         reverse()
         addProfiles(response)
+//        log.print("ADD DATA: ${data.response.items.size} ${response.response.items.size}", false, TAG)
+//        notifyDataSetChanged()
         notifyItemRangeInserted(0, response.response.items.size)
     }
 
@@ -94,33 +85,22 @@ class HistoryAdapter(
             mActionListener.onScroll(itemCount)
             log.print("Message history loading request... position: $itemCount", false, TAG)
         }
-        val item = getItemById(position)
-        val conversation = getConversationsById(position)
-        holder.card.setOnLongClickListener {
-            item.isSelected = !item.isSelected
-            log.print("selected: $position ${item.isSelected}")
-            return@setOnLongClickListener true
-        }
+        val item = data.response.items!![position]
+        val conversation = data.response.conversations!![0]
         configureReading(item, conversation, holder)
         configureCard(holder.card, item, holder)
         configureDate(item, holder)
-        configureImage(item, holder)
-        holder.text.text = item.text
-        holder.attachments.removeAllViews()
-        includeAttachments(item, holder.attachments)
-    }
-
-    private fun configureImage(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
         val url = getUrl(profiles, groups, item)
         if (url != EMPTY_STRING)
             picasso.load(url)
                     .circle()
                     .into(holder.image)
+        holder.text.text = item.text
+        holder.attachments.removeAllViews()
+        includeAttachments(item, holder.attachments)
     }
 
-    private fun getItemById(id: Int) : VKMessage = data.response.items!![id]
-
-    private fun getConversationsById(id: Int) : VKConversation = data.response.conversations!![id]
+    fun getItemById(id: Int) : VKMessage? = data.response.items?.get(id)
 
     private fun getUrl(profiles: HashMap<Int, VKProfile>, groups: HashMap<Int, VKGroup>, item: VKMessage) : String {
         return when {
@@ -279,23 +259,5 @@ class HistoryAdapter(
         val time: TextView = itemView.findViewById(R.id.message_history_time)
         val attachments: LinearLayout = itemView.findViewById(R.id.message_history_attachments)
         val image: ImageView = itemView.findViewById(R.id.message_history_user_card)
-
-        fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
-                object : ItemDetailsLookup.ItemDetails<Long>() {
-                    override fun getSelectionKey(): Long? = itemId
-
-                    override fun getPosition(): Int = adapterPosition
-
-                }
-
-//        init {
-//            card.setOnCreateContextMenuListener(this)
-//        }
-//
-//        override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-//            menu?.setHeaderTitle("Выберите действие")
-//            menu?.add(this.adapterPosition, 0, 0, "Удалить сообщение")
-//            menu?.add(this.adapterPosition, 1, 0, "Редактировать сообщение")
-//        }
     }
 }
