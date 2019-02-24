@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.hendraanggrian.pikasso:pikasso-palette:0.2@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/pikasso-palette-0.2.aar/cf6a49fd4dd354c9fdcc89c790616dbb/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/pikasso-palette-0.2.aar/cf6a49fd4dd354c9fdcc89c790616dbb/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/pikasso-palette-0.2.aar/90f82b8ef4d154e933c415118132ecea/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/pikasso-palette-0.2.aar/90f82b8ef4d154e933c415118132ecea/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

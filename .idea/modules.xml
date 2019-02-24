@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/messenger.iml" filepath="$PROJECT_DIR$/messenger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vk-messenger-two.iml" filepath="$PROJECT_DIR$/vk-messenger-two.iml" />
     </modules>
   </component>
 </project>

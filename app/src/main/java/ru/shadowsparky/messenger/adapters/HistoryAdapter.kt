@@ -94,22 +94,33 @@ class HistoryAdapter(
             mActionListener.onScroll(itemCount)
             log.print("Message history loading request... position: $itemCount", false, TAG)
         }
-        val item = data.response.items!![position]
-        val conversation = data.response.conversations!![0]
+        val item = getItemById(position)
+        val conversation = getConversationsById(position)
+        holder.card.setOnLongClickListener {
+            item.isSelected = !item.isSelected
+            log.print("selected: $position ${item.isSelected}")
+            return@setOnLongClickListener true
+        }
         configureReading(item, conversation, holder)
         configureCard(holder.card, item, holder)
         configureDate(item, holder)
-        val url = getUrl(profiles, groups, item)
-        if (url != EMPTY_STRING)
-            picasso.load(url)
-                .circle()
-                .into(holder.image)
+        configureImage(item, holder)
         holder.text.text = item.text
         holder.attachments.removeAllViews()
         includeAttachments(item, holder.attachments)
     }
 
-    fun getItemById(id: Int) : VKMessage? = data.response.items?.get(id)
+    private fun configureImage(item: VKMessage, holder: HistoryAdapter.MainViewHolder) {
+        val url = getUrl(profiles, groups, item)
+        if (url != EMPTY_STRING)
+            picasso.load(url)
+                    .circle()
+                    .into(holder.image)
+    }
+
+    private fun getItemById(id: Int) : VKMessage = data.response.items!![id]
+
+    private fun getConversationsById(id: Int) : VKConversation = data.response.conversations!![id]
 
     private fun getUrl(profiles: HashMap<Int, VKProfile>, groups: HashMap<Int, VKGroup>, item: VKMessage) : String {
         return when {

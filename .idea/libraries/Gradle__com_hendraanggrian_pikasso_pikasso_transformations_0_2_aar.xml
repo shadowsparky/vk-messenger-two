@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.hendraanggrian.pikasso:pikasso-transformations:0.2@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/pikasso-transformations-0.2.aar/3e114803d24d7db94eef41c2cc7e5bfb/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/pikasso-transformations-0.2.aar/3e114803d24d7db94eef41c2cc7e5bfb/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/pikasso-transformations-0.2.aar/4dc9ea483dae39098d5725285b046ab9/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/pikasso-transformations-0.2.aar/4dc9ea483dae39098d5725285b046ab9/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

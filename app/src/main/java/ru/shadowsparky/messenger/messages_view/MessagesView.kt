@@ -37,7 +37,6 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_ID_NOT_FOUND
 import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
 import javax.inject.Inject
 
-
 class MessagesView : AppCompatActivity(), Messages.View {
     // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
@@ -53,7 +52,6 @@ class MessagesView : AppCompatActivity(), Messages.View {
     private var onlineStatus = STATUS_HIDE
     private var mLastSeen = STATUS_HIDE
     private var receiver: ResponseReceiver? = null
-    private var tracker: SelectionTracker<Long>? = null
     private val TAG = javaClass.name
 
     init {
@@ -103,11 +101,7 @@ class MessagesView : AppCompatActivity(), Messages.View {
         log.print("$userId $userData $url $onlineStatus")
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_messages_view)
-        setSupportActionBar(toolbarview)
-        initVars()
+    private fun initControls() {
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
                 (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
@@ -118,6 +112,14 @@ class MessagesView : AppCompatActivity(), Messages.View {
                 presenter.onSendMessage(add_message.text.toString())
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_messages_view)
+        setSupportActionBar(toolbarview)
+        initVars()
+        initControls()
         initToolbar()
         val verifyCallback: (Boolean) -> Unit = { push_message.isEnabled = it }
         validator.verifyText(add_message, verifyCallback)
@@ -144,15 +146,12 @@ class MessagesView : AppCompatActivity(), Messages.View {
 
     private fun initToolbar() {
         message_history_user_data.text = userData
-        val dateUtils = DateUtils()
         val todayDate = dateUtils.fromUnixToStrictDate(System.currentTimeMillis()/1000)
         val messageDate = dateUtils.fromUnixToStrictDate(mLastSeen.toLong())
-        var formattedDate = if (todayDate > messageDate) {
+        val formattedDate = if (todayDate > messageDate)
             dateUtils.fromUnixToDateAndTime(mLastSeen.toLong())
-        } else {
+        else
             dateUtils.fromUnixToTimeString(mLastSeen.toLong())
-        }
-        log.print(formattedDate, false, TAG)
         when (onlineStatus) {
             STATUS_HIDE -> message_history_user_online.visibility = GONE
             STATUS_OFFLINE -> {

@@ -22,5 +22,6 @@ data class VKMessage(
     val important: Boolean?,
     val payload: String?,
     val reply_message: VKMessage?,
-    val fwd_messages: ArrayList<VKMessage>?
+    val fwd_messages: ArrayList<VKMessage>?,
+    var isSelected: Boolean = false
 ) : Serializable
