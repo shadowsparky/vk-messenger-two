@@ -7,12 +7,14 @@ package ru.shadowsparky.messenger.messages_view
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.view.*
+import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.selection.SelectionTracker
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
@@ -20,7 +22,6 @@ import ru.shadowsparky.messenger.open_photo.OpenPhotoView
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.utils.*
 import ru.shadowsparky.messenger.utils.Constansts.Companion.DEAD
-import ru.shadowsparky.messenger.utils.Constansts.Companion.DEFAULT_SPAN_VALUE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.LAST_SEEN_FIELD
 import ru.shadowsparky.messenger.utils.Constansts.Companion.OFFLINE
 import ru.shadowsparky.messenger.utils.Constansts.Companion.ONLINE
@@ -37,23 +38,7 @@ import ru.shadowsparky.messenger.utils.Constansts.Companion.USER_NOT_FOUND
 import javax.inject.Inject
 
 
-class MessagesView : AppCompatActivity(), Messages.View,  ActionMode.Callback {
-    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onDestroyActionMode(mode: ActionMode?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
+class MessagesView : AppCompatActivity(), Messages.View {
     // protected a не private ПОТОМУ ЧТО Я ТАК ЗАХОТЕЛ. ВЫ НЕ ИМЕЕТЕ ПРАВА МЕНЯ СУДИТЬ, ВЫ НИЧЕГО НЕ ЗНАЕТЕ
     @Inject protected lateinit var preferencesUtils: SharedPreferencesUtils
     @Inject protected lateinit var log: Logger
@@ -68,6 +53,7 @@ class MessagesView : AppCompatActivity(), Messages.View,  ActionMode.Callback {
     private var onlineStatus = STATUS_HIDE
     private var mLastSeen = STATUS_HIDE
     private var receiver: ResponseReceiver? = null
+    private var tracker: SelectionTracker<Long>? = null
     private val TAG = javaClass.name
 
     init {
@@ -99,20 +85,15 @@ class MessagesView : AppCompatActivity(), Messages.View,  ActionMode.Callback {
             adapter = HistoryAdapter(response, presenter)
             adapter!!.reverse()
             message_history_list.setHasFixedSize(true)
-            message_history_list.layoutManager = GridLayoutManager(this, DEFAULT_SPAN_VALUE)
+            message_history_list.layoutManager = LinearLayoutManager(this)
             message_history_list.adapter = adapter
-            message_history_list.scrollToPosition(adapter!!.itemCount - 1)
         } else {
             adapter!!.addData(response)
         }
         setLoading(false)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_messages_view)
-        setSupportActionBar(toolbarview)
-        registerForContextMenu(message_history_list)
+    private fun initVars() {
         userId = intent.getIntExtra(USER_ID, USER_ID_NOT_FOUND)
         log.print("User ID $userId", false, TAG)
         userData = intent.getStringExtra(USER_DATA)
@@ -120,6 +101,13 @@ class MessagesView : AppCompatActivity(), Messages.View,  ActionMode.Callback {
         onlineStatus = intent.getIntExtra(ONLINE_STATUS, STATUS_HIDE)
         mLastSeen = intent.getIntExtra(LAST_SEEN_FIELD, STATUS_HIDE)
         log.print("$userId $userData $url $onlineStatus")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_messages_view)
+        setSupportActionBar(toolbarview)
+        initVars()
         if ((userId != USER_ID_NOT_FOUND) and (userData != USER_NOT_FOUND) and
                 (url != URL_NOT_FOUND)) {
             presenter.attachPeerID(userId)
@@ -171,7 +159,7 @@ class MessagesView : AppCompatActivity(), Messages.View,  ActionMode.Callback {
                 val status = "$OFFLINE $formattedDate"
                 setStatus(status)
             }
-            STATUS_ONLINE -> setStatus("$ONLINE")
+            STATUS_ONLINE -> setStatus(ONLINE)
         }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back_gray_24dp)

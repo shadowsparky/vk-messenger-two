@@ -5,7 +5,6 @@
 package ru.shadowsparky.messenger.messages_view
 
 import android.widget.ImageView
-import com.squareup.picasso.Target
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
 import ru.shadowsparky.messenger.response_utils.RequestHandler
 import ru.shadowsparky.messenger.response_utils.Response
@@ -25,7 +24,6 @@ interface Messages {
     interface Presenter : RequestHandler, HistoryAdapter.ActionListener {
         fun attachPeerID(peerId: Int) : MessagesPresenter
         fun onGetMessageHistoryRequest()
-        fun onScrollFinished(position: Int)
         fun attachView(view: MessagesView)
         fun onSendMessage(message: String)
         fun onActivityDestroying()

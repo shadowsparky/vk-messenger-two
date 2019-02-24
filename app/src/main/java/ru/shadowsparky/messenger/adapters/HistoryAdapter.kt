@@ -5,7 +5,9 @@
 package ru.shadowsparky.messenger.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.util.SparseBooleanArray
 import android.view.Gravity
 import android.view.Gravity.LEFT
@@ -19,6 +21,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.selection.ItemDetailsLookup
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.hendraanggrian.pikasso.picasso
@@ -53,37 +57,11 @@ class HistoryAdapter(
     private val profiles = HashMap<Int, VKProfile>()
     private val groups = HashMap<Int, VKGroup>()
     private var context: Context? = null
-    private var selectedItems: SparseBooleanArray = SparseBooleanArray()
     private val TAG = javaClass.name
 
     init {
         App.component.inject(this)
-    }
-
-    fun toggleSelection(pos: Int) {
-        if (selectedItems.get(pos, false)) {
-            selectedItems.delete(pos)
-        } else {
-            selectedItems.put(pos, true)
-        }
-        notifyItemChanged(pos)
-    }
-
-    fun clearSelections() {
-        selectedItems.clear()
-        notifyDataSetChanged()
-    }
-
-    fun getSelectedItemCount(): Int {
-        return selectedItems.size()
-    }
-
-    fun getSelectedItems(): List<Int> {
-        val items = ArrayList<Int>(selectedItems!!.size())
-        for (i in 0 until selectedItems!!.size()) {
-            items.add(selectedItems!!.keyAt(i))
-        }
-        return items
+        setHasStableIds(true)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryAdapter.MainViewHolder {
@@ -106,8 +84,6 @@ class HistoryAdapter(
         data.response.profiles!!.addAll(response.response.profiles!!)
         reverse()
         addProfiles(response)
-//        log.print("ADD DATA: ${data.response.items.size} ${response.response.items.size}", false, TAG)
-//        notifyDataSetChanged()
         notifyItemRangeInserted(0, response.response.items.size)
     }
 
@@ -292,6 +268,14 @@ class HistoryAdapter(
         val time: TextView = itemView.findViewById(R.id.message_history_time)
         val attachments: LinearLayout = itemView.findViewById(R.id.message_history_attachments)
         val image: ImageView = itemView.findViewById(R.id.message_history_user_card)
+
+        fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
+                object : ItemDetailsLookup.ItemDetails<Long>() {
+                    override fun getSelectionKey(): Long? = itemId
+
+                    override fun getPosition(): Int = adapterPosition
+
+                }
 
 //        init {
 //            card.setOnCreateContextMenuListener(this)

@@ -4,15 +4,13 @@
 
 package ru.shadowsparky.messenger.messages_view
 
-import android.widget.ImageView
+import android.widget.ImageView // FIXME Зависимость андроида в Presenter.
 import ru.shadowsparky.messenger.response_utils.Response
-import ru.shadowsparky.messenger.response_utils.pojos.VKMessage
 import ru.shadowsparky.messenger.response_utils.requester.FailureResponseHandler
 import ru.shadowsparky.messenger.response_utils.responses.HistoryResponse
 import ru.shadowsparky.messenger.response_utils.responses.SendMessageResponse
 import ru.shadowsparky.messenger.utils.App
 import ru.shadowsparky.messenger.utils.Logger
-import ru.shadowsparky.messenger.utils.ToastUtils
 import javax.inject.Inject
 
 class MessagesPresenter : Messages.Presenter {
@@ -57,23 +55,19 @@ class MessagesPresenter : Messages.Presenter {
         model.getMessageHistory(peerId!!)
     }
 
-    override fun onScrollFinished(position: Int) {
-
-    }
-
     override fun onSendMessage(message: String) {
         view!!.setLoading(true)
         model.sendMessage(peerId!!, message)
     }
 
     override fun onFailureResponse(error: Throwable) {
-        val callback: (response: Response) -> Unit = {
+        val onErrorCallback: (response: Response) -> Unit = {
             loadingError = true
             view!!.setAdapter(it as HistoryResponse)
         }
         if (!loadingError) {
             view!!.setLoading(true)
-            model.getCachedHistory(callback, peerId!!.toLong())
+            model.getCachedHistory(onErrorCallback, peerId!!.toLong())
             view!!.disposeAdapter()
         }
         view!!.setLoading(false)
@@ -85,7 +79,7 @@ class MessagesPresenter : Messages.Presenter {
     override fun onSuccessResponse(response: Response) {
         when (response) {
             is HistoryResponse -> view!!.setAdapter(response)
-            is SendMessageResponse -> { view!!.clearMessageText() }
+            is SendMessageResponse -> view!!.clearMessageText()
             else -> onFailureResponse(ClassCastException())
         }
         loadingError = false
