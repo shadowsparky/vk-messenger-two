@@ -32,12 +32,7 @@ class MessagesPresenter : Messages.Presenter {
     }
 
     override fun onItemSelected(map: HashMap<Int, VKMessage>) {
-        if (map.size > 0) {
-            view!!.setSelectionActionMenu("")
-//            view!!.setToolbar(DEFAULT_TOOLBAR)
-        } else {
-//            view!!.setToolbar(SELECTED_TOOLBAR)
-        }
+        view!!.setSelectionActionMenu("Выбрано сообщений: ${map.size}")
     }
 
     override fun onScroll(position: Int) {

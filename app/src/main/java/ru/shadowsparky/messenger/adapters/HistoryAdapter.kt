@@ -96,7 +96,7 @@ class HistoryAdapter(
         configureCard(holder.card, item, holder)
         configureDate(item, holder)
         holder.layout.setOnLongClickListener {
-            configureSelecting(item, position, holder.layout)
+//            configureSelecting(item, position, holder.layout)
             return@setOnLongClickListener true
         }
         val url = getUrl(profiles, groups, item)

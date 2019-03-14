@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.GridLayoutManager
+import com.jakewharton.rxbinding2.view.visible
 import kotlinx.android.synthetic.main.activity_messages_view.*
 import ru.shadowsparky.messenger.R
 import ru.shadowsparky.messenger.adapters.HistoryAdapter
@@ -55,6 +56,7 @@ class MessagesView : AppCompatActivity(), Messages.View, ActionMode.Callback {
     private var receiver: ResponseReceiver? = null
     private val TAG = javaClass.name
     private var mActionMode: ActionMode? = null
+    private var menu: Menu? = null
 
     init {
         App.component.inject(this)
@@ -71,6 +73,7 @@ class MessagesView : AppCompatActivity(), Messages.View, ActionMode.Callback {
     override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
         val inflater = mode!!.menuInflater
         inflater.inflate(R.menu.messages_view_selected_menu, menu)
+        this.menu = menu
         return true
     }
 
@@ -103,10 +106,22 @@ class MessagesView : AppCompatActivity(), Messages.View, ActionMode.Callback {
     }
 
     override fun setSelectionActionMenu(title: String) {
-        if (mActionMode != null)
+        log.print("Selection action menu worked", false, TAG)
+        if (mActionMode != null) {
+            configureActionMode()
             return
+        }
         mActionMode = this.startSupportActionMode(this)
-//        supportActionBar!!.hide()
+        configureActionMode()
+    }
+
+    private fun configureActionMode() {
+        mActionMode!!.title = title
+        val message = mActionMode!!.menu.findItem(R.id.edit_message)
+        message.isVisible = adapter!!.selectedItems.size == 1 && adapter!!.selectedItems.values.elementAt(0).out == 1
+        if (adapter!!.selectedItems.size == 0) {
+            mActionMode!!.finish()
+        }
     }
 
     override fun setAdapter(response: HistoryResponse) {
